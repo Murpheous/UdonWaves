@@ -21,8 +21,8 @@ public int iterationPerFrame = 5;
        // UpdateZones();
         texture.Update(iterationPerFrame);
     }
-
- /*   void UpdateZones()
+    /*
+   void UpdateZones()
     {
         bool leftClick = Input.GetMouseButton(0);
         bool rightClick = Input.GetMouseButton(1);
@@ -46,7 +46,7 @@ public int iterationPerFrame = 5;
             clickZone.updateZoneCenter = new Vector2(hit.textureCoord.x, 1f - hit.textureCoord.y);
             clickZone.updateZoneSize = new Vector2(0.01f, 0.01f);
 
-            texture.SetUpdateZones(new CustomRenderTextureUpdateZone[] { defaultZone, clickZone });
+            //texture.SetUpdateZones(new CustomRenderTextureUpdateZone[] { defaultZone, clickZone });
         }
     } */
 }

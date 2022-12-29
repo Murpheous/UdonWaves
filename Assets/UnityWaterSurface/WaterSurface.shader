@@ -1,9 +1,10 @@
-﻿Shader "Water/Surface" 
+﻿Shader "Water/Surface"
 {
 
 Properties
 {
-    _Color("Color", color) = (1, 1, 1, 0)
+    _Color("Color", color) = (1, 1, 0, 0)
+    _ColorNeg("ColorNeg", color) = (0, 0.3, 1, 0)
     _DispTex("Disp Texture", 2D) = "gray" {}
     _Glossiness ("Smoothness", Range(0,1)) = 0.5
     _Metallic ("Metallic", Range(0,1)) = 0.0
@@ -31,6 +32,7 @@ float _MaxDist;
 sampler2D _DispTex;
 float4 _DispTex_TexelSize;
 fixed4 _Color;
+fixed4 _ColorNeg;
 half _Glossiness;
 half _Metallic;
 
@@ -60,10 +62,12 @@ void disp(inout appdata v)
 
 void surf(Input IN, inout SurfaceOutputStandard o) 
 {
-    o.Albedo = _Color.rgb;
+    float val = tex2D(_DispTex, IN.uv_DispTex).r;
+    o.Albedo = val > 0 ? _Color.rgb : _ColorNeg.rgb;
     o.Metallic = _Metallic;
     o.Smoothness = _Glossiness;
-    o.Alpha = _Color.a * (0.5 + 0.5 * clamp(tex2D(_DispTex, IN.uv_DispTex).r, 0, 1));
+    o.Alpha = val > 0 ? _Color.a * clamp(val, 0.2, 1) : _ColorNeg.a* clamp(-val, 0.2, 1);
+
 
     float3 duv = float3(_DispTex_TexelSize.xy, 0);
     half v1 = tex2D(_DispTex, IN.uv_DispTex - duv.xz).y;

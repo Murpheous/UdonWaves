@@ -71,7 +71,7 @@ SubShader
 
     Pass
     {
-        Name "LeftClick"
+        Name "RightClick"
         CGPROGRAM
         #pragma vertex CustomRenderTextureVertexShader
         #pragma fragment frag_right_click
