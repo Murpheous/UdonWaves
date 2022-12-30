@@ -62,11 +62,11 @@ void disp(inout appdata v)
 
 void surf(Input IN, inout SurfaceOutputStandard o) 
 {
-    float val = tex2D(_DispTex, IN.uv_DispTex).r;
-    o.Albedo = val > 0 ? _Color.rgb : _ColorNeg.rgb;
+    float val = (tex2D(_DispTex, IN.uv_DispTex).r+1)*0.5;
+    o.Albedo = lerp(_ColorNeg.rgb,_Color.rgb,val);
     o.Metallic = _Metallic;
     o.Smoothness = _Glossiness;
-    o.Alpha = val > 0 ? _Color.a * clamp(val, 0.2, 1) : _ColorNeg.a* clamp(-val, 0.2, 1);
+    o.Alpha = 1;// val > 0 ? _Color.a * clamp(val, 0.2, 1) : _ColorNeg.a * clamp(-val, 0.2, 1);
 
 
     float3 duv = float3(_DispTex_TexelSize.xy, 0);
