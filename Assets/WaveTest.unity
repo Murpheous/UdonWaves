@@ -671,10 +671,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5239915332397845297}
+  - component: {fileID: 5239915332397845300}
   - component: {fileID: 5239915332397845303}
   - component: {fileID: 5239915332397845296}
   - component: {fileID: 5239915332397845302}
-  - component: {fileID: 5239915332397845300}
   - component: {fileID: 5239915332397845299}
   m_Layer: 0
   m_Name: WavePlane
@@ -733,9 +733,9 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 5239915332397845299}
   texture: {fileID: 8600000, guid: be8c672ce9314b1409c245d2c813b108, type: 2}
   effect: {x: 1, y: 0, z: 0, w: 0}
-  frequency: 1
-  CFL: 0.4
-  waveSpeedPixels: 15
+  frequency: 2.5
+  CFL: 0.3
+  waveSpeedPixels: 20
   textMat: {fileID: 2100000, guid: 2dcfa7fe472afa24cab4179976935e21, type: 2}
   iterationPerFrame: 1
 --- !u!23 &5239915332397845302

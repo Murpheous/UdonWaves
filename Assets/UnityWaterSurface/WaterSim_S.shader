@@ -27,19 +27,44 @@ float4 frag(v2f_customrendertexture i) : SV_Target
     int yPixel = (int)(floor(uv.y * _CustomRenderTextureHeight));
     int atLeft = (int)(xPixel <= 0);
     int atRight = (int)(xPixel >= (_CustomRenderTextureWidth-1));
-    int atBottom = (int)(xPixel <= 0);
-    int atTop = (int)(xPixel >= (_CustomRenderTextureHeight - 1));
-
+    int atBottom = (int)(yPixel <= 0);
+    int atTop = (int)(yPixel >= (_CustomRenderTextureHeight - 1));
+    int onBoundary = (int)((atLeft + atRight + atTop + atBottom) > 0);
     float2 c = tex2D(_SelfTexture2D, uv);
+    float state = c.x;
+    float state_m1 = c.y;
+    
+    
+    float stateXp1 = tex2D(_SelfTexture2D, uv + duv.xz).r; // + uint2(1, 0)].x;
+    float stateXm1 = tex2D(_SelfTexture2D, uv - duv.xz).r; // + uint2(1, 0)].x;    
+    float stateYp1 = tex2D(_SelfTexture2D, uv + duv.zy).r; // + uint2(0, 1)].x;
+    float stateYm1 = tex2D(_SelfTexture2D, uv - duv.zy).r; // + uint2(0, 1)].x;
+    
+
+    float b = 0;
+    // 
+    float absL = tex2D(_SelfTexture2D, uv + duv.xz).g + _CFAbsorb * (stateXp1 - state_m1);
+    b = lerp(b, absL, atLeft);
+    float absR = tex2D(_SelfTexture2D, uv - duv.xz).g + _CFAbsorb * (stateXm1 - state_m1);
+    b = lerp(b, absR, atRight);
+    float absB = tex2D(_SelfTexture2D, uv + duv.zy).g + _CFAbsorb * (stateYp1 - state_m1);
+    b = lerp(b, absB, atBottom);
+    float absT = tex2D(_SelfTexture2D, uv - duv.zy).g + _CFAbsorb * (stateYm1 - state_m1);
+    b = lerp(b, absT, atTop);
+
+    /* Update the boundary absorption */
+
+    // Calculate the wave update
     float p = (2 * c.r - c.g + _CFLSq * (
         tex2D(_SelfTexture2D, uv - duv.zy).r +
         tex2D(_SelfTexture2D, uv + duv.zy).r +
         tex2D(_SelfTexture2D, uv - duv.xz).r +
         tex2D(_SelfTexture2D, uv + duv.xz).r - 4 * c.r));
+    p = lerp(p, b, onBoundary);
+    // Add Effect into the mix
     float effectDelta = clamp(abs(xPixel - floor(_Effect.x)), 0, 1);
-
     p = lerp(_Effect.z, p, effectDelta);
-    return float4(p, c.r, 0, 0);
+    return float4(p, state, 0, 0);
 }
 
 float4 frag_left_click(v2f_customrendertexture i) : SV_Target
