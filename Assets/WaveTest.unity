@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 1260129841}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
+  m_IndirectSpecularColor: {r: 0.0027333754, g: 0.006107235, b: 0.038166106, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -132,7 +132,6 @@ GameObject:
   - component: {fileID: 367000747}
   - component: {fileID: 367000746}
   - component: {fileID: 367000745}
-  - component: {fileID: 367000748}
   m_Layer: 0
   m_Name: VRCWorld
   m_TagString: Untagged
@@ -272,19 +271,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &367000748
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 367000744}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 229740497, guid: 4ecd63eff847044b68db9453ce219299, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  contentType: 1
 --- !u!1 &1027434194
 GameObject:
   m_ObjectHideFlags: 0
@@ -746,7 +732,12 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 5239915332397845299}
   texture: {fileID: 8600000, guid: be8c672ce9314b1409c245d2c813b108, type: 2}
-  iterationPerFrame: 2
+  effect: {x: 1, y: 0, z: 0, w: 0}
+  frequency: 1
+  CFL: 0.4
+  waveSpeedPixels: 15
+  textMat: {fileID: 2100000, guid: 2dcfa7fe472afa24cab4179976935e21, type: 2}
+  iterationPerFrame: 1
 --- !u!23 &5239915332397845302
 MeshRenderer:
   m_ObjectHideFlags: 0

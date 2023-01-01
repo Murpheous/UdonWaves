@@ -6,20 +6,81 @@ using VRC.Udon;
 
 public class WaveMonitor : UdonSharpBehaviour
 {
-public CustomRenderTexture texture;
+    public CustomRenderTexture texture;
+
+    [Header("Stimulus")]
+    public Vector4 effect;
+    [Range(0f, 2.5f), SerializeField]
+    float frequency = 0.5f;
+    [Header("Wave paraemters")]
+
+    public float CFL = 0.5f;
+    float CFLSq = 0.25f;
+    float AbsorbFactor = 0.25f;
+    public float waveSpeedPixels = 40; // Speed
+
+    float dt; // Time step
+    float effectPeriod = 1;
+    float effectTime = 0;
+
+    float lambdaEffect = 1;
+    public Material textMat = null;
 
 public int iterationPerFrame = 5;
 
+    void CalcParameters()
+    {
+        effectPeriod = 1/frequency;
+        lambdaEffect = waveSpeedPixels * effectPeriod;
+        CFLSq = CFL * CFL;
+        AbsorbFactor = (CFL - 1) / (1 + CFL);
+        dt = CFL / waveSpeedPixels;
+    }
+
     void Start()
     {
-        texture.Initialize();
+        CalcParameters();
+        if (texture != null)
+        {
+            texture.Initialize();
+            if (textMat!= null)
+            {
+                texture.material = textMat;
+            }
+        }
     }
+
+    void UpdateWaves(float dt)
+    {
+        texture.ClearUpdateZones();
+        effectTime += dt;
+        effect.w = dt;
+        if (effectTime > effectPeriod)
+        {
+            effectTime -= effectPeriod;
+            effect.w = 0;
+        }
+        effect.z = Mathf.Sin(effectTime * 2 * Mathf.PI * frequency);
+        //waveCompute.SetFloat("dispersion", dispersion);
+        if (textMat!= null)
+        {
+            textMat.SetFloat("_CFL^2", CFLSq);
+            textMat.SetVector("_Effect", effect);
+            textMat.SetFloat("_CFAbsorb", AbsorbFactor);
+        }
+        texture.Update(1);
+    }
+    double waveTime = 0;
+    double updateTime = 0;
 
     void Update()
     {
-        texture.ClearUpdateZones();
-       // UpdateZones();
-        texture.Update(iterationPerFrame);
+        waveTime += Time.deltaTime;
+        while (updateTime < waveTime)
+        {
+            updateTime += dt;
+            UpdateWaves(dt);
+        }
     }
     /*
    void UpdateZones()

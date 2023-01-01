@@ -1,21 +1,20 @@
 ﻿Shader "Water/Simulation"
 {
 
-Properties
-{
-    _S2("PhaseVelocity^2", Range(0.0, 0.5)) = 0.2
-    [PowerSlider(0.01)]
-    _Atten("Attenuation", Range(0.0, 1.0)) = 0.999
-    _DeltaUV("Delta UV", Float) = 3
-}
+    Properties
+    {
+        _CFLSq("CFL^2", Range(0.0, 0.5)) = 0.2
+        _Effect("Effect",Vector) = (0,0,0,0)
+        _CFAbsorb("CFAbsorb", Range(0.0,1.0)) = 0.2
+    }
 
-CGINCLUDE
+        CGINCLUDE
 
 #include "UnityCustomRenderTexture.cginc"
 
-half _S2;
-half _Atten;
-float _DeltaUV;
+    half _CFLSq;
+    float4 _Effect;
+    float _CFAbsorb;
 
 float4 frag(v2f_customrendertexture i) : SV_Target
 {
@@ -23,15 +22,23 @@ float4 frag(v2f_customrendertexture i) : SV_Target
 
     float du = 1.0 / _CustomRenderTextureWidth;
     float dv = 1.0 / _CustomRenderTextureHeight;
-    float3 duv = float3(du, dv, 0) * _DeltaUV;
+    float3 duv = float3(du, dv, 0);
+    int xPixel = (int)(floor(uv.x * _CustomRenderTextureWidth));
+    int yPixel = (int)(floor(uv.y * _CustomRenderTextureHeight));
+    int atLeft = (int)(xPixel <= 0);
+    int atRight = (int)(xPixel >= (_CustomRenderTextureWidth-1));
+    int atBottom = (int)(xPixel <= 0);
+    int atTop = (int)(xPixel >= (_CustomRenderTextureHeight - 1));
 
     float2 c = tex2D(_SelfTexture2D, uv);
-    float p = (2 * c.r - c.g + _S2 * (
+    float p = (2 * c.r - c.g + _CFLSq * (
         tex2D(_SelfTexture2D, uv - duv.zy).r +
         tex2D(_SelfTexture2D, uv + duv.zy).r +
         tex2D(_SelfTexture2D, uv - duv.xz).r +
-        tex2D(_SelfTexture2D, uv + duv.xz).r - 4 * c.r)) * _Atten;
+        tex2D(_SelfTexture2D, uv + duv.xz).r - 4 * c.r));
+    float effectDelta = clamp(abs(xPixel - floor(_Effect.x)), 0, 1);
 
+    p = lerp(_Effect.z, p, effectDelta);
     return float4(p, c.r, 0, 0);
 }
 
