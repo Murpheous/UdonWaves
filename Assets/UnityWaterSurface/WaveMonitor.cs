@@ -7,6 +7,7 @@ using VRC.Udon;
 public class WaveMonitor : UdonSharpBehaviour
 {
     public CustomRenderTexture texture;
+    public Vector2Int SimDimensions = new Vector2Int(2,1);
 
     [Header("Stimulus")]
     public Vector4 effect;
@@ -26,7 +27,12 @@ public class WaveMonitor : UdonSharpBehaviour
     float lambdaEffect = 1;
     public Material textMat = null;
 
-public int iterationPerFrame = 5;
+    [Header("Obstacles")]
+    public RenderTexture obstaclesTex;
+    public Camera obstaclesCamera;
+
+
+    public int iterationPerFrame = 5;
 
     void CalcParameters()
     {
@@ -46,6 +52,20 @@ public int iterationPerFrame = 5;
             if (textMat!= null)
             {
                 texture.material = textMat;
+            }
+        }
+        if (obstaclesTex != null)
+        {
+            if (obstaclesCamera == null)
+                obstaclesCamera = GetComponentInChildren<Camera>();
+            if (obstaclesCamera != null)
+            {
+                obstaclesCamera.clearFlags = CameraClearFlags.SolidColor;
+                obstaclesCamera.targetTexture = obstaclesTex;
+                obstaclesCamera.backgroundColor = Color.black;
+                obstaclesCamera.orthographic = true;
+                // Camera orthographic size is image height in space/2 width is determined by aspect ratio
+                obstaclesCamera.orthographicSize = SimDimensions.y / 2f;
             }
         }
     }

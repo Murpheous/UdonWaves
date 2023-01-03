@@ -18,12 +18,20 @@ Material:
   disabledShaderPasses: []
   m_SavedProperties:
     serializedVersion: 3
-    m_TexEnvs: []
+    m_TexEnvs:
+    - _ObstacleTex:
+        m_Texture: {fileID: 8400000, guid: 75384e9f3fbb12d4b819f3eaa345f5e7, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ObstacleTex2D:
+        m_Texture: {fileID: 8400000, guid: 75384e9f3fbb12d4b819f3eaa345f5e7, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Floats:
     - _Atten: 1
-    - _CFAbsorb: -0.53846157
+    - _CFAbsorb: -0.33333334
     - _CFLSq: 0.3
     - _DeltaUV: 1
     - _S2: 0.2
     m_Colors:
-    - _Effect: {r: 1, g: 0, b: 0.9723217, a: 0.015000001}
+    - _Effect: {r: 4, g: 0, b: -0.9980271, a: 0.025}
