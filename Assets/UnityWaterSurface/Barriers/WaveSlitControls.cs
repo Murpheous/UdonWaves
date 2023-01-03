@@ -1,4 +1,5 @@
 ﻿
+using TMPro;
 using UdonSharp;
 using UnityEngine;
 using VRC.SDKBase;
@@ -19,10 +20,106 @@ public class WaveSlitControls : UdonSharpBehaviour
 
     public float apertureWidth;
     public float aperturePitch;
+    [Header("UI Interface")]
+    [SerializeField] TextMeshProUGUI labelSlits;
+    [SerializeField] TextMeshProUGUI labelSlitPitch;
+    [SerializeField] TextMeshProUGUI labelSlitWidth;
 
-    // Private stuff
-    //bool borderValid = true;
-    bool gratingValid;
+    void setText(TextMeshProUGUI tmproLabel, string text)
+    {
+        if (tmproLabel != null)
+            tmproLabel.text = text;
+    }
+
+    private void UpdateLabels()
+    {
+        setText(labelSlits, "#Apertures\n" + apertureCount.ToString());
+        setText(labelSlitPitch, "Pitch\n" + Units.ToEngineeringNotation(aperturePitch) + "m");
+        setText(labelSlitWidth, "Width\n" + Units.ToEngineeringNotation(apertureWidth) + "m");
+    }
+    float AperturePitch
+    {
+        get => aperturePitch;
+        set
+        {
+            if (value <= MaxPitch() && (value > 0.01f))
+            {
+                if (value != aperturePitch)
+                {
+                    aperturePitch = value;
+                    gratingValid = false;
+                }
+            }
+        }
+    }
+
+    float ApertureWidth
+    {
+        get => apertureWidth;
+        set
+        {
+            if (value <= tankWidth / MAX_SLITS && value > 0.01f)
+            {
+                if (value != apertureWidth)
+                {
+                    apertureWidth = value;
+                    gratingValid = false;
+                }
+            }
+        }
+    }
+
+
+    int ApertureCount
+    {
+        get => apertureCount;
+        set
+        {
+            if (value < 1)
+                value = 1;
+            else
+            {
+                int Max = MaxSlits();
+                if (value > Max)
+                    value = Max;
+            }
+            if (value != apertureCount)
+            {
+                apertureCount = value;
+                gratingValid = false;
+            }
+        }
+    }
+
+    public void OnAperturesPlus()
+    {
+        this.ApertureCount = apertureCount + 1;
+    }
+
+    public void OnAperturesMinus()
+    {
+        ApertureCount = apertureCount - 1;
+    }
+    public void OnWidthPlus()
+    {
+        ApertureWidth = apertureWidth + 0.005f;
+    }
+    public void OnWidthMinus()
+    {
+        ApertureWidth = apertureWidth - 0.005f;
+    }
+    public void OnPitchPlus()
+    {
+        AperturePitch = aperturePitch + 0.01f;
+    }
+    public void OnPitchMinus()
+    {
+        AperturePitch = aperturePitch - 0.01f;
+    }
+
+// Private stuff
+//bool borderValid = true;
+bool gratingValid;
     int MAX_SLITS;
 
     float tankWidth
@@ -38,18 +135,19 @@ public class WaveSlitControls : UdonSharpBehaviour
     
     GameObject LocalFromPrefab(GameObject prototype, string name, Transform xfrm)
     {
-        GameObject result = VRCInstantiate(prototype);
-        if (result != null)
+        GameObject result = Instantiate(prototype);
+        if (result == null)
         {
-            result.transform.SetParent(xfrm);
-            result.name = name;
-            result.transform.localPosition = Vector3.zero;
-            result.transform.localRotation = Quaternion.identity;
-            result.transform.localScale = Vector3.one;
+            return result;
         }
+        result.transform.SetParent(xfrm);
+        result.name = name;
+        result.transform.localPosition = Vector3.zero;
+        result.transform.localRotation = Quaternion.identity;
+        result.transform.localScale = Vector3.one;
         return result;
     }
-    
+
     void SetBarSizeAndPosition(Transform bar, float targetWidth, float targetposition, bool isVisible)
     {
         if (bar == null)
@@ -75,61 +173,7 @@ public class WaveSlitControls : UdonSharpBehaviour
         return usableWidth / (MAX_SLITS - 1);
     }
     
-    public float AperturePitch
-    {
-        get => aperturePitch;
-        set
-        {
-            if (value <= MaxPitch() && (value > 0.01f))
-            {
-                if (value != aperturePitch)
-                {
-                    aperturePitch = value;
-                    gratingValid = false;
-                }
-            }
-        }
-    }
-
-    public float ApertureWidth
-    {
-        get => apertureWidth;
-        set
-        {
-            if (value <= tankWidth / MAX_SLITS && value > 0.01f)
-            {
-                if (value != apertureWidth)
-                {
-                    apertureWidth = value;
-                    gratingValid = false;
-                }
-            }
-        }
-    }
-
-    public int ApertureCount
-    {
-        get => apertureCount;
-        set
-        {
-            if (value < 1)
-                value = 1;
-            else
-            {
-                int Max = MaxSlits();
-                if (value > Max)
-                    value = Max;
-            }
-            if (value != apertureCount)
-            {
-                apertureCount = value;
-                gratingValid = false;
-            }
-        }
-    }
-    
-    
-    // Grating properties
+     // Grating properties
     private GameObject[] theBars;
     private GameObject panelLeft;
     private GameObject panelRight;
@@ -226,7 +270,7 @@ public class WaveSlitControls : UdonSharpBehaviour
         {
             gratingValid = true;
             setupLattice();
-         //   UpdateLabels();
+            UpdateLabels();
         }
     }
 

@@ -65,7 +65,7 @@ public class WaveMonitor : UdonSharpBehaviour
                 obstaclesCamera.backgroundColor = Color.black;
                 obstaclesCamera.orthographic = true;
                 // Camera orthographic size is image height in space/2 width is determined by aspect ratio
-                obstaclesCamera.orthographicSize = SimDimensions.y / 2f;
+                //obstaclesCamera.orthographicSize = SimDimensions.y / 2f;
             }
         }
     }
