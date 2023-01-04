@@ -124,13 +124,13 @@ bool gratingValid;
 
     float tankWidth
     {
-        get => TankDims.x;
-        set { TankDims.x = value; }
+        get => TankDims.y;
+        set { TankDims.y = value; }
     }
     float tankLength
     {
-        get => TankDims.y;
-        set { TankDims.y = value; }
+        get => TankDims.x;
+        set { TankDims.x = value; }
     }
     
     GameObject LocalFromPrefab(GameObject prototype, string name, Transform xfrm)
@@ -189,8 +189,8 @@ bool gratingValid;
 
         gratingWidth = (aperturePitch * (apertureCount - 1)) + apertureWidth;
         sideBarWidth = (tankWidth - gratingWidth) / 2.0f;
-        if (sideBarWidth < 0)
-            sideBarWidth = gratingWidth / 4.0f;
+        //if (sideBarWidth < 0)
+        //    sideBarWidth = gratingWidth / 4.0f;
 
         if (sideBarWidth < 0.05F)
             sideBarWidth = 0.05F;
