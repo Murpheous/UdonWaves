@@ -56,24 +56,26 @@ float4 tessDistance(appdata v0, appdata v1, appdata v2)
 
 void disp(inout appdata v)
 {
-    float d = tex2Dlod(_DispTex, float4(v.texcoord.xy, 0, 0)).r * _Displacement;
+    float d = tex2Dlod(_DispTex, float4(v.texcoord.xy, 0, 0)).z * _Displacement;
     v.vertex.xyz += v.normal * d;
 }
 
 void surf(Input IN, inout SurfaceOutputStandard o) 
 {
-    float val = (tex2D(_DispTex, IN.uv_DispTex).r+1)*0.5;
-    o.Albedo = lerp(_ColorNeg.rgb,_Color.rgb,val);
     o.Metallic = _Metallic;
     o.Smoothness = _Glossiness;
-    o.Alpha = 1;// val > 0 ? _Color.a * clamp(val, 0.2, 1) : _ColorNeg.a * clamp(-val, 0.2, 1);
-
-
+    o.Alpha = 1;
     float3 duv = float3(_DispTex_TexelSize.xy, 0);
-    half v1 = tex2D(_DispTex, IN.uv_DispTex - duv.xz).y;
-    half v2 = tex2D(_DispTex, IN.uv_DispTex + duv.xz).y;
-    half v3 = tex2D(_DispTex, IN.uv_DispTex - duv.zy).y;
-    half v4 = tex2D(_DispTex, IN.uv_DispTex + duv.zy).y;
+    float amp = tex2D(_DispTex, IN.uv_DispTex).z;
+    int showAmpSquared = (int)tex2D(_DispTex, IN.uv_DispTex).a;
+
+    float v1 = tex2D(_DispTex, IN.uv_DispTex - duv.xz).z;
+    float v2 = tex2D(_DispTex, IN.uv_DispTex + duv.xz).z;
+    float v3 = tex2D(_DispTex, IN.uv_DispTex - duv.zy).z;
+    float v4 = tex2D(_DispTex, IN.uv_DispTex + duv.zy).z;
+
+    float range = lerp((amp + 1) * 0.5, amp,showAmpSquared);
+    o.Albedo = lerp(_ColorNeg.rgb, _Color.rgb, range);
     o.Normal = normalize(float3(v1 - v2, v3 - v4, 0.3));
 }
 

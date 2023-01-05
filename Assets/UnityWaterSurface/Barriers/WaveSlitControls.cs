@@ -20,10 +20,15 @@ public class WaveSlitControls : UdonSharpBehaviour
 
     public float apertureWidth;
     public float aperturePitch;
+
+
     [Header("UI Interface")]
     [SerializeField] TextMeshProUGUI labelSlits;
     [SerializeField] TextMeshProUGUI labelSlitPitch;
     [SerializeField] TextMeshProUGUI labelSlitWidth;
+
+    private int MAX_SLITS = 7;
+    bool gratingValid;
 
     void setText(TextMeshProUGUI tmproLabel, string text)
     {
@@ -42,7 +47,7 @@ public class WaveSlitControls : UdonSharpBehaviour
         get => aperturePitch;
         set
         {
-            if (value <= MaxPitch() && (value > 0.01f))
+            if (checkGratingWidth(apertureWidth, value, ApertureCount))
             {
                 if (value != aperturePitch)
                 {
@@ -58,7 +63,7 @@ public class WaveSlitControls : UdonSharpBehaviour
         get => apertureWidth;
         set
         {
-            if (value <= tankWidth / MAX_SLITS && value > 0.01f)
+            if (checkGratingWidth(value,aperturePitch,apertureCount) && value > 0.01f)
             {
                 if (value != apertureWidth)
                 {
@@ -77,12 +82,8 @@ public class WaveSlitControls : UdonSharpBehaviour
         {
             if (value < 1)
                 value = 1;
-            else
-            {
-                int Max = MaxSlits();
-                if (value > Max)
-                    value = Max;
-            }
+            else if (value > MAX_SLITS)
+                value = MAX_SLITS;
             if (value != apertureCount)
             {
                 apertureCount = value;
@@ -93,7 +94,8 @@ public class WaveSlitControls : UdonSharpBehaviour
 
     public void OnAperturesPlus()
     {
-        this.ApertureCount = apertureCount + 1;
+       if ((ApertureCount < MAX_SLITS) && checkGratingWidth(ApertureWidth, AperturePitch, ApertureCount+1))
+            ApertureCount = apertureCount + 1;
     }
 
     public void OnAperturesMinus()
@@ -102,25 +104,29 @@ public class WaveSlitControls : UdonSharpBehaviour
     }
     public void OnWidthPlus()
     {
-        ApertureWidth = apertureWidth + 0.005f;
+        if (checkGratingWidth(ApertureWidth + 0.005f, AperturePitch, ApertureCount))
+            ApertureWidth = apertureWidth + 0.005f;
     }
     public void OnWidthMinus()
     {
-        ApertureWidth = apertureWidth - 0.005f;
+        if (ApertureWidth <= 0.005f)
+            return;
+        if (checkGratingWidth(ApertureWidth-0.005f, AperturePitch, ApertureCount))
+            ApertureWidth = apertureWidth - 0.005f;
     }
     public void OnPitchPlus()
     {
-        AperturePitch = aperturePitch + 0.01f;
+        if (checkGratingWidth(ApertureWidth,AperturePitch+0.01f, ApertureCount))
+            AperturePitch = aperturePitch + 0.01f;
     }
     public void OnPitchMinus()
     {
-        AperturePitch = aperturePitch - 0.01f;
+        if (aperturePitch <= 0.01f)
+            return;
+        if (checkGratingWidth(ApertureWidth, AperturePitch - 0.01f, ApertureCount))
+            AperturePitch = aperturePitch - 0.01f;
     }
 
-// Private stuff
-//bool borderValid = true;
-bool gratingValid;
-    int MAX_SLITS;
 
     float tankWidth
     {
@@ -157,22 +163,16 @@ bool gratingValid;
         bar.gameObject.SetActive(isVisible);
     }
 
-
-    int MaxSlits()
+    bool checkGratingWidth(float apertureWidth, float aperturePitch, int numGaps)
     {
-        float usableWidth = tankWidth - apertureWidth;
-        int units = Mathf.FloorToInt(usableWidth / (aperturePitch + apertureWidth));
-        if (units > MAX_SLITS - 1)
-            return MAX_SLITS;
-        return units + 1;
+        if (numGaps <= 0)
+            return true;
+        if (numGaps == 1)
+            return apertureWidth <= tankWidth;
+        return tankWidth >= (numGaps - 1) * aperturePitch + numGaps * apertureWidth;
     }
 
-    float MaxPitch()
-    {
-        float usableWidth = (tankWidth - apertureWidth * MAX_SLITS);
-        return usableWidth / (MAX_SLITS - 1);
-    }
-    
+   
      // Grating properties
     private GameObject[] theBars;
     private GameObject panelLeft;
@@ -186,8 +186,7 @@ bool gratingValid;
     {
         // Set dimensons for the construction of the lattice;
         barWidth = aperturePitch - apertureWidth;
-
-        gratingWidth = (aperturePitch * (apertureCount - 1)) + apertureWidth;
+        gratingWidth = apertureCount < 1 ? 0 : (aperturePitch * (apertureCount - 1)) + apertureWidth;
         sideBarWidth = (tankWidth - gratingWidth) / 2.0f;
         //if (sideBarWidth < 0)
         //    sideBarWidth = gratingWidth / 4.0f;

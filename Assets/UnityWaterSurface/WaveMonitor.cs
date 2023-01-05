@@ -3,6 +3,7 @@ using UdonSharp;
 using UnityEngine;
 using VRC.SDKBase;
 using VRC.Udon;
+using UnityEngine.UI;
 
 public class WaveMonitor : UdonSharpBehaviour
 {
@@ -31,8 +32,70 @@ public class WaveMonitor : UdonSharpBehaviour
     public RenderTexture obstaclesTex;
     public Camera obstaclesCamera;
 
+    [Header("UI Toggles")]
+    public Toggle TogViewDisplacementMode;
+    public Toggle TogViewAmplitudeSquare;
+    public bool showDisplacement = true;
+    public bool showAmplitudeSquare = false;
 
-    public int iterationPerFrame = 5;
+    private void UpdateUI()
+    {
+        if (TogViewDisplacementMode != null)
+            TogViewDisplacementMode.isOn = showDisplacement;
+        if (TogViewAmplitudeSquare != null)
+            TogViewAmplitudeSquare.isOn = showAmplitudeSquare;
+    }
+
+    bool ShowDisplacement
+    {
+        get { return showDisplacement; }
+        set
+        {
+            showDisplacement = value;
+            if (value && showAmplitudeSquare)
+                showAmplitudeSquare= false;
+            if (textMat != null && showDisplacement)
+                textMat.SetFloat("_ShowAmpSquared", 0);
+        }
+    }
+
+    bool ShowAmplitudeSquare
+    {
+        get { return showAmplitudeSquare; }
+        set
+        {
+            showAmplitudeSquare = value;
+            if (value && showDisplacement) 
+                showDisplacement= false;
+            if (showAmplitudeSquare && (textMat != null))
+            {
+                textMat.SetFloat("_ShowAmpSquared", 1);
+            }
+        }
+    }
+    public void ViewAmplitudeChanged()
+    {
+        if (TogViewDisplacementMode != null)
+        {
+            if (ShowDisplacement != TogViewDisplacementMode.isOn)
+            {
+                ShowDisplacement = !showDisplacement;
+                UpdateUI();
+            }
+        }
+    }
+
+    public void ViewAmplitudeSqChanged()
+    {
+        if (TogViewAmplitudeSquare != null)
+        {
+            if (TogViewAmplitudeSquare.isOn != ShowAmplitudeSquare)
+            {
+                ShowAmplitudeSquare = !showAmplitudeSquare;
+                UpdateUI();
+            }
+        }
+    }
 
     void CalcParameters()
     {
@@ -46,6 +109,9 @@ public class WaveMonitor : UdonSharpBehaviour
     void Start()
     {
         CalcParameters();
+        ShowDisplacement = true;
+        UpdateUI();
+
         if (texture != null)
         {
             texture.Initialize();
@@ -93,9 +159,9 @@ public class WaveMonitor : UdonSharpBehaviour
     double waveTime = 0;
     double updateTime = 0;
 
-    void Update()
+    void FixedUpdate()
     {
-        waveTime += Time.deltaTime;
+        waveTime += Time.fixedDeltaTime;
         while (updateTime < waveTime)
         {
             updateTime += dt;

@@ -273,7 +273,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 253721116}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -2}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_Children: []
   m_Father: {fileID: 1791901998}
@@ -455,9 +455,8 @@ MonoBehaviour:
   useAssignedLayers: 0
   DynamicPrefabs: []
   DynamicMaterials:
-  - {fileID: 2100000, guid: efa07ce449c439644942e3d00435374a, type: 2}
-  - {fileID: 2100000, guid: c65a50570d4442c4b906922c4374c262, type: 2}
   - {fileID: 2100000, guid: 3ed24290b5b8eb0409d547190aea1922, type: 2}
+  - {fileID: 2100000, guid: efa07ce449c439644942e3d00435374a, type: 2}
   - {fileID: 2100000, guid: bf920649a2f22254f85a4e053660bcb5, type: 2}
   - {fileID: 2100000, guid: 87294f02d9437b8479f6d772f8b00a8d, type: 2}
   - {fileID: 2100000, guid: 87440f63aab3d884c8843f939cc5af01, type: 2}
@@ -528,7 +527,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 367000744}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -1.5}
+  m_LocalPosition: {x: 0, y: 1, z: -1.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -915,7 +914,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 2100000, guid: 4546b0ec54086e840800d63eb723acd2, type: 2}
-  m_Color: {r: 0, g: 0.5888767, b: 1, a: 0.25490198}
+  m_Color: {r: 0.4728098, g: 0, b: 1, a: 0.25490198}
   m_RaycastTarget: 1
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -1455,8 +1454,8 @@ MonoBehaviour:
   barHeight: 0.12
   barThickness: 0.015
   apertureCount: 2
-  apertureWidth: 0.05
-  aperturePitch: 0.15
+  apertureWidth: 0.08500001
+  aperturePitch: 0.20000003
   labelSlits: {fileID: 1675543140}
   labelSlitPitch: {fileID: 1391214951}
   labelSlitWidth: {fileID: 253721118}
@@ -1516,6 +1515,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: a28068c718c3c144c90420aa97cf5f61, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 3ed24290b5b8eb0409d547190aea1922, type: 2}
+    - target: {fileID: 2300012, guid: a28068c718c3c144c90420aa97cf5f61, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 3ed24290b5b8eb0409d547190aea1922, type: 2}
@@ -1645,7 +1648,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1391214949}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -2}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_Children: []
   m_Father: {fileID: 1791901998}
@@ -1861,7 +1864,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1675543138}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -2}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_Children: []
   m_Father: {fileID: 1791901998}
@@ -2051,7 +2054,18 @@ MonoBehaviour:
   m_Group: {fileID: 0}
   onValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 5239915332397845299}
+        m_MethodName: SendCustomEvent
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: ViewAmplitudeChanged
+          m_BoolArgument: 0
+        m_CallState: 2
   m_IsOn: 1
 --- !u!1 &1777828111
 GameObject:
@@ -2185,8 +2199,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 2100000, guid: ebfe683196edb924092f67c5ac3958b5, type: 2}
-  m_Color: {r: 0, g: 0.5888767, b: 1, a: 0.25490198}
+  m_Material: {fileID: 2100000, guid: 4546b0ec54086e840800d63eb723acd2, type: 2}
+  m_Color: {r: 0.4728098, g: 0, b: 1, a: 0.25490198}
   m_RaycastTarget: 1
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -2287,14 +2301,25 @@ MonoBehaviour:
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
   m_Interactable: 1
-  m_TargetGraphic: {fileID: 672981899}
+  m_TargetGraphic: {fileID: 1055261121}
   toggleTransition: 1
-  graphic: {fileID: 1777828113}
+  graphic: {fileID: 1123377829}
   m_Group: {fileID: 0}
   onValueChanged:
     m_PersistentCalls:
-      m_Calls: []
-  m_IsOn: 1
+      m_Calls:
+      - m_Target: {fileID: 5239915332397845299}
+        m_MethodName: SendCustomEvent
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: ViewAmplitudeSqChanged
+          m_BoolArgument: 0
+        m_CallState: 2
+  m_IsOn: 0
 --- !u!1 &2047187776
 GameObject:
   m_ObjectHideFlags: 0
@@ -2549,13 +2574,16 @@ MonoBehaviour:
   texture: {fileID: 8600000, guid: be8c672ce9314b1409c245d2c813b108, type: 2}
   SimDimensions: {x: 2, y: 1}
   effect: {x: 4, y: 0, z: 0, w: 0}
-  frequency: 1.7
-  CFL: 0.3
-  waveSpeedPixels: 20
+  frequency: 1.43
+  CFL: 0.2
+  waveSpeedPixels: 15
   textMat: {fileID: 2100000, guid: 2dcfa7fe472afa24cab4179976935e21, type: 2}
   obstaclesTex: {fileID: 8400000, guid: 75384e9f3fbb12d4b819f3eaa345f5e7, type: 2}
   obstaclesCamera: {fileID: 2068026138}
-  iterationPerFrame: 1
+  TogViewDisplacementMode: {fileID: 1714330653}
+  TogViewAmplitudeSquare: {fileID: 1816737678}
+  showDisplacement: 1
+  showAmplitudeSquare: 0
 --- !u!224 &6112098011160576432
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2564,7 +2592,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6112098011160576435}
   m_LocalRotation: {x: -0, y: -0, z: 1, w: 0}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1791901998}
@@ -2660,7 +2688,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 2100000, guid: ebfe683196edb924092f67c5ac3958b5, type: 2}
+  m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_Maskable: 1
@@ -2766,7 +2794,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6112098011217482704}
   m_LocalRotation: {x: -0, y: -0, z: 1, w: 0}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1791901998}
@@ -2895,7 +2923,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6112098011236127858}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1791901998}
@@ -2926,7 +2954,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 2100000, guid: ebfe683196edb924092f67c5ac3958b5, type: 2}
+  m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_Maskable: 1
@@ -2974,7 +3002,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 2100000, guid: ebfe683196edb924092f67c5ac3958b5, type: 2}
+  m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_Maskable: 1
@@ -3007,7 +3035,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6112098011326547473}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1791901998}
@@ -3153,7 +3181,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6112098011985700514}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1791901998}
@@ -3184,7 +3212,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 2100000, guid: ebfe683196edb924092f67c5ac3958b5, type: 2}
+  m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_Maskable: 1
@@ -3282,7 +3310,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6112098012075647232}
   m_LocalRotation: {x: -0, y: -0, z: 1, w: 0}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1791901998}
@@ -3313,7 +3341,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 2100000, guid: ebfe683196edb924092f67c5ac3958b5, type: 2}
+  m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_Maskable: 1
