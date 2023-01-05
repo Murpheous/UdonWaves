@@ -14,7 +14,7 @@ CustomRenderTexture:
   m_DownscaleFallback: 0
   serializedVersion: 3
   m_Width: 2048
-  m_Height: 1024
+  m_Height: 2048
   m_AntiAliasing: 1
   m_MipCount: -1
   m_DepthFormat: 0
@@ -44,7 +44,17 @@ CustomRenderTexture:
   m_InitializationMode: 2
   m_UpdateZoneSpace: 0
   m_CurrentUpdateZoneSpace: 0
-  m_UpdateZones: []
+  m_UpdateZones:
+  - updateZoneCenter: {x: 0.5, y: 0.5, z: 0.5}
+    updateZoneSize: {x: 1, y: 1, z: 1}
+    rotation: 0
+    passIndex: 0
+    needSwap: 1
+  - updateZoneCenter: {x: 0.5, y: 0.5, z: 0.5}
+    updateZoneSize: {x: 1, y: 1, z: 1}
+    rotation: 0
+    passIndex: 1
+    needSwap: 1
   m_UpdatePeriod: 0
   m_ShaderPass: 0
   m_CubemapFaceMask: 4294967295

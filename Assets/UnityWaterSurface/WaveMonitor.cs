@@ -55,7 +55,7 @@ public class WaveMonitor : UdonSharpBehaviour
             if (value && showAmplitudeSquare)
                 showAmplitudeSquare= false;
             if (textMat != null && showDisplacement)
-                textMat.SetFloat("_ShowAmpSquared", 0);
+                textMat.SetFloat("_ViewSelection", 0);
         }
     }
 
@@ -69,7 +69,7 @@ public class WaveMonitor : UdonSharpBehaviour
                 showDisplacement= false;
             if (showAmplitudeSquare && (textMat != null))
             {
-                textMat.SetFloat("_ShowAmpSquared", 1);
+                textMat.SetFloat("_ViewSelection", 1);
             }
         }
     }
@@ -138,7 +138,6 @@ public class WaveMonitor : UdonSharpBehaviour
 
     void UpdateWaves(float dt)
     {
-        texture.ClearUpdateZones();
         effectTime += dt;
         effect.w = dt;
         if (effectTime > effectPeriod)
