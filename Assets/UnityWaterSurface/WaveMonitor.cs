@@ -35,8 +35,12 @@ public class WaveMonitor : UdonSharpBehaviour
     [Header("UI Toggles")]
     public Toggle TogViewDisplacementMode;
     public Toggle TogViewAmplitudeSquare;
+    public Toggle TogglePlay;
+    public Toggle TogglePause;
+    public Toggle ToggleReset;
     public bool showDisplacement = true;
     public bool showAmplitudeSquare = false;
+    private bool animationPlay = true;
 
     private void UpdateUI()
     {
@@ -56,6 +60,8 @@ public class WaveMonitor : UdonSharpBehaviour
                 showAmplitudeSquare= false;
             if (textMat != null && showDisplacement)
                 textMat.SetFloat("_ViewSelection", 0);
+            if (!animationPlay)
+                UpdateWaves(0);
         }
     }
 
@@ -70,9 +76,49 @@ public class WaveMonitor : UdonSharpBehaviour
             if (showAmplitudeSquare && (textMat != null))
             {
                 textMat.SetFloat("_ViewSelection", 1);
+                if (!animationPlay)
+                    UpdateWaves(0);
             }
         }
     }
+
+    //* UI Toggle Handlers
+
+    public void PlayChanged()
+    {
+        if (TogglePlay != null)
+        {
+            if (TogglePlay.isOn)
+            {
+                animationPlay = true;
+            }
+        }
+    }
+
+    public void PauseChanged()
+    {
+        if (TogglePause != null)
+        {
+            if (TogglePause.isOn)
+                animationPlay = false;
+        }
+    }
+
+    public void ResetChanged()
+    {
+        if (ToggleReset != null)
+        {
+            if (ToggleReset.isOn)
+            {
+                if (texture != null)
+                {
+                    texture.Initialize();
+                }
+                ToggleReset.isOn = false;
+            }
+        }
+    }
+
     public void ViewAmplitudeChanged()
     {
         if (TogViewDisplacementMode != null)
@@ -160,11 +206,14 @@ public class WaveMonitor : UdonSharpBehaviour
 
     void FixedUpdate()
     {
-        waveTime += Time.fixedDeltaTime;
-        while (updateTime < waveTime)
+        if (animationPlay)
         {
-            updateTime += dt;
-            UpdateWaves(dt);
+            waveTime += Time.fixedDeltaTime;
+            while (updateTime < waveTime)
+            {
+                updateTime += dt;
+                UpdateWaves(dt);
+            }
         }
     }
     /*

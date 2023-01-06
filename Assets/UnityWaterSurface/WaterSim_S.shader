@@ -4,7 +4,7 @@
     Properties
     {
         _ViewSelection("Show A=0, A^2=1, E=2",Range(0.0,2.0)) = 0.0
-        _wallAttenDistance("Atten pixels from wall",Range(1,250)) = 20
+        _Attenuation("Attenuation",Range(0,1)) = 0
         _CFLSq("CFL^2", Range(0.0, 0.5)) = 0.2
         _Effect("Effect",Vector) = (0,0,0,0)
         _CFAbsorb("CFAbsorb", Range(0.0,1.0)) = 0.2
@@ -16,7 +16,7 @@
     #include "UnityCustomRenderTexture.cginc"
 
     float _ViewSelection;
-    float _wallAttenDistance;
+    float _Attenuation;
     float _CFLSq;
     float4 _Effect;
     float _CFAbsorb;
@@ -41,14 +41,7 @@ float4 frag(v2f_customrendertexture i) : SV_Target
     int xPixel = (int)(floor(uv.x * _CustomRenderTextureWidth));
     int yPixel = (int)(floor(uv.y * _CustomRenderTextureHeight));
     
-    float highDelta = _CustomRenderTextureWidth - xPixel;
-    float xDelta = highDelta; //lerp(xPixel, highDelta, (int)(xPixel <= highDelta));
-    highDelta = _CustomRenderTextureHeight - yPixel;
-    float yDelta = lerp(yPixel, highDelta, (int)(yPixel >= highDelta));
-    float wallDelta = lerp(yDelta, xDelta, (int)(yDelta >= xDelta));
-    //wallDelta = lerp(delta, wallDelta, (int)(wallDelta <= delta));
-    float delta = clamp(abs(wallDelta / _wallAttenDistance),0,1);
-    float attenFactor = lerp(0.996, 1.0, delta);
+    float attenFactor = lerp(1.0, 0.995, _Attenuation);
     // Calculate update
     float wn = stateData.r;
     float wnm1 = stateData.g;
