@@ -38,9 +38,9 @@ public class WaveSlitControls : UdonSharpBehaviour
 
     private void UpdateLabels()
     {
-        setText(labelSlits, "#Apertures\n" + apertureCount.ToString());
-        setText(labelSlitPitch, "Pitch\n" + Units.ToEngineeringNotation(aperturePitch) + "m");
-        setText(labelSlitWidth, "Width\n" + Units.ToEngineeringNotation(apertureWidth) + "m");
+        setText(labelSlits, "Gaps\n" + apertureCount.ToString());
+        setText(labelSlitPitch, "Spacing\n" + Units.ToEngineeringNotation(aperturePitch) + "m");
+        setText(labelSlitWidth, "Gap Width\n" + Units.ToEngineeringNotation(apertureWidth) + "m");
     }
     float AperturePitch
     {
@@ -259,7 +259,6 @@ public class WaveSlitControls : UdonSharpBehaviour
         //vectorDisplay = transform.parent.GetComponentInChildren<DisplayWaveVectors>() as IMenuClick;
         populateBars();
         //setBorders();
-
     }
     void Update()
     {

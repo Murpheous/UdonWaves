@@ -3,9 +3,12 @@
 
     Properties
     {
-        _ViewSelection("Show A=0, A^2=1, E=2",Range(0.0,2.0)) = 0.0
+        // _ViewSelection("Show A=0, A^2=1, E=2",Range(0.0,2.0)) = 0.0
         _Attenuation("Attenuation",Range(0,1)) = 0
-        _CFLSq("CFL^2", Range(0.0, 0.5)) = 0.2
+        _CdTdXaq("Cdtdx^2", Range(0.0, 0.5)) = 0.2
+        _Cbar("Cbar", Float) = 1
+        _C("C", Float) = 1
+        _DeltaT2("DeltaT2",Float) = 1
         _Effect("Effect",Vector) = (0,0,0,0)
         _CFAbsorb("CFAbsorb", Range(0.0,1.0)) = 0.2
         _ObstacleTex2D("Obstacle Image", 2D) = "black" {}
@@ -15,9 +18,12 @@
 
     #include "UnityCustomRenderTexture.cginc"
 
-    float _ViewSelection;
+    //float _ViewSelection;
     float _Attenuation;
-    float _CFLSq;
+    float _CdTdXaq;
+    float _Cbar; // c/2pi
+    float _C; // c/2pi
+    float _DeltaT2;
     float4 _Effect;
     float _CFAbsorb;
     sampler2D _ObstacleTex2D;
@@ -32,7 +38,8 @@
 float4 frag(v2f_customrendertexture i) : SV_Target
 {
     float2 uv = i.globalTexcoord;
-    int IsSquared = (int)((_ViewSelection > 0.5) && (_ViewSelection < 1.5));
+    //int IsSquared = (int)(_ViewSelection > 0.5);
+    //int IsEnergy = (int)(_ViewSelection > 1.5);
     float du = 1.0 / _CustomRenderTextureWidth;
     float dv = 1.0 / _CustomRenderTextureHeight;
     float3 duv = float3(du, dv, 0);
@@ -43,23 +50,34 @@ float4 frag(v2f_customrendertexture i) : SV_Target
     
     float attenFactor = lerp(1.0, 0.995, _Attenuation);
     // Calculate update
-    float wn = stateData.r;
-    float wnm1 = stateData.g;
+    float waveDisplacement = stateData.r;
+    float waveBefore = stateData.g;
     float wnmzy = tex2D(_SelfTexture2D, uv - duv.zy).r;
     float wnpzy = tex2D(_SelfTexture2D, uv + duv.zy).r;
     float wnmxz = tex2D(_SelfTexture2D, uv - duv.xz).r;
     float wnpxz = tex2D(_SelfTexture2D, uv + duv.xz).r;
-
+    float fourNeighbours = tex2D(_SelfTexture2D, uv - duv.zy).r + tex2D(_SelfTexture2D, uv + duv.zy).r + tex2D(_SelfTexture2D, uv - duv.xz).r + tex2D(_SelfTexture2D, uv + duv.xz).r;
     // Calculate the wave update
-    float wnp1 = ((2 * wn - wnm1 + _CFLSq * (wnmzy + wnpzy + wnmxz + wnpxz - 4 * wn))) *attenFactor;
+    float wavePlus1 = (2 * waveDisplacement - waveBefore + _CdTdXaq * (fourNeighbours - 4 * waveDisplacement)) *attenFactor;
   
     // Inject Effect
     float effectDelta = clamp(abs(xPixel - floor(_Effect.x)), 0, 1);
-    wnp1 = lerp(_Effect.z, wnp1, effectDelta);
+    wavePlus1 = lerp(_Effect.z, wavePlus1, effectDelta);
+    // Accumulate currentEnergy
+    float currentEnergy = wavePlus1 * wavePlus1;
+    // at effect reset move previousMax to savedEnergy;   
+    float previousMax = stateData.w;
+    float savedEnergy = stateData.z;
+    if (_Effect.w > 0.9)
+    {
+        savedEnergy = previousMax;
+        previousMax = 0.0;
+    }
+    // check if currentEnergy > previousMax (Energy)
+    float thisIsBigger = clamp((int)((currentEnergy - previousMax) > 0),0,1);
+    float newMax  = lerp(previousMax, currentEnergy, thisIsBigger);
 
-    // Add Effect into the mix
-    float output = lerp(wnp1, wnp1 * wnp1, IsSquared);
-    return float4(wnp1, wn, output, IsSquared);
+    return float4(wavePlus1, waveDisplacement, savedEnergy,newMax);
 }
 
 float4 fragAbsorb(v2f_customrendertexture i) : SV_Target
@@ -101,11 +119,9 @@ float4 fragAbsorb(v2f_customrendertexture i) : SV_Target
     float absT = tex2D(_SelfTexture2D, uv - duv.zy).g + _CFAbsorb * (stateYm1 - stateM1);
     b = lerp(b, absT, atTop);
 
-// Update the boundary absorption
+    // Update the boundary absorption
 
     state = lerp(state, b, onBoundary);
-
-
 
     // Mask off blue areas
     state = lerp(state, 0, isBlue);

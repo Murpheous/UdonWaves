@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: WaterSim_M
+  m_Name: MAT_WaterSim
   m_Shader: {fileID: 4800000, guid: 93be1bcbfb48508468ba4709d2ad75ea, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
@@ -29,13 +29,21 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - _Atten: 1
-    - _Attenuation: 0.206
-    - _CFAbsorb: -0.6666666
+    - _Attenuation: 0
+    - _C: 45
+    - _CDeltaTSq: 0.2
+    - _CFAbsorb: -0.42857146
     - _CFLSq: 0.3
+    - _Cbar: 7.161972
+    - _CdTdXaq: 0.2
+    - _CdXdTsq: 0.2
+    - _DeltaT: 0.013333334
+    - _DeltaT2: 0.00007901235
     - _DeltaUV: 1
     - _S2: 0.2
     - _ShowAmpSquared: 1
     - _ViewSelection: 0
+    - _cdTdXsq: 0.2
     - _wallAttenDistance: 1
     m_Colors:
-    - _Effect: {r: 1, g: 0, b: 0.06751533, a: 0}
+    - _Effect: {r: 1, g: 0, b: 0.71418256, a: 0}

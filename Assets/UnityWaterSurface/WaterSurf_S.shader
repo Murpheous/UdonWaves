@@ -5,9 +5,10 @@ Properties
 {
     _Color("Color", color) = (1, 1, 0, 0)
     _ColorNeg("ColorNeg", color) = (0, 0.3, 1, 0)
+    _ViewSelection("Show A=0, A^2=1, E=2",Range(0.0,2.0)) = 0.0    
     _DispTex("Disp Texture", 2D) = "gray" {}
-    _Glossiness ("Smoothness", Range(0,1)) = 0.5
-    _Metallic ("Metallic", Range(0,1)) = 0.0
+    _Glossiness("Smoothness", Range(0,1)) = 0.5
+    _Metallic("Metallic", Range(0,1)) = 0.0
     _MinDist("Min Distance", Range(0.1, 50)) = 10
     _MaxDist("Max Distance", Range(0.1, 50)) = 25
     _TessFactor("Tessellation", Range(1, 50)) = 10
@@ -15,16 +16,17 @@ Properties
 }
 
 SubShader
-{
+    {
 
-Tags { "Queue" = "Transparent" "RenderType" = "Transparent" }
+    Tags { "Queue" = "Transparent" "RenderType" = "Transparent" }
 
-CGPROGRAM
+    CGPROGRAM
 
-#pragma surface surf Standard alpha addshadow fullforwardshadows vertex:disp tessellate:tessDistance
-#pragma target 5.0
-#include "Tessellation.cginc"
+    #pragma surface surf Standard alpha addshadow fullforwardshadows vertex:disp tessellate:tessDistance
+    #pragma target 5.0
+    #include "Tessellation.cginc"
 
+float _ViewSelection;
 float _TessFactor;
 float _Displacement;
 float _MinDist;
@@ -65,16 +67,44 @@ void surf(Input IN, inout SurfaceOutputStandard o)
     o.Metallic = _Metallic;
     o.Smoothness = _Glossiness;
     o.Alpha = 1;
+    int showAmpSquared = (int)((_ViewSelection > 0.5) && (_ViewSelection < 1.5));
+    int showEnergy = (int)(_ViewSelection > 1.5);
+
     float3 duv = float3(_DispTex_TexelSize.xy, 0);
-    float amp = tex2D(_DispTex, IN.uv_DispTex).z;
-    int showAmpSquared = (int)tex2D(_DispTex, IN.uv_DispTex).a;
+    float val;
+    float v1;
+    float v2;
+    float v3;
+    float v4;
+    float range;
+    if (showEnergy < 1)
+    {
+        val = tex2D(_DispTex, IN.uv_DispTex).r;
+        v1 = tex2D(_DispTex, IN.uv_DispTex - duv.xz).r;
+        v2 = tex2D(_DispTex, IN.uv_DispTex + duv.xz).r;
+        v3 = tex2D(_DispTex, IN.uv_DispTex - duv.zy).r;
+        v4 = tex2D(_DispTex, IN.uv_DispTex + duv.zy).r;
+        range = (val + 1) * 0.5;
+        if (showAmpSquared == 1)
+        {
+            val *= val;
+            v1 *= v1;
+            v2 *= v2;
+            v3 *= v3;
+            v4 *= v4;
+            range =  val;
 
-    float v1 = tex2D(_DispTex, IN.uv_DispTex - duv.xz).z;
-    float v2 = tex2D(_DispTex, IN.uv_DispTex + duv.xz).z;
-    float v3 = tex2D(_DispTex, IN.uv_DispTex - duv.zy).z;
-    float v4 = tex2D(_DispTex, IN.uv_DispTex + duv.zy).z;
-
-    float range = lerp((amp + 1) * 0.5, amp,showAmpSquared);
+        }
+    }
+    else
+    {
+        val = tex2D(_DispTex, IN.uv_DispTex).b;
+        v1 = tex2D(_DispTex, IN.uv_DispTex - duv.xz).b;
+        v2 = tex2D(_DispTex, IN.uv_DispTex + duv.xz).b;
+        v3 = tex2D(_DispTex, IN.uv_DispTex - duv.zy).b;
+        v4 = tex2D(_DispTex, IN.uv_DispTex + duv.zy).b;
+        range = val;
+    }
     o.Albedo = lerp(_ColorNeg.rgb, _Color.rgb, range);
     o.Normal = normalize(float3(v1 - v2, v3 - v4, 0.3));
 }

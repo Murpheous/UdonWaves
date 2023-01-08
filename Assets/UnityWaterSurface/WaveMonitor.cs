@@ -26,7 +26,8 @@ public class WaveMonitor : UdonSharpBehaviour
     float effectTime = 0;
 
     float lambdaEffect = 1;
-    public Material textMat = null;
+    public Material simulationMaterial = null;
+    public Material surfaceMaterial = null;
 
     [Header("Obstacles")]
     public RenderTexture obstaclesTex;
@@ -35,11 +36,13 @@ public class WaveMonitor : UdonSharpBehaviour
     [Header("UI Toggles")]
     public Toggle TogViewDisplacementMode;
     public Toggle TogViewAmplitudeSquare;
+    public Toggle TogViewEnergy;
     public Toggle TogglePlay;
     public Toggle TogglePause;
     public Toggle ToggleReset;
     public bool showDisplacement = true;
     public bool showAmplitudeSquare = false;
+    public bool showEnergy          = false;
     private bool animationPlay = true;
 
     private void UpdateUI()
@@ -48,6 +51,8 @@ public class WaveMonitor : UdonSharpBehaviour
             TogViewDisplacementMode.isOn = showDisplacement;
         if (TogViewAmplitudeSquare != null)
             TogViewAmplitudeSquare.isOn = showAmplitudeSquare;
+        if (TogViewEnergy != null)
+            TogViewEnergy.isOn = showEnergy;
     }
 
     bool ShowDisplacement
@@ -58,8 +63,10 @@ public class WaveMonitor : UdonSharpBehaviour
             showDisplacement = value;
             if (value && showAmplitudeSquare)
                 showAmplitudeSquare= false;
-            if (textMat != null && showDisplacement)
-                textMat.SetFloat("_ViewSelection", 0);
+            if (value && showEnergy)
+                showEnergy = false;
+            if (surfaceMaterial != null && showDisplacement)
+                surfaceMaterial.SetFloat("_ViewSelection", 0);
             if (!animationPlay)
                 UpdateWaves(0);
         }
@@ -73,9 +80,30 @@ public class WaveMonitor : UdonSharpBehaviour
             showAmplitudeSquare = value;
             if (value && showDisplacement) 
                 showDisplacement= false;
-            if (showAmplitudeSquare && (textMat != null))
+            if (value && showEnergy)
+                showEnergy = false;
+            if (showAmplitudeSquare && (surfaceMaterial != null))
             {
-                textMat.SetFloat("_ViewSelection", 1);
+                surfaceMaterial.SetFloat("_ViewSelection", 1);
+                if (!animationPlay)
+                    UpdateWaves(0);
+            }
+        }
+    }
+
+    bool ShowEnergy
+    {
+        get { return showAmplitudeSquare; }
+        set
+        {
+            showEnergy = value;
+            if (value && showDisplacement)
+                showDisplacement = false;
+            if (value && showAmplitudeSquare)
+                showAmplitudeSquare = false;
+            if (showEnergy && (surfaceMaterial != null))
+            {
+                surfaceMaterial.SetFloat("_ViewSelection", 2);
                 if (!animationPlay)
                     UpdateWaves(0);
             }
@@ -143,13 +171,41 @@ public class WaveMonitor : UdonSharpBehaviour
         }
     }
 
+    public void ViewEnergyChanged()
+    {
+        if (TogViewEnergy != null)
+        {
+            if (TogViewEnergy.isOn != ShowEnergy)
+            {
+                ShowEnergy = !showEnergy;
+                UpdateUI();
+            }
+        }
+    }
+
+
     void CalcParameters()
     {
-        effectPeriod = 1/frequency;
-        lambdaEffect = waveSpeedPixels * effectPeriod;
         CFLSq = CFL * CFL;
         AbsorbFactor = (CFL - 1) / (1 + CFL);
+        effectPeriod = 1/frequency;
         dt = CFL / waveSpeedPixels;
+        float cBar = waveSpeedPixels / (2*Mathf.PI);
+        // Calculate dt using c in Pixels per second
+        // CFL = cdt/dx (dt*(c/dx + c/dy));
+        // c is pixels per sec and dx=dy=1 (1 pixel)
+        // dt = CFL/(c/1+c/1);
+        // dt = CFL/(2c);
+        lambdaEffect = waveSpeedPixels * effectPeriod;
+        if (simulationMaterial != null)
+        {
+            simulationMaterial.SetFloat("_Cdtdx^2", CFLSq);
+            simulationMaterial.SetFloat("_Cbar", cBar);
+            simulationMaterial.SetFloat("_C", waveSpeedPixels);
+            simulationMaterial.SetFloat("_DeltaT2", dt * dt);
+            simulationMaterial.SetVector("_Effect", effect);
+            simulationMaterial.SetFloat("_CFAbsorb", AbsorbFactor);
+        }
     }
 
     void Start()
@@ -161,9 +217,9 @@ public class WaveMonitor : UdonSharpBehaviour
         if (texture != null)
         {
             texture.Initialize();
-            if (textMat!= null)
+            if (simulationMaterial!= null)
             {
-                texture.material = textMat;
+                texture.material = simulationMaterial;
             }
         }
         if (obstaclesTex != null)
@@ -185,30 +241,28 @@ public class WaveMonitor : UdonSharpBehaviour
     void UpdateWaves(float dt)
     {
         effectTime += dt;
-        effect.w = dt;
+        effect.w = 0;
         if (effectTime > effectPeriod)
         {
             effectTime -= effectPeriod;
-            effect.w = 0;
+            effect.w = 1;
         }
         effect.z = Mathf.Sin(effectTime * 2 * Mathf.PI * frequency);
         //waveCompute.SetFloat("dispersion", dispersion);
-        if (textMat!= null)
+        if (simulationMaterial != null)
         {
-            textMat.SetFloat("_CFL^2", CFLSq);
-            textMat.SetVector("_Effect", effect);
-            textMat.SetFloat("_CFAbsorb", AbsorbFactor);
+            simulationMaterial.SetVector("_Effect", effect);
         }
         texture.Update(1);
     }
     double waveTime = 0;
     double updateTime = 0;
 
-    void FixedUpdate()
+    void Update()
     {
         if (animationPlay)
         {
-            waveTime += Time.fixedDeltaTime;
+            waveTime += Time.deltaTime;
             while (updateTime < waveTime)
             {
                 updateTime += dt;
@@ -216,6 +270,7 @@ public class WaveMonitor : UdonSharpBehaviour
             }
         }
     }
+
     /*
    void UpdateZones()
     {

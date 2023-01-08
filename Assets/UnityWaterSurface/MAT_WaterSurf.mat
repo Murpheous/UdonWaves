@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: WaterSurf_MAT
+  m_Name: MAT_WaterSurf
   m_Shader: {fileID: 4800000, guid: 70a95831812e04d4e8ac7c09152b1b76, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
@@ -63,26 +63,28 @@ Material:
     - _BumpScale: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
-    - _Displacement: 0.03
+    - _Displacement: 0.02
     - _DstBlend: 0
     - _GlossMapScale: 1
-    - _Glossiness: 0.409
+    - _Glossiness: 0.72
     - _GlossyReflections: 1
     - _MaxDist: 50
-    - _Metallic: 1
+    - _Metallic: 0.505
     - _MinDist: 0.1
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
     - _ShowAmpSquared: 0.015
+    - _ShowEnergy: 0
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _TessFactor: 50
     - _UVSec: 0
+    - _ViewSelection: 1
     - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 0, g: 0.9866438, b: 1, a: 1}
-    - _ColorNeg: {r: 0.07142617, g: 0, b: 0.23529412, a: 0.70980394}
+    - _Color: {r: 0, g: 1, b: 0.81728864, a: 1}
+    - _ColorNeg: {r: 0.16619276, g: 0, b: 0.49056602, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _SpecColor: {r: 0.5, g: 0.5, b: 0.5, a: 0.5}

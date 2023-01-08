@@ -568,7 +568,7 @@ GameObject:
   - component: {fileID: 197442347}
   - component: {fileID: 197442348}
   m_Layer: 0
-  m_Name: Point Light
+  m_Name: SpotLight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -599,8 +599,8 @@ Light:
   serializedVersion: 10
   m_Type: 0
   m_Shape: 0
-  m_Color: {r: 1, g: 0.8443396, b: 0.9448409, a: 1}
-  m_Intensity: 1
+  m_Color: {r: 0.6996206, g: 0.15619439, b: 0.735849, a: 1}
+  m_Intensity: 2
   m_Range: 20
   m_SpotAngle: 91.9
   m_InnerSpotAngle: 10.5
@@ -639,7 +639,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 4
+  m_Lightmapping: 2
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -1010,14 +1010,14 @@ MonoBehaviour:
   useAssignedLayers: 0
   DynamicPrefabs: []
   DynamicMaterials:
-  - {fileID: 2100000, guid: 4fa0e7fe273f6ff4a8e1eb320ed0d357, type: 2}
-  - {fileID: 2100000, guid: 6d92d30b2c87d194883953b2f09e7b1f, type: 2}
-  - {fileID: 2100000, guid: 941e37e4043fcf046800a2bfd105400d, type: 2}
   - {fileID: 2100000, guid: d9a3fdbbf8e90784ab94b3efffbfad17, type: 2}
-  - {fileID: 2100000, guid: efa07ce449c439644942e3d00435374a, type: 2}
-  - {fileID: 2100000, guid: bf920649a2f22254f85a4e053660bcb5, type: 2}
+  - {fileID: 2100000, guid: 4fa0e7fe273f6ff4a8e1eb320ed0d357, type: 2}
   - {fileID: 2100000, guid: 3ed24290b5b8eb0409d547190aea1922, type: 2}
+  - {fileID: 2100000, guid: bf920649a2f22254f85a4e053660bcb5, type: 2}
+  - {fileID: 2100000, guid: efa07ce449c439644942e3d00435374a, type: 2}
   - {fileID: 2100000, guid: 87294f02d9437b8479f6d772f8b00a8d, type: 2}
+  - {fileID: 2100000, guid: 941e37e4043fcf046800a2bfd105400d, type: 2}
+  - {fileID: 2100000, guid: 6d92d30b2c87d194883953b2f09e7b1f, type: 2}
   - {fileID: 2100000, guid: 87440f63aab3d884c8843f939cc5af01, type: 2}
   LightMapsNear: []
   LightMapsFar: []
@@ -1305,7 +1305,7 @@ GameObject:
   - component: {fileID: 571582199}
   - component: {fileID: 571582200}
   m_Layer: 0
-  m_Name: Point Light
+  m_Name: SpotLight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1336,8 +1336,8 @@ Light:
   serializedVersion: 10
   m_Type: 0
   m_Shape: 0
-  m_Color: {r: 1, g: 0.8443396, b: 0.9448409, a: 1}
-  m_Intensity: 1
+  m_Color: {r: 1, g: 0.90016395, b: 0.8066038, a: 1}
+  m_Intensity: 3
   m_Range: 20
   m_SpotAngle: 91.9
   m_InnerSpotAngle: 10.5
@@ -1376,7 +1376,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 4
+  m_Lightmapping: 2
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -2020,7 +2020,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 2100000, guid: 4546b0ec54086e840800d63eb723acd2, type: 2}
-  m_Color: {r: 0.6732687, g: 0.36320752, b: 1, a: 1}
+  m_Color: {r: 0.486094, g: 0, b: 1, a: 1}
   m_RaycastTarget: 1
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -2573,8 +2573,8 @@ MonoBehaviour:
   barHeight: 0.12
   barThickness: 0.015
   apertureCount: 2
-  apertureWidth: 0.08500001
-  aperturePitch: 0.20000003
+  apertureWidth: 0.1
+  aperturePitch: 0.25
   labelSlits: {fileID: 1675543140}
   labelSlitPitch: {fileID: 1391214951}
   labelSlitWidth: {fileID: 253721118}
@@ -2679,17 +2679,17 @@ Light:
   serializedVersion: 10
   m_Type: 1
   m_Shape: 0
-  m_Color: {r: 0.7599082, g: 0.7253471, b: 0.9433962, a: 1}
-  m_Intensity: 1.5
+  m_Color: {r: 0.73312914, g: 0.7254902, b: 0.94509804, a: 1}
+  m_Intensity: 2
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
   m_CookieSize: 10
   m_Shadows:
     m_Type: 2
-    m_Resolution: -1
+    m_Resolution: 0
     m_CustomResolution: -1
-    m_Strength: 1
+    m_Strength: 0.829
     m_Bias: 0.05
     m_NormalBias: 0.4
     m_NearPlane: 0.2
@@ -3053,7 +3053,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 0
+  m_Interactable: 1
   m_TargetGraphic: {fileID: 2057795272}
   toggleTransition: 1
   graphic: {fileID: 691055702}
@@ -3069,7 +3069,7 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: ViewMomentumChanged
+          m_StringArgument: ViewEnergyChanged
           m_BoolArgument: 0
         m_CallState: 2
   m_IsOn: 0
@@ -3449,7 +3449,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Wall Control
+  m_text: Wave Barrier
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -3770,7 +3770,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 2100000, guid: 4546b0ec54086e840800d63eb723acd2, type: 2}
-  m_Color: {r: 0.6732687, g: 0.36320752, b: 1, a: 1}
+  m_Color: {r: 0.486094, g: 0, b: 1, a: 1}
   m_RaycastTarget: 1
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -4279,7 +4279,7 @@ GameObject:
   - component: {fileID: 2029428684}
   - component: {fileID: 2029428685}
   m_Layer: 0
-  m_Name: Point Light
+  m_Name: SpotLight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4310,8 +4310,8 @@ Light:
   serializedVersion: 10
   m_Type: 0
   m_Shape: 0
-  m_Color: {r: 1, g: 0.8443396, b: 0.9448409, a: 1}
-  m_Intensity: 1
+  m_Color: {r: 1, g: 0.90016395, b: 0.8066038, a: 1}
+  m_Intensity: 3
   m_Range: 20
   m_SpotAngle: 91.9
   m_InnerSpotAngle: 10.5
@@ -4350,7 +4350,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 4
+  m_Lightmapping: 2
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -4906,7 +4906,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5239915332397845298}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: 0}
+  m_LocalPosition: {x: 0, y: 1.02, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 2068026139}
@@ -4984,19 +4984,22 @@ MonoBehaviour:
   texture: {fileID: 8600000, guid: be8c672ce9314b1409c245d2c813b108, type: 2}
   SimDimensions: {x: 2, y: 2}
   effect: {x: 1, y: 0, z: 0, w: 0}
-  frequency: 1.67
-  CFL: 0.2
-  waveSpeedPixels: 15
-  textMat: {fileID: 2100000, guid: 2dcfa7fe472afa24cab4179976935e21, type: 2}
+  frequency: 1.4
+  CFL: 0.4
+  waveSpeedPixels: 45
+  simulationMaterial: {fileID: 2100000, guid: 2dcfa7fe472afa24cab4179976935e21, type: 2}
+  surfaceMaterial: {fileID: 2100000, guid: 87440f63aab3d884c8843f939cc5af01, type: 2}
   obstaclesTex: {fileID: 8400000, guid: 75384e9f3fbb12d4b819f3eaa345f5e7, type: 2}
   obstaclesCamera: {fileID: 2068026138}
   TogViewDisplacementMode: {fileID: 1714330653}
   TogViewAmplitudeSquare: {fileID: 1816737678}
+  TogViewEnergy: {fileID: 1392528981}
   TogglePlay: {fileID: 106805055056112382}
   TogglePause: {fileID: 2010078414}
   ToggleReset: {fileID: 1826869187}
   showDisplacement: 1
   showAmplitudeSquare: 0
+  showEnergy: 0
 --- !u!224 &6112098011160576432
 RectTransform:
   m_ObjectHideFlags: 0
