@@ -1,9 +1,11 @@
 ﻿
 using UdonSharp;
 using UnityEngine;
+using System.Collections.Generic;
 using VRC.SDKBase;
 using VRC.Udon;
 using UnityEngine.UI;
+using TMPro;
 
 public class WaveMonitor : UdonSharpBehaviour
 {
@@ -14,6 +16,8 @@ public class WaveMonitor : UdonSharpBehaviour
     public Vector4 effect;
     [Range(0f, 2.5f), SerializeField]
     float frequency = 0.5f;
+    public Slider frequencySlider;
+    public TextMeshPro frequencyLabel;
     [Header("Wave paraemters")]
 
     public float CFL = 0.5f;
@@ -54,6 +58,18 @@ public class WaveMonitor : UdonSharpBehaviour
         if (TogViewEnergy != null)
             TogViewEnergy.isOn = showEnergy;
     }
+
+    private void UpdateFrequencyUI()
+    {
+        if (frequencySlider != null)
+        {
+            if (frequencySlider.value != frequency)
+                frequencySlider.value = frequency;
+        }
+        if (frequencyLabel != null)
+            frequencyLabel.text = string.Format("Frequency: {0:0.00}Hz",frequency);
+    }
+
 
     bool ShowDisplacement
     {
@@ -109,7 +125,24 @@ public class WaveMonitor : UdonSharpBehaviour
             }
         }
     }
-
+    //* Slider changed
+    public void FrequencyChanged()
+    {
+        float newFreq = frequency;
+        if (frequencySlider!= null)
+        {
+            if (frequency != frequencySlider.value) 
+            {
+                newFreq = frequencySlider.value;
+            }
+        }
+        if (newFreq != frequency)
+        {
+            frequency = newFreq;
+            UpdateFrequencyUI();
+            CalcParameters();
+        }
+    }
     //* UI Toggle Handlers
 
     public void PlayChanged()
@@ -202,7 +235,7 @@ public class WaveMonitor : UdonSharpBehaviour
             simulationMaterial.SetFloat("_Cdtdx^2", CFLSq);
             simulationMaterial.SetFloat("_Cbar", cBar);
             simulationMaterial.SetFloat("_C", waveSpeedPixels);
-            simulationMaterial.SetFloat("_DeltaT2", dt * dt);
+            simulationMaterial.SetFloat("_DeltaT", dt);
             simulationMaterial.SetVector("_Effect", effect);
             simulationMaterial.SetFloat("_CFAbsorb", AbsorbFactor);
         }
@@ -210,6 +243,7 @@ public class WaveMonitor : UdonSharpBehaviour
 
     void Start()
     {
+
         CalcParameters();
         ShowDisplacement = true;
         UpdateUI();
@@ -236,24 +270,33 @@ public class WaveMonitor : UdonSharpBehaviour
                 //obstaclesCamera.orthographicSize = SimDimensions.y / 2f;
             }
         }
+
+        UpdateFrequencyUI();
+        
     }
 
     void UpdateWaves(float dt)
     {
+        bool isReset = false;
+        texture.ClearUpdateZones();
         effectTime += dt;
         effect.w = 0;
         if (effectTime > effectPeriod)
         {
             effectTime -= effectPeriod;
             effect.w = 1;
+            isReset= true;
         }
         effect.z = Mathf.Sin(effectTime * 2 * Mathf.PI * frequency);
-        //waveCompute.SetFloat("dispersion", dispersion);
-        if (simulationMaterial != null)
+        simulationMaterial.SetVector("_Effect", effect);
+        if (isReset)
         {
-            simulationMaterial.SetVector("_Effect", effect);
+           // UpdateZones();
         }
+        //else
         texture.Update(1);
+        effect.w = 0;
+        simulationMaterial.SetVector("_Effect", effect);
     }
     double waveTime = 0;
     double updateTime = 0;
@@ -271,32 +314,24 @@ public class WaveMonitor : UdonSharpBehaviour
         }
     }
 
-    /*
+    CustomRenderTextureUpdateZone[] TheUpdateZones = new CustomRenderTextureUpdateZone[2];
+    //TheUpdateZones = new CustomRenderTextureUpdateZone[2];
    void UpdateZones()
     {
-        bool leftClick = Input.GetMouseButton(0);
-        bool rightClick = Input.GetMouseButton(1);
-        if (!leftClick && !rightClick) return;
-
-        RaycastHit hit;
-        var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        if (Physics.Raycast(ray, out hit))
-        {
-            var defaultZone = new CustomRenderTextureUpdateZone();
-            defaultZone.needSwap = true;
-            defaultZone.passIndex = 0;
-            defaultZone.rotation = 0f;
-            defaultZone.updateZoneCenter = new Vector2(0.5f, 0.5f);
-            defaultZone.updateZoneSize = new Vector2(1f, 1f);
-
-            var clickZone = new CustomRenderTextureUpdateZone();
-            clickZone.needSwap = true;
-            clickZone.passIndex = leftClick ? 1 : 2;
-            clickZone.rotation = 0f;
-            clickZone.updateZoneCenter = new Vector2(hit.textureCoord.x, 1f - hit.textureCoord.y);
-            clickZone.updateZoneSize = new Vector2(0.01f, 0.01f);
-
-            //texture.SetUpdateZones(new CustomRenderTextureUpdateZone[] { defaultZone, clickZone });
-        }
-    } */
+        //CustomRenderTextureUpdateZone DefaultZone = new CustomRenderTextureUpdateZone();
+        //TheUpdateZones[0].needSwap = true;
+        /*DefaultZone.passIndex = 0;
+        DefaultZone.rotation = 0f;
+        DefaultZone.updateZoneCenter = new Vector2(0.5f, 0.5f);
+        DefaultZone.updateZoneSize = new Vector2(1f, 1f);
+        CustomRenderTextureUpdateZone ResetZone = new CustomRenderTextureUpdateZone();
+        ResetZone.needSwap = true;
+        ResetZone.passIndex = 1;
+        ResetZone.rotation = 0f;
+        ResetZone.updateZoneCenter = new Vector2(0.5f, 0.5f);
+        ResetZone.updateZoneSize = new Vector2(1f, 1f);
+        TheUpdateZones[0] = DefaultZone;
+        TheUpdateZones[1] = ResetZone;*/
+        texture.SetUpdateZones(TheUpdateZones);
+    }     
 }

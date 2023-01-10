@@ -1,4 +1,4 @@
-﻿Shader "Water/Simulation"
+﻿Shader "Water/WaveSim"
 {
 
     Properties
