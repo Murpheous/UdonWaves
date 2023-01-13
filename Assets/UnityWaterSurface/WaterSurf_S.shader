@@ -84,7 +84,7 @@ void surf(Input IN, inout SurfaceOutputStandard o)
         v2 = tex2D(_DispTex, IN.uv_DispTex + duv.xz).r;
         v3 = tex2D(_DispTex, IN.uv_DispTex - duv.zy).r;
         v4 = tex2D(_DispTex, IN.uv_DispTex + duv.zy).r;
-        range = (val + 1) * 0.5;
+        range = val;
         if (showAmpSquared == 1)
         {
             val *= val;

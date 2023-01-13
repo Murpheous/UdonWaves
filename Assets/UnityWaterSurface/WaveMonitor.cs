@@ -17,7 +17,7 @@ public class WaveMonitor : UdonSharpBehaviour
     [Range(0f, 2.5f), SerializeField]
     float frequency = 0.5f;
     public Slider frequencySlider;
-    public TextMeshPro frequencyLabel;
+    public TextMeshProUGUI frequencyLabel;
     [Header("Wave paraemters")]
 
     public float CFL = 0.5f;
@@ -223,21 +223,23 @@ public class WaveMonitor : UdonSharpBehaviour
         AbsorbFactor = (CFL - 1) / (1 + CFL);
         effectPeriod = 1/frequency;
         dt = CFL / waveSpeedPixels;
-        float cBar = waveSpeedPixels / (2*Mathf.PI);
+
         // Calculate dt using c in Pixels per second
         // CFL = cdt/dx (dt*(c/dx + c/dy));
         // c is pixels per sec and dx=dy=1 (1 pixel)
         // dt = CFL/(c/1+c/1);
-        // dt = CFL/(2c);
+        // dt = CFL/(c);
         lambdaEffect = waveSpeedPixels * effectPeriod;
         if (simulationMaterial != null)
         {
-            simulationMaterial.SetFloat("_Cdtdx^2", CFLSq);
-            simulationMaterial.SetFloat("_Cbar", cBar);
-            simulationMaterial.SetFloat("_C", waveSpeedPixels);
+            simulationMaterial.SetFloat("_CdTdX^2", CFLSq);
+            simulationMaterial.SetFloat("_CdTdX", CFL);
+            simulationMaterial.SetFloat("_T2Radians", frequency*(Mathf.PI*2));
             simulationMaterial.SetFloat("_DeltaT", dt);
+            simulationMaterial.SetFloat("_Lambda2PI", 10);
             simulationMaterial.SetVector("_Effect", effect);
             simulationMaterial.SetFloat("_CFAbsorb", AbsorbFactor);
+            simulationMaterial.SetVector("_Effect", effect);
         }
     }
 
@@ -277,26 +279,16 @@ public class WaveMonitor : UdonSharpBehaviour
 
     void UpdateWaves(float dt)
     {
-        bool isReset = false;
-        texture.ClearUpdateZones();
+        
         effectTime += dt;
         effect.w = 0;
         if (effectTime > effectPeriod)
         {
             effectTime -= effectPeriod;
             effect.w = 1;
-            isReset= true;
-        }
+        } 
         effect.z = Mathf.Sin(effectTime * 2 * Mathf.PI * frequency);
-        simulationMaterial.SetVector("_Effect", effect);
-        if (isReset)
-        {
-           // UpdateZones();
-        }
-        //else
         texture.Update(1);
-        effect.w = 0;
-        simulationMaterial.SetVector("_Effect", effect);
     }
     double waveTime = 0;
     double updateTime = 0;
@@ -312,26 +304,5 @@ public class WaveMonitor : UdonSharpBehaviour
                 UpdateWaves(dt);
             }
         }
-    }
-
-    CustomRenderTextureUpdateZone[] TheUpdateZones = new CustomRenderTextureUpdateZone[2];
-    //TheUpdateZones = new CustomRenderTextureUpdateZone[2];
-   void UpdateZones()
-    {
-        //CustomRenderTextureUpdateZone DefaultZone = new CustomRenderTextureUpdateZone();
-        //TheUpdateZones[0].needSwap = true;
-        /*DefaultZone.passIndex = 0;
-        DefaultZone.rotation = 0f;
-        DefaultZone.updateZoneCenter = new Vector2(0.5f, 0.5f);
-        DefaultZone.updateZoneSize = new Vector2(1f, 1f);
-        CustomRenderTextureUpdateZone ResetZone = new CustomRenderTextureUpdateZone();
-        ResetZone.needSwap = true;
-        ResetZone.passIndex = 1;
-        ResetZone.rotation = 0f;
-        ResetZone.updateZoneCenter = new Vector2(0.5f, 0.5f);
-        ResetZone.updateZoneSize = new Vector2(1f, 1f);
-        TheUpdateZones[0] = DefaultZone;
-        TheUpdateZones[1] = ResetZone;*/
-        texture.SetUpdateZones(TheUpdateZones);
     }     
 }
