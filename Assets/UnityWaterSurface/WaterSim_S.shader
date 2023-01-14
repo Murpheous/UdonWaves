@@ -9,7 +9,7 @@
         _CdTdX("CdTdX", Float) = 0.25
         _DeltaT("DeltaT",Float) = 1
         _T2Radians("T2Radians",Float) = 6.283
-        _Lambda2Pi("Lambda2Pi",Range(6,20)) = 10
+        _Lambda2PI("Lambda2PI",Float) = 10
         _Effect("Effect",Vector) = (0,0,0,0)
         _CFAbsorb("CFAbsorb", Range(0.0,1.0)) = 0.2
         _ObstacleTex2D("Obstacle Image", 2D) = "black" {}
@@ -28,7 +28,7 @@
     float _CdTdX; // c/2pi
     float _DeltaT;
     float _T2Radians;
-    float _Lambda2Pi;
+    float _Lambda2PI;
     float4 _Effect;
     float _CFAbsorb;
     sampler2D _ObstacleTex2D;
@@ -36,12 +36,7 @@
 
 float laplacian(float2 pos, float3 duv)
 {
-    //float stateXp1 = A(pos + duv.xz).x;
-    //float stateXm1 = tex2D(_SelfTexture2D, pos - duv.xz).x;
-    //float stateYp1 = tex2D(_SelfTexture2D, pos + duv.zy).x;
-    //float stateYm1 = tex2D(_SelfTexture2D, pos - duv.zy).x;
     return (A(pos + duv.xz).x + A(pos - duv.xz).x + A(pos + duv.zy).x + A(pos - duv.zy).x - 4.0 * A(pos).x);
-    //return (stateXp1 + stateXm1 + stateYp1 + stateYm1 - 4.0 * A(pos).x);
 }
 
 float2 newField(float2 pos, float3 duv)
@@ -52,8 +47,7 @@ float2 newField(float2 pos, float3 duv)
     float cycletime = currentTime * _T2Radians; // _Time = (t/20, t, t*2, t*3
     int2 effectpos = int2(floor(_Effect.x),floor(_CustomRenderTextureHeight*pos.y));
     int2 pixelPos = int2(floor(pos.x * _CustomRenderTextureWidth), floor(pos.y * _CustomRenderTextureHeight));
-    //float force = 0.1* exp(-0.1 * dot(pixelPos - effectpos, pixelPos - effectpos)) * sin(cycletime);
-    float force =  lerp(0, 0.5 * sin(cycletime),(int)(effectpos == pixelPos));
+    float force =  lerp(0, _Effect.z * sin(cycletime),(int)(effectpos == pixelPos));
 
     field.y += _CdTdX * (laplacian(pos,duv) + force); //velocity += force * time step
     field.x += _CdTdX * field.y; //position += velocity*time step
@@ -113,8 +107,8 @@ float4 fragNew(v2f_customrendertexture i) : SV_Target
         else //if (!onBoundary)
             updated = newField(pos, duv);
     }
-    float vScaled = _Lambda2Pi * updated.y;
-    return float4(updated.x,updated.y,vScaled,A(pos).a+_DeltaT);
+  
+    return float4(updated.x,updated.y, _Lambda2PI * updated.y,A(pos).a+_DeltaT);
 }
 /*
 float4 frag(v2f_customrendertexture i) : SV_Target

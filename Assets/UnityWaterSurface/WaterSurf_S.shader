@@ -62,13 +62,20 @@ void disp(inout appdata v)
     v.vertex.xyz += v.normal * d;
 }
 
+float sq(float x)
+{
+    return (x * x);
+}
+
 void surf(Input IN, inout SurfaceOutputStandard o) 
 {
     o.Metallic = _Metallic;
     o.Smoothness = _Glossiness;
     o.Alpha = 1;
-    int showAmpSquared = (int)((_ViewSelection > 0.5) && (_ViewSelection < 1.5));
-    int showEnergy = (int)(_ViewSelection > 1.5);
+
+    bool showAmp = (_ViewSelection < 1.5);
+    bool showVel = ((_ViewSelection > 1.5) && (_ViewSelection < 3.5));
+    bool showSquared = (((_ViewSelection > 0.5) && (_ViewSelection < 1.5)) || ((_ViewSelection > 2.5) && (_ViewSelection < 3.5)));
 
     float3 duv = float3(_DispTex_TexelSize.xy, 0);
     float val;
@@ -77,7 +84,8 @@ void surf(Input IN, inout SurfaceOutputStandard o)
     float v3;
     float v4;
     float range;
-    if (showEnergy < 1)
+    
+    if (showAmp)
     {
         val = tex2D(_DispTex, IN.uv_DispTex).r;
         v1 = tex2D(_DispTex, IN.uv_DispTex - duv.xz).r;
@@ -85,24 +93,32 @@ void surf(Input IN, inout SurfaceOutputStandard o)
         v3 = tex2D(_DispTex, IN.uv_DispTex - duv.zy).r;
         v4 = tex2D(_DispTex, IN.uv_DispTex + duv.zy).r;
         range = val;
-        if (showAmpSquared == 1)
-        {
-            val *= val;
-            v1 *= v1;
-            v2 *= v2;
-            v3 *= v3;
-            v4 *= v4;
-            range =  val;
-
-        }
     }
-    else
+    else if (showVel)
     {
         val = tex2D(_DispTex, IN.uv_DispTex).b;
         v1 = tex2D(_DispTex, IN.uv_DispTex - duv.xz).b;
         v2 = tex2D(_DispTex, IN.uv_DispTex + duv.xz).b;
         v3 = tex2D(_DispTex, IN.uv_DispTex - duv.zy).b;
         v4 = tex2D(_DispTex, IN.uv_DispTex + duv.zy).b;
+        range = val;
+    }
+    else //(showEnergy)
+    {
+        val = sq(tex2D(_DispTex, IN.uv_DispTex).r) + sq(tex2D(_DispTex, IN.uv_DispTex).b);
+        v1 = sq(tex2D(_DispTex, IN.uv_DispTex - duv.xz).r) + sq(tex2D(_DispTex, IN.uv_DispTex - duv.xz).b);
+        v2 = sq(tex2D(_DispTex, IN.uv_DispTex + duv.xz).r) + sq(tex2D(_DispTex, IN.uv_DispTex + duv.xz).b);
+        v3 = sq(tex2D(_DispTex, IN.uv_DispTex - duv.zy).r) + sq(tex2D(_DispTex, IN.uv_DispTex - duv.zy).b);
+        v4 = sq(tex2D(_DispTex, IN.uv_DispTex + duv.zy).r) + sq(tex2D(_DispTex, IN.uv_DispTex + duv.zy).b);
+        range = val;
+    }
+    if (showSquared)
+    {
+        val *= val;
+        v1 *= v1;
+        v2 *= v2;
+        v3 *= v3;
+        v4 *= v4;
         range = val;
     }
     o.Albedo = lerp(_ColorNeg.rgb, _Color.rgb, range);

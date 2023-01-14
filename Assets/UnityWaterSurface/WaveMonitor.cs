@@ -1,7 +1,6 @@
 ﻿
 using UdonSharp;
 using UnityEngine;
-using System.Collections.Generic;
 using VRC.SDKBase;
 using VRC.Udon;
 using UnityEngine.UI;
@@ -14,8 +13,8 @@ public class WaveMonitor : UdonSharpBehaviour
 
     [Header("Stimulus")]
     public Vector4 effect;
-    [Range(0f, 2.5f), SerializeField]
-    float frequency = 0.5f;
+    [Range(1f, 3f), SerializeField]
+    float frequency = 1f;
     public Slider frequencySlider;
     public TextMeshProUGUI frequencyLabel;
     [Header("Wave paraemters")]
@@ -27,7 +26,6 @@ public class WaveMonitor : UdonSharpBehaviour
 
     float dt; // Time step
     float effectPeriod = 1;
-    float effectTime = 0;
 
     float lambdaEffect = 1;
     public Material simulationMaterial = null;
@@ -38,36 +36,52 @@ public class WaveMonitor : UdonSharpBehaviour
     public Camera obstaclesCamera;
 
     [Header("UI Toggles")]
-    public Toggle TogViewDisplacementMode;
+    public Toggle TogViewDisplacement;
+    public Toggle TogViewTension;
     public Toggle TogViewAmplitudeSquare;
     public Toggle TogViewEnergy;
     public Toggle TogglePlay;
     public Toggle TogglePause;
     public Toggle ToggleReset;
     public bool showDisplacement = true;
-    public bool showAmplitudeSquare = false;
+    public bool showTension = false;
+    public bool showSquaredAmplitudes = false;
     public bool showEnergy          = false;
     private bool animationPlay = true;
 
     private void UpdateUI()
     {
-        if (TogViewDisplacementMode != null)
-            TogViewDisplacementMode.isOn = showDisplacement;
+        if (TogViewDisplacement != null)
+            TogViewDisplacement.isOn = ShowDisplacement;
+        if (TogViewTension != null)
+            TogViewTension.isOn = ShowTension;
         if (TogViewAmplitudeSquare != null)
-            TogViewAmplitudeSquare.isOn = showAmplitudeSquare;
+            TogViewAmplitudeSquare.isOn = ShowSquaredAmplitudes;
         if (TogViewEnergy != null)
-            TogViewEnergy.isOn = showEnergy;
+            TogViewEnergy.isOn = ShowEnergy;
+    }
+
+    private void UpdateViewControl()
+    {
+        if (surfaceMaterial == null)
+            return;
+        if (showDisplacement)
+            surfaceMaterial.SetFloat("_ViewSelection", showSquaredAmplitudes ? 1f : 0f );
+        else if (showTension)
+             surfaceMaterial.SetFloat("_ViewSelection", showSquaredAmplitudes ? 3f : 2f);
+        else if (ShowEnergy)
+            surfaceMaterial.SetFloat("_ViewSelection", showSquaredAmplitudes ? 5f : 4f); 
     }
 
     private void UpdateFrequencyUI()
     {
         if (frequencySlider != null)
         {
-            if (frequencySlider.value != frequency)
-                frequencySlider.value = frequency;
+            if (frequencySlider.value != requestedFrequency)
+                frequencySlider.value = requestedFrequency;
         }
         if (frequencyLabel != null)
-            frequencyLabel.text = string.Format("Frequency: {0:0.00}Hz",frequency);
+            frequencyLabel.text = string.Format("Frequency: {0:0.00}Hz",requestedFrequency);
     }
 
 
@@ -77,56 +91,76 @@ public class WaveMonitor : UdonSharpBehaviour
         set
         {
             showDisplacement = value;
-            if (value && showAmplitudeSquare)
-                showAmplitudeSquare= false;
-            if (value && showEnergy)
-                showEnergy = false;
-            if (surfaceMaterial != null && showDisplacement)
-                surfaceMaterial.SetFloat("_ViewSelection", 0);
+            UpdateViewControl();
             if (!animationPlay)
                 UpdateWaves(0);
         }
     }
 
-    bool ShowAmplitudeSquare
+    bool ShowTension
     {
-        get { return showAmplitudeSquare; }
+        get { return showTension; }
         set
         {
-            showAmplitudeSquare = value;
-            if (value && showDisplacement) 
-                showDisplacement= false;
-            if (value && showEnergy)
-                showEnergy = false;
-            if (showAmplitudeSquare && (surfaceMaterial != null))
-            {
-                surfaceMaterial.SetFloat("_ViewSelection", 1);
-                if (!animationPlay)
-                    UpdateWaves(0);
-            }
+            showTension = value;
+            UpdateViewControl();
+            if (!animationPlay)
+                UpdateWaves(0);
         }
     }
 
     bool ShowEnergy
     {
-        get { return showAmplitudeSquare; }
+        get { return showEnergy; }
         set
         {
             showEnergy = value;
-            if (value && showDisplacement)
-                showDisplacement = false;
-            if (value && showAmplitudeSquare)
-                showAmplitudeSquare = false;
-            if (showEnergy && (surfaceMaterial != null))
-            {
-                surfaceMaterial.SetFloat("_ViewSelection", 2);
-                if (!animationPlay)
-                    UpdateWaves(0);
-            }
+            UpdateViewControl();                
+            if (!animationPlay)
+                UpdateWaves(0);
         }
     }
+
+    bool ShowSquaredAmplitudes
+    {
+        get { return showSquaredAmplitudes; }
+        set
+        {
+            showSquaredAmplitudes = value;
+            UpdateViewControl();
+            if (!animationPlay)
+                UpdateWaves(0);
+        }
+    }
+
+
+    
     //* Slider changed
-    public void FrequencyChanged()
+    float frequencyQuenchTime = 0;
+    float frequencyQuenchDuration = 0;
+    float frequencyQuenchStartValue = 0;
+    float effectRampDuration = 5;
+    float requestedFrequency;
+    bool freqPointerIsDown = false;
+
+    public void OnFreqPointerDown()
+    {
+        freqPointerIsDown = true;
+        if (frequencyQuenchTime <= 0)
+        {
+            frequencyQuenchTime = effectRampDuration;
+            frequencyQuenchDuration = effectRampDuration;
+            frequencyQuenchStartValue = effect.z;
+        }
+    }
+
+    public void OnFreqPointerUp() 
+    {
+        freqPointerIsDown = false;
+        if (frequencyQuenchTime <= 0)
+            ResetEffect();
+    }
+    public void OnFrequencyChanged()
     {
         float newFreq = frequency;
         if (frequencySlider!= null)
@@ -136,11 +170,12 @@ public class WaveMonitor : UdonSharpBehaviour
                 newFreq = frequencySlider.value;
             }
         }
-        if (newFreq != frequency)
+        if (newFreq != requestedFrequency)
         {
-            frequency = newFreq;
+            requestedFrequency = newFreq;
             UpdateFrequencyUI();
-            CalcParameters();
+            if (frequencyQuenchTime <= 0)
+                CalcParameters();
         }
     }
     //* UI Toggle Handlers
@@ -175,32 +210,33 @@ public class WaveMonitor : UdonSharpBehaviour
                 {
                     texture.Initialize();
                 }
+                ResetEffect();
                 ToggleReset.isOn = false;
             }
         }
     }
 
-    public void ViewAmplitudeChanged()
+    public void ViewHeightChanged()
     {
-        if (TogViewDisplacementMode != null)
+        if (TogViewDisplacement != null)
         {
-            if (ShowDisplacement != TogViewDisplacementMode.isOn)
-            {
-                ShowDisplacement = !showDisplacement;
-                UpdateUI();
-            }
+            ShowDisplacement = TogViewDisplacement.isOn;
         }
     }
 
-    public void ViewAmplitudeSqChanged()
+    public void ViewTensionChanged()
+    {
+        if (TogViewTension != null)
+        {
+            ShowTension = TogViewTension.isOn;
+        }
+    }
+
+    public void ViewSquareChanged()
     {
         if (TogViewAmplitudeSquare != null)
         {
-            if (TogViewAmplitudeSquare.isOn != ShowAmplitudeSquare)
-            {
-                ShowAmplitudeSquare = !showAmplitudeSquare;
-                UpdateUI();
-            }
+            ShowSquaredAmplitudes = TogViewAmplitudeSquare.isOn;
         }
     }
 
@@ -208,11 +244,7 @@ public class WaveMonitor : UdonSharpBehaviour
     {
         if (TogViewEnergy != null)
         {
-            if (TogViewEnergy.isOn != ShowEnergy)
-            {
-                ShowEnergy = !showEnergy;
-                UpdateUI();
-            }
+                ShowEnergy = TogViewEnergy.isOn;
         }
     }
 
@@ -223,41 +255,41 @@ public class WaveMonitor : UdonSharpBehaviour
         AbsorbFactor = (CFL - 1) / (1 + CFL);
         effectPeriod = 1/frequency;
         dt = CFL / waveSpeedPixels;
-
+        effectRampDuration = effectPeriod * 9;
         // Calculate dt using c in Pixels per second
         // CFL = cdt/dx (dt*(c/dx + c/dy));
         // c is pixels per sec and dx=dy=1 (1 pixel)
         // dt = CFL/(c/1+c/1);
         // dt = CFL/(c);
         lambdaEffect = waveSpeedPixels * effectPeriod;
+        requestedFrequency= frequency;
         if (simulationMaterial != null)
         {
             simulationMaterial.SetFloat("_CdTdX^2", CFLSq);
             simulationMaterial.SetFloat("_CdTdX", CFL);
             simulationMaterial.SetFloat("_T2Radians", frequency*(Mathf.PI*2));
             simulationMaterial.SetFloat("_DeltaT", dt);
-            simulationMaterial.SetFloat("_Lambda2PI", 10);
+            simulationMaterial.SetFloat("_Lambda2PI", lambdaEffect/(2*Mathf.PI));
             simulationMaterial.SetVector("_Effect", effect);
             simulationMaterial.SetFloat("_CFAbsorb", AbsorbFactor);
-            simulationMaterial.SetVector("_Effect", effect);
         }
     }
 
     void Start()
     {
-
         CalcParameters();
         ShowDisplacement = true;
         UpdateUI();
 
         if (texture != null)
         {
-            texture.Initialize();
             if (simulationMaterial!= null)
             {
                 texture.material = simulationMaterial;
             }
+            texture.Initialize();
         }
+        ResetEffect();
         if (obstaclesTex != null)
         {
             if (obstaclesCamera == null)
@@ -279,25 +311,46 @@ public class WaveMonitor : UdonSharpBehaviour
 
     void UpdateWaves(float dt)
     {
-        
-        effectTime += dt;
-        effect.w = 0;
-        if (effectTime > effectPeriod)
-        {
-            effectTime -= effectPeriod;
-            effect.w = 1;
-        } 
-        effect.z = Mathf.Sin(effectTime * 2 * Mathf.PI * frequency);
         texture.Update(1);
     }
-    double waveTime = 0;
-    double updateTime = 0;
+
+    float waveTime = 0;
+    float updateTime = 0;
+    void ResetEffect()
+    {
+        frequency = requestedFrequency;
+        CalcParameters();
+        waveTime = 0;
+        updateTime = 0;
+    }
 
     void Update()
     {
         if (animationPlay)
         {
             waveTime += Time.deltaTime;
+            if (frequencyQuenchTime > 0)
+            {
+                frequencyQuenchTime -= Time.deltaTime;
+                effect.z = Mathf.Lerp(0, frequencyQuenchStartValue, frequencyQuenchTime / frequencyQuenchDuration);
+                if (simulationMaterial != null)
+                    simulationMaterial.SetVector("_Effect", effect);
+                if (frequencyQuenchTime <= 0)
+                {
+                    frequency = requestedFrequency;
+                    CalcParameters();
+                    if (!freqPointerIsDown)
+                        ResetEffect();
+                }
+            }
+
+            if (waveTime <= effectRampDuration)
+            {
+                effect.z = Mathf.Lerp(0, 1, waveTime / effectRampDuration);
+                if (simulationMaterial != null)
+                    simulationMaterial.SetVector("_Effect", effect);
+            }
+            
             while (updateTime < waveTime)
             {
                 updateTime += dt;
