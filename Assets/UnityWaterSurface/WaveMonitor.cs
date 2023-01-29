@@ -17,6 +17,12 @@ public class WaveMonitor : UdonSharpBehaviour
     float frequency = 1f;
     public Slider frequencySlider;
     public TextMeshProUGUI frequencyLabel;
+    private float minFrequency = 1;
+    private float maxFrequency = 3;
+    public float Frequency { get => frequency; private set => frequency = value; }
+    public float MaxFrequency { get => maxFrequency;private set => maxFrequency = value;}
+    public float MinFrequency { get => minFrequency; private set => minFrequency = value; }
+
     [Header("Wave paraemters")]
 
     public float CFL = 0.5f;
@@ -306,7 +312,11 @@ public class WaveMonitor : UdonSharpBehaviour
         }
 
         UpdateFrequencyUI();
-        
+        if (frequencySlider != null) 
+        {
+            MaxFrequency= frequencySlider.maxValue;
+            MinFrequency= frequencySlider.minValue;
+        }
     }
 
     void UpdateWaves(float dt)

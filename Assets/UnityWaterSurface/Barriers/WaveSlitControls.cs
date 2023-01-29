@@ -21,6 +21,17 @@ public class WaveSlitControls : UdonSharpBehaviour
     public float apertureWidth;
     public float aperturePitch;
 
+    private float gratingWidth;
+    private float barWidth;
+    private float sideBarWidth;
+    public float GratingWidth { get => gratingWidth; private set => gratingWidth = value; }
+    public float SideBarWidth { get => sideBarWidth; private set => sideBarWidth = value; }
+    // Grating properties
+    private GameObject[] theBars;
+    private GameObject panelLeft;
+    private GameObject panelRight;
+    // dimensions
+
 
     [Header("UI Interface")]
     [SerializeField] TextMeshProUGUI labelSlits;
@@ -42,10 +53,10 @@ public class WaveSlitControls : UdonSharpBehaviour
         setText(labelSlitPitch, "Spacing\n" + Units.ToEngineeringNotation(aperturePitch) + "m");
         setText(labelSlitWidth, "Gap Width\n" + Units.ToEngineeringNotation(apertureWidth) + "m");
     }
-    float AperturePitch
+    public float AperturePitch
     {
         get => aperturePitch;
-        set
+        private set
         {
             if (checkGratingWidth(apertureWidth, value, ApertureCount))
             {
@@ -58,10 +69,10 @@ public class WaveSlitControls : UdonSharpBehaviour
         }
     }
 
-    float ApertureWidth
+    public float ApertureWidth
     {
         get => apertureWidth;
-        set
+        private set
         {
             if (checkGratingWidth(value,aperturePitch,apertureCount) && value > 0.01f)
             {
@@ -75,10 +86,10 @@ public class WaveSlitControls : UdonSharpBehaviour
     }
 
 
-    int ApertureCount
+    public int ApertureCount
     {
         get => apertureCount;
-        set
+        private set
         {
             if (value < 1)
                 value = 1;
@@ -123,7 +134,7 @@ public class WaveSlitControls : UdonSharpBehaviour
     {
         if (aperturePitch <= 0.01f)
             return;
-        if (checkGratingWidth(ApertureWidth, AperturePitch - 0.01f, ApertureCount))
+        //if (checkGratingWidth(ApertureWidth, AperturePitch - 0.01f, ApertureCount))
             AperturePitch = aperturePitch - 0.01f;
     }
 
@@ -172,15 +183,6 @@ public class WaveSlitControls : UdonSharpBehaviour
         return tankWidth >= (numGaps - 1) * aperturePitch + numGaps * apertureWidth;
     }
 
-   
-     // Grating properties
-    private GameObject[] theBars;
-    private GameObject panelLeft;
-    private GameObject panelRight;
-    // dimensions
-    private float gratingWidth;
-    private float barWidth;
-    private float sideBarWidth;
     
     void setupLattice()
     {
