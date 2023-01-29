@@ -112,6 +112,7 @@ public class particleSim : UdonSharpBehaviour
             if (quantumDistribution != null)
             {
                 quantumDistribution.SetGratingByPitch(currentSlitCount, currentSlitWidth, currentSlitPitch);
+                quantumDistribution.EnableScatter = true;
             }
 
         }
@@ -130,10 +131,22 @@ public class particleSim : UdonSharpBehaviour
             for (int i=0; i<numParticles; i++)
             {
                 if ((particles[i].startLifetime < 10) && (particles[i].position.x < apertureX))
-                {// Newborn
+                {// At Grating
                     nUpdated++;
                     particles[i].startLifetime = 10f;
                     particles[i].remainingLifetime = 3f;
+                    if (quantumDistribution !=null)
+                    {
+                        
+						Vector3 vUpdated;
+						vUpdated = particles[i].velocity;
+
+                        if (quantumDistribution.EnableScatter)
+                        {
+                            vUpdated.z += (quantumDistribution.RandomImpulse)*0.01f; // * planckValue);
+                        }
+                        particles[i].velocity = vUpdated;   
+                    }
                     // Set Velocity
                     nUpdated++;
                 }
