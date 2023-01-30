@@ -2,6 +2,7 @@
 using TMPro;
 using UdonSharp;
 using UnityEngine;
+using UnityEngine.UI;
 using VRC.SDKBase;
 using VRC.Udon;
 
@@ -15,11 +16,13 @@ public class WaveSlitControls : UdonSharpBehaviour
     public float barHeight;
     
     public float barThickness;
-    
-    public int apertureCount;
+    [SerializeField,UdonSynced,FieldChangeCallback(nameof (ApertureCount))]
+    private int apertureCount;
 
-    public float apertureWidth;
-    public float aperturePitch;
+    [SerializeField,UdonSynced, FieldChangeCallback(nameof(ApertureWidth))]
+    private float apertureWidth;
+    [SerializeField,UdonSynced, FieldChangeCallback(nameof(AperturePitch))]
+    private float aperturePitch;
 
     private float gratingWidth;
     private float barWidth;
@@ -34,6 +37,7 @@ public class WaveSlitControls : UdonSharpBehaviour
 
 
     [Header("UI Interface")]
+    [SerializeField] GameObject UiPanel;
     [SerializeField] TextMeshProUGUI labelSlits;
     [SerializeField] TextMeshProUGUI labelSlitPitch;
     [SerializeField] TextMeshProUGUI labelSlitWidth;
@@ -64,6 +68,7 @@ public class WaveSlitControls : UdonSharpBehaviour
                 {
                     aperturePitch = value;
                     gratingValid = false;
+                    RequestSerialization();
                 }
             }
         }
@@ -80,6 +85,7 @@ public class WaveSlitControls : UdonSharpBehaviour
                 {
                     apertureWidth = value;
                     gratingValid = false;
+                    RequestSerialization();
                 }
             }
         }
@@ -89,7 +95,7 @@ public class WaveSlitControls : UdonSharpBehaviour
     public int ApertureCount
     {
         get => apertureCount;
-        private set
+        set
         {
             if (value < 1)
                 value = 1;
@@ -99,6 +105,7 @@ public class WaveSlitControls : UdonSharpBehaviour
             {
                 apertureCount = value;
                 gratingValid = false;
+                RequestSerialization();
             }
         }
     }
@@ -245,11 +252,29 @@ public class WaveSlitControls : UdonSharpBehaviour
         gratingValid = false;
     }
 
-    
+    private void UpdateOwnerShip()
+    {
+        bool isLocal = Networking.IsOwner(this.gameObject);
+
+        if (UiPanel != null)
+        {
+            Toggle[] toggles = UiPanel.GetComponentsInChildren<Toggle>();
+            if (toggles != null)
+                foreach (Toggle t in toggles)
+                    t.interactable = isLocal;
+        }
+    }
+
+    public override void OnOwnershipTransferred(VRCPlayerApi player)
+    {
+        UpdateOwnerShip();
+    }
+
     void Start()
     {
         MAX_SLITS = 7;
         gratingValid= false;
+        UpdateOwnerShip();
         if (TankScale <= 0) TankScale = 1;
         if (tankWidth <= 0) tankWidth = 1.0f;
         if (tankLength <= 0) tankLength = 2.0f;

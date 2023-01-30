@@ -5,6 +5,7 @@ using VRC.SDKBase;
 using VRC.Udon;
 using UnityEngine.UI;
 using TMPro;
+using System.Net.Sockets;
 
 public class WaveMonitor : UdonSharpBehaviour
 {
@@ -13,13 +14,67 @@ public class WaveMonitor : UdonSharpBehaviour
 
     [Header("Stimulus")]
     public Vector4 effect;
-    [Range(1f, 3f), SerializeField]
+    [Range(1f, 3f), SerializeField,UdonSynced,FieldChangeCallback(nameof(Frequency))]
     float frequency = 1f;
-    public Slider frequencySlider;
-    public TextMeshProUGUI frequencyLabel;
+    //public Slider frequencySlider;
+    public SyncedSlider frequencyControl;
+    [UdonSynced, FieldChangeCallback(nameof(FreqPointerIsDown))]
+    bool freqPointerIsDown = false;
+
     private float minFrequency = 1;
     private float maxFrequency = 3;
-    public float Frequency { get => frequency; private set => frequency = value; }
+    public float Frequency 
+    { 
+        get
+        {
+            if (freqPointerIsDown)
+                return requestedFrequency;
+            return frequency;
+        } 
+        set
+        {
+            if (value != requestedFrequency)
+            {
+                if (frequencyControl!=null)
+                {
+                    if (frequencyControl.CurrentValue != value)
+                        frequencyControl.CurrentValue = value;
+                }
+                requestedFrequency = value;
+                if (frequencyQuenchTime <= 0)
+                    CalcParameters();
+            }
+        } 
+    }
+
+    public bool FreqPointerIsDown
+    {
+        get => FreqPointerIsDown;
+        set
+        {
+            if (freqPointerIsDown != value)
+            {
+                freqPointerIsDown = value;
+                if (value)
+                { 
+                    if (frequencyQuenchTime <= 0)
+                    {
+                        frequencyQuenchTime = effectRampDuration;
+                        frequencyQuenchDuration = effectRampDuration;
+                        frequencyQuenchStartValue = effect.z;
+                    }
+                }
+                else
+                { 
+                    if (frequencyQuenchTime <= 0)
+                        ResetEffect();
+                }
+                RequestSerialization();
+            }
+        }
+    }
+
+
     public float MaxFrequency { get => maxFrequency;private set => maxFrequency = value;}
     public float MinFrequency { get => minFrequency; private set => minFrequency = value; }
 
@@ -49,12 +104,54 @@ public class WaveMonitor : UdonSharpBehaviour
     public Toggle TogglePlay;
     public Toggle TogglePause;
     public Toggle ToggleReset;
-    public bool showDisplacement = true;
+    [UdonSynced,FieldChangeCallback(nameof(ShowDisplacement))]
+    private bool showDisplacement = true;
+    [UdonSynced, FieldChangeCallback(nameof(ShowTension))]
     public bool showTension = false;
+    [UdonSynced, FieldChangeCallback(nameof(ShowSquaredAmplitudes))]
     public bool showSquaredAmplitudes = false;
-    public bool showEnergy          = false;
+    [UdonSynced, FieldChangeCallback(nameof(ShowEnergy))]
+    public bool showEnergy = false;
+    [UdonSynced,FieldChangeCallback(nameof(AnimationPlay))]
     private bool animationPlay = true;
+    [UdonSynced, FieldChangeCallback(nameof(ResetTriggerState))]
+    private int resetTriggerState = 0;
+    private int resetDoneState = 0;
 
+    public int ResetTriggerState
+    { 
+        get => resetTriggerState;
+        set
+        {
+            if (value != resetTriggerState)
+            {
+                resetTriggerState = value;
+                if (resetDoneState != resetTriggerState)
+                {
+                    resetDoneState = value;
+                    if (texture != null)
+                    {
+                        texture.Initialize();
+                    }
+                    ResetEffect();
+                }
+                RequestSerialization();
+            }
+        }
+    } 
+    public bool AnimationPlay 
+    { 
+        get => animationPlay;
+        set
+        {
+            if ((value) && (TogglePlay != null) &&  (!TogglePlay.isOn)) 
+                TogglePlay.isOn = true;
+            if ((!value) && (TogglePause != null) && (!TogglePause.isOn))
+                TogglePause.isOn = true;
+            animationPlay= value;
+            RequestSerialization();
+        }
+    }
     private void UpdateUI()
     {
         if (TogViewDisplacement != null)
@@ -79,7 +176,7 @@ public class WaveMonitor : UdonSharpBehaviour
             surfaceMaterial.SetFloat("_ViewSelection", showSquaredAmplitudes ? 5f : 4f); 
     }
 
-    private void UpdateFrequencyUI()
+    /*private void UpdateFrequencyUI()
     {
         if (frequencySlider != null)
         {
@@ -87,8 +184,8 @@ public class WaveMonitor : UdonSharpBehaviour
                 frequencySlider.value = requestedFrequency;
         }
         if (frequencyLabel != null)
-            frequencyLabel.text = string.Format("Frequency: {0:0.00}Hz",requestedFrequency);
-    }
+            frequencyLabel.text = string.Format("{0:0.00}Hz",requestedFrequency);
+    }*/
 
 
     bool ShowDisplacement
@@ -96,10 +193,14 @@ public class WaveMonitor : UdonSharpBehaviour
         get { return showDisplacement; }
         set
         {
-            showDisplacement = value;
-            UpdateViewControl();
-            if (!animationPlay)
-                UpdateWaves(0);
+            if (showDisplacement != value)
+            {
+                showDisplacement = value;
+                UpdateViewControl();
+                if (!animationPlay)
+                    UpdateWaves(0);
+                RequestSerialization();
+            }
         }
     }
 
@@ -108,10 +209,14 @@ public class WaveMonitor : UdonSharpBehaviour
         get { return showTension; }
         set
         {
-            showTension = value;
-            UpdateViewControl();
-            if (!animationPlay)
-                UpdateWaves(0);
+            if (value != showTension)
+            {
+                showTension = value;
+                UpdateViewControl();
+                if (!animationPlay)
+                    UpdateWaves(0);
+                RequestSerialization();
+            }
         }
     }
 
@@ -120,10 +225,14 @@ public class WaveMonitor : UdonSharpBehaviour
         get { return showEnergy; }
         set
         {
-            showEnergy = value;
-            UpdateViewControl();                
-            if (!animationPlay)
-                UpdateWaves(0);
+            if (value != showEnergy)
+            {
+                showEnergy = value;
+                UpdateViewControl();
+                if (!animationPlay)
+                    UpdateWaves(0);
+                RequestSerialization();
+            }
         }
     }
 
@@ -132,10 +241,14 @@ public class WaveMonitor : UdonSharpBehaviour
         get { return showSquaredAmplitudes; }
         set
         {
-            showSquaredAmplitudes = value;
-            UpdateViewControl();
-            if (!animationPlay)
-                UpdateWaves(0);
+            if (value != showSquaredAmplitudes)
+            {
+                showSquaredAmplitudes = value;
+                UpdateViewControl();
+                if (!animationPlay)
+                    UpdateWaves(0);
+                RequestSerialization();
+            }
         }
     }
 
@@ -147,29 +260,11 @@ public class WaveMonitor : UdonSharpBehaviour
     float frequencyQuenchStartValue = 0;
     float effectRampDuration = 5;
     float requestedFrequency;
-    bool freqPointerIsDown = false;
 
-    public void OnFreqPointerDown()
-    {
-        freqPointerIsDown = true;
-        if (frequencyQuenchTime <= 0)
-        {
-            frequencyQuenchTime = effectRampDuration;
-            frequencyQuenchDuration = effectRampDuration;
-            frequencyQuenchStartValue = effect.z;
-        }
-    }
-
-    public void OnFreqPointerUp() 
-    {
-        freqPointerIsDown = false;
-        if (frequencyQuenchTime <= 0)
-            ResetEffect();
-    }
-    public void OnFrequencyChanged()
+/*    public void OnFrequencyChanged()
     {
         float newFreq = frequency;
-        if (frequencySlider!= null)
+   /*     if (frequencySlider!= null)
         {
             if (frequency != frequencySlider.value) 
             {
@@ -183,7 +278,7 @@ public class WaveMonitor : UdonSharpBehaviour
             if (frequencyQuenchTime <= 0)
                 CalcParameters();
         }
-    }
+    } */
     //* UI Toggle Handlers
 
     public void PlayChanged()
@@ -192,7 +287,7 @@ public class WaveMonitor : UdonSharpBehaviour
         {
             if (TogglePlay.isOn)
             {
-                animationPlay = true;
+                AnimationPlay = true;
             }
         }
     }
@@ -202,7 +297,7 @@ public class WaveMonitor : UdonSharpBehaviour
         if (TogglePause != null)
         {
             if (TogglePause.isOn)
-                animationPlay = false;
+                AnimationPlay = false;
         }
     }
 
@@ -212,11 +307,7 @@ public class WaveMonitor : UdonSharpBehaviour
         {
             if (ToggleReset.isOn)
             {
-                if (texture != null)
-                {
-                    texture.Initialize();
-                }
-                ResetEffect();
+                ResetTriggerState = resetTriggerState+1;
                 ToggleReset.isOn = false;
             }
         }
@@ -281,11 +372,44 @@ public class WaveMonitor : UdonSharpBehaviour
         }
     }
 
+    private void UpdateOwnerShip()
+    {
+        bool isLocal = Networking.IsOwner(this.gameObject);
+        if (frequencyControl != null)
+            frequencyControl.IsInteractible = isLocal;
+
+        if (TogViewDisplacement != null)
+            TogViewDisplacement.interactable = isLocal;
+        if ( TogViewTension != null)
+            TogViewTension.interactable = isLocal;
+        if (TogViewAmplitudeSquare != null)
+            TogViewAmplitudeSquare.interactable = isLocal;
+        if (TogViewEnergy != null)
+            TogViewEnergy.interactable = isLocal;
+        if (TogglePlay != null)
+            TogglePlay.interactable = isLocal;
+        if (TogglePause != null)
+            TogglePause.interactable = isLocal;
+        if (ToggleReset != null)
+            ToggleReset.interactable = isLocal;
+    }
+
+    public override void OnOwnershipTransferred(VRCPlayerApi player)
+    {
+        UpdateOwnerShip();
+    }
+
     void Start()
     {
+        if (frequencyControl != null)
+        {
+            requestedFrequency = frequency;
+            frequencyControl.SetValues(frequency,minFrequency,maxFrequency);
+        }
         CalcParameters();
         ShowDisplacement = true;
         UpdateUI();
+        UpdateOwnerShip();
 
         if (texture != null)
         {
@@ -309,13 +433,6 @@ public class WaveMonitor : UdonSharpBehaviour
                 // Camera orthographic size is image height in space/2 width is determined by aspect ratio
                 //obstaclesCamera.orthographicSize = SimDimensions.y / 2f;
             }
-        }
-
-        UpdateFrequencyUI();
-        if (frequencySlider != null) 
-        {
-            MaxFrequency= frequencySlider.maxValue;
-            MinFrequency= frequencySlider.minValue;
         }
     }
 
@@ -348,6 +465,7 @@ public class WaveMonitor : UdonSharpBehaviour
                 if (frequencyQuenchTime <= 0)
                 {
                     frequency = requestedFrequency;
+                    RequestSerialization();
                     CalcParameters();
                     if (!freqPointerIsDown)
                         ResetEffect();
