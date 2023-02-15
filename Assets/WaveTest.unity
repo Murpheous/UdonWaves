@@ -368,7 +368,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &68698930
 MonoBehaviour:
-  m_ObjectHideFlags: 2
+  m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -1424,7 +1424,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &538238800
 MonoBehaviour:
-  m_ObjectHideFlags: 2
+  m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -2845,7 +2845,7 @@ MonoBehaviour:
   apertureCount: 2
   apertureWidth: 0.05
   aperturePitch: 0.125
-  UiPanel: {fileID: 1791901997}
+  UiPanel: {fileID: 0}
   labelSlits: {fileID: 1675543140}
   labelSlitPitch: {fileID: 1391214951}
   labelSlitWidth: {fileID: 253721118}
@@ -4198,18 +4198,6 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   m_IsOn: 0
---- !u!114 &1826427257 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1143197885194155144, guid: 93a2206fcac766446b5d66c797f8a106,
-    type: 3}
-  m_PrefabInstance: {fileID: 7618532143010140921}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 862794444}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 52f23ed1ae0c9354885d127d652116dd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1826869185
 GameObject:
   m_ObjectHideFlags: 0
@@ -9980,7 +9968,7 @@ MonoBehaviour:
   SimDimensions: {x: 2, y: 2}
   effect: {x: 5, y: 0, z: 0, w: 0}
   frequency: 2
-  frequencyControl: {fileID: 1826427257}
+  frequencyControl: {fileID: 0}
   CFL: 0.4
   waveSpeedPixels: 64
   simulationMaterial: {fileID: 2100000, guid: 2dcfa7fe472afa24cab4179976935e21, type: 2}
