@@ -211,7 +211,7 @@ public class particleSim : UdonSharpBehaviour
 
                         if (quantumDistribution.EnableScatter)
                         {
-                            vUpdated.z += (quantumDistribution.RandomImpulse)*0.01f; // * planckValue);
+                            vUpdated.z += (quantumDistribution.RandomImpulse())*0.01f; // * planckValue);
                         }
                         particles[i].velocity = vUpdated;   
                     }

@@ -104,15 +104,15 @@ public class WaveMonitor : UdonSharpBehaviour
     public Toggle TogglePlay;
     public Toggle TogglePause;
     public Toggle ToggleReset;
-    [UdonSynced,FieldChangeCallback(nameof(ShowDisplacement))]
+    [SerializeField, UdonSynced,FieldChangeCallback(nameof(ShowDisplacement))]
     private bool showDisplacement = true;
-    [UdonSynced, FieldChangeCallback(nameof(ShowTension))]
-    public bool showTension = false;
-    [UdonSynced, FieldChangeCallback(nameof(ShowSquaredAmplitudes))]
-    public bool showSquaredAmplitudes = false;
-    [UdonSynced, FieldChangeCallback(nameof(ShowEnergy))]
-    public bool showEnergy = false;
-    [UdonSynced,FieldChangeCallback(nameof(AnimationPlay))]
+    [SerializeField, UdonSynced, FieldChangeCallback(nameof(ShowTension))]
+    private bool showTension = false;
+    [SerializeField, UdonSynced, FieldChangeCallback(nameof(ShowSquaredAmplitudes))]
+    private bool showSquaredAmplitudes = false;
+    [SerializeField, UdonSynced, FieldChangeCallback(nameof(ShowEnergy))]
+    private bool showEnergy = false;
+    [SerializeField, UdonSynced,FieldChangeCallback(nameof(AnimationPlay))]
     private bool animationPlay = true;
     [UdonSynced, FieldChangeCallback(nameof(ResetTriggerState))]
     private int resetTriggerState = 0;
@@ -407,6 +407,7 @@ public class WaveMonitor : UdonSharpBehaviour
             frequencyControl.SetValues(frequency,minFrequency,maxFrequency);
         }
         CalcParameters();
+        showDisplacement= false; // Force update of displacement visible
         ShowDisplacement = true;
         UpdateUI();
         UpdateOwnerShip();

@@ -127,17 +127,19 @@ public class QuantumScatter : UdonSharpBehaviour
         }
     }
 
-    public float RandomImpulse
+    public float RandomImpulse()
     {
-        get
-        {
-            if (!_IsEnabled || _numSlits <= 0)
-                return 0.0f;
-            float randSample = RandomSample;
-            return randSample * _outputScale;
-        }
+        if (!_IsEnabled || _numSlits <= 0)
+            return 0.0f;
+        float randSample = RandomSample;
+        return randSample * _outputScale;
     }
 
+    public Vector3 RandomReaction(float particleSpeed, Vector3 indcidentVelocity)
+    {
+        int maxLookup = Mathf.FloorToInt(particleSpeed);
+        return indcidentVelocity;
+    }
     public double[] Distribution
     {
         get
