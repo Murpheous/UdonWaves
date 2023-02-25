@@ -4,7 +4,9 @@
 Properties
 {
     _Color("Color", color) = (1, 1, 0, 0)
-    _ColorNeg("ColorNeg", color) = (0, 0.3, 1, 0)
+    _ColorNeg("ColorBase", color) = (0, 0.3, 1, 0)
+    _ColorVel("ColorVelocity", color) = (0, 0.3, 1, 0)
+    _ColorFlow("ColorFlow", color) = (1, 0.3, 0, 0)
     _ViewSelection("Show A=0, A^2=1, E=2",Range(0.0,2.0)) = 0.0    
     _DispTex("Disp Texture", 2D) = "gray" {}
     _Glossiness("Smoothness", Range(0,1)) = 0.5
@@ -35,6 +37,8 @@ sampler2D _DispTex;
 float4 _DispTex_TexelSize;
 fixed4 _Color;
 fixed4 _ColorNeg;
+fixed4 _ColorVel;
+fixed4 _ColorFlow;
 half _Glossiness;
 half _Metallic;
 
@@ -44,6 +48,8 @@ struct appdata
     float4 tangent  : TANGENT;
     float3 normal   : NORMAL;
     float2 texcoord : TEXCOORD0;
+    float2 texcoord1 : TEXCOORD1;
+    float2 texcoord2 : TEXCOORD2;
 };
 
 struct Input 
@@ -84,7 +90,7 @@ void surf(Input IN, inout SurfaceOutputStandard o)
     float v3;
     float v4;
     float range;
-    
+    fixed4 theColor = _Color;
     if (showAmp)
     {
         val = tex2D(_DispTex, IN.uv_DispTex).r;
@@ -102,6 +108,7 @@ void surf(Input IN, inout SurfaceOutputStandard o)
         v3 = tex2D(_DispTex, IN.uv_DispTex - duv.zy).b;
         v4 = tex2D(_DispTex, IN.uv_DispTex + duv.zy).b;
         range = val;
+        theColor = _ColorVel;
     }
     else //(showEnergy)
     {
@@ -111,6 +118,7 @@ void surf(Input IN, inout SurfaceOutputStandard o)
         v3 = sq(tex2D(_DispTex, IN.uv_DispTex - duv.zy).r) + sq(tex2D(_DispTex, IN.uv_DispTex - duv.zy).b);
         v4 = sq(tex2D(_DispTex, IN.uv_DispTex + duv.zy).r) + sq(tex2D(_DispTex, IN.uv_DispTex + duv.zy).b);
         range = val;
+        theColor = _ColorFlow;
     }
     if (showSquared)
     {
@@ -120,8 +128,9 @@ void surf(Input IN, inout SurfaceOutputStandard o)
         v3 *= v3;
         v4 *= v4;
         range = val;
+
     }
-    o.Albedo = lerp(_ColorNeg.rgb, _Color.rgb, range);
+    o.Albedo = lerp(_ColorNeg.rgb, theColor, range);
     o.Normal = normalize(float3(v1 - v2, v3 - v4, 0.3));
 }
 
