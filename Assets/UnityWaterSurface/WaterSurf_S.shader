@@ -48,8 +48,8 @@ struct appdata
     float4 tangent  : TANGENT;
     float3 normal   : NORMAL;
     float2 texcoord : TEXCOORD0;
-    float2 texcoord1 : TEXCOORD1;
-    float2 texcoord2 : TEXCOORD2;
+//    float2 texcoord1 : TEXCOORD1;
+//    float2 texcoord2 : TEXCOORD2;
 };
 
 struct Input 
