@@ -10,7 +10,8 @@ using System.Net.Sockets;
 public class WaveMonitor : UdonSharpBehaviour
 {
     public CustomRenderTexture texture;
-    public Vector2Int SimDimensions = new Vector2Int(2,1);
+    public Vector2 tankDimensions = new Vector2(2,2);
+    public Vector2Int tankResolution = new Vector2Int(1536, 1536);
 
     [Header("Stimulus")]
     public Vector4 effect;
@@ -87,7 +88,11 @@ public class WaveMonitor : UdonSharpBehaviour
 
     float dt; // Time step
     float effectPeriod = 1;
-
+    // Wave properties
+    public float WaveSpeed
+    {
+        get => (waveSpeedPixels * tankDimensions.x) / tankResolution.x;
+    }
     float lambdaEffect = 1;
     public Material simulationMaterial = null;
     public Material surfaceMaterial = null;

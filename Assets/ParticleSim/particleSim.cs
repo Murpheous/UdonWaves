@@ -19,7 +19,15 @@ public class particleSim : UdonSharpBehaviour
     private float frequency = 1.5f;
     private Color sourceColour = Color.gray;
     private float sourceSpeed = 0.25f;
-    private float frequencyMax = 3f;
+    [SerializeField]
+    private float frequencyMax = 2f;
+    [SerializeField]
+    private float frequencyMin = 1.0f;
+    [SerializeField]
+    private float waveSpeed = 1.0f;
+    [SerializeField]
+    private float lambdaMin = 1.0f;
+    private float spatialFreqMax = 3f;
     // Only works if particles travel in decreasing X direction
     public float apertureX = -100;
     public float averageSpeed = 0.5f;
@@ -226,7 +234,19 @@ public class particleSim : UdonSharpBehaviour
         }
     }
 
-
+    private void initialize()
+    {
+        if (waveControl == null)
+            return;
+        frequencyMax = waveControl.MaxFrequency;
+        frequencyMin = waveControl.MinFrequency;
+        waveSpeed = waveControl.WaveSpeed;
+        lambdaMin = waveSpeed / frequencyMax;
+        if (quantumDistribution != null)
+        {
+            quantumDistribution.LambdaMin = lambdaMin;
+        }
+    }
     public void checkFrequency()
     {
         if (waveControl == null)
@@ -234,8 +254,6 @@ public class particleSim : UdonSharpBehaviour
         if (frequency != waveControl.Frequency) 
         {
             frequency = waveControl.Frequency;
-            float frequencyMax = waveControl.MaxFrequency;
-            float frequencyMin = waveControl.MinFrequency;
             float rangeFrac = (frequency - frequencyMin) / (frequencyMax - frequencyMin);
             sourceColour = lerpColour(rangeFrac);
             float speedFrac = 2*frequency/frequencyMax;
@@ -265,5 +283,6 @@ public class particleSim : UdonSharpBehaviour
             apertureXfrm= apertureControl.transform;
         if ((sourceXfrm != null) && (apertureXfrm != null))
             apertureX = apertureXfrm.position.x;
+        initialize();
     }
 }

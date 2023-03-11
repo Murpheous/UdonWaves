@@ -32,6 +32,37 @@ public class QuantumScatter : UdonSharpBehaviour
     private int[] nDistributionLookup;
     [SerializeField]
     private int nDistributionSum = 0;
+    [SerializeField,Range(1f,24f)]
+    private float lambdaMin = 1;
+    [SerializeField]
+    private float spatialFreqMax = 1;
+    [SerializeField]
+    private float spatialFreqIncident = 1;
+    public float SpatialFreqMax
+    {
+        get => spatialFreqMax;
+        set
+        {
+            if (value == 0)
+                return;
+            spatialFreqMax = value;
+        }
+    }
+    public float LambdaMin 
+    { 
+        get => lambdaMin; 
+        set
+        {
+            if (value == 0)
+                return;
+            value = Mathf.Abs(value);
+            if (lambdaMin != value)
+            {
+                lambdaMin = value;
+                spatialFreqMax = 1 / lambdaMin;
+            }
+        } 
+    }
 
     public bool EnableScatter
     {
