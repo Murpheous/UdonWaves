@@ -54,17 +54,20 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 5264127327851712199}
-  _numSlits: 2
-  _slitWidth: 0.03
-  _slitPitch: 0.09
-  _xformPoints: 1024
-  _transformScale: 0.001
-  _outputScale: 1
-  _xformHeight: 512
-  _IsInitialized: 0
-  _IsEnabled: 0
-  _dCurrentMax: 0
+  numApertures: 2
+  apertureWidth: 0.04166666
+  aperturePitch: 0.1666666
+  pointsWide: 1024
+  thetaPerDistributionStep: 0.0016
+  outputScale: 1
+  pointsHigh: 512
+  isInitialized: 0
+  isEnabled: 1
+  randomWidths: 
+  currentMax: 0
   nDistributionSum: 0
+  lambdaMin: 1
+  spatialFreqMax: 1
 --- !u!114 &5264127327851712199
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -108,7 +111,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &5264127328321770170
 Transform:
   m_ObjectHideFlags: 0
@@ -151,6 +154,10 @@ MonoBehaviour:
   apertureControl: {fileID: 0}
   waveControl: {fileID: 0}
   quantumDistribution: {fileID: 5264127327851712198}
+  frequencyMax: 2
+  frequencyMin: 1
+  waveSpeed: 1
+  lambdaMin: 1
   apertureX: -100
   averageSpeed: 0.5
 --- !u!114 &5264127328321770149

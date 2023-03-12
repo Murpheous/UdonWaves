@@ -1,53 +1,90 @@
 ﻿
 using UdonSharp;
 using UnityEngine;
-using System;
 using Random = UnityEngine.Random;
 using VRC.SDKBase;
 using VRC.Udon;
+using Newtonsoft.Json.Linq;
 
 public class QuantumScatter : UdonSharpBehaviour
 {
     [SerializeField]
-    private int _numSlits = 8;
+    private int numApertures = 8;
     [SerializeField]
-    private float _slitWidth = 0.8f;
+    private float apertureWidth = 0.8f;
+    private float apertureLambda;
+    
+    public float ApertureWidth
+    {
+        get => apertureWidth;
+        set 
+        {
+            if (apertureWidth != value)
+                isInitialized = false;
+            apertureWidth = value;
+        }
+    }
+
     [SerializeField]
-    private double _slitPitch = 4.0d;
+    private float aperturePitch = 4.0f;
+    private float pitchLamba;
+    public float AperturePitch 
+    { 
+        get => aperturePitch;
+        set
+        {
+            if (aperturePitch != value)
+                isInitialized = false;
+            aperturePitch = value;
+        }
+    }
+
     [SerializeField]
-    private int _xformPoints = 8192;
+    private int pointsWide = 1024;
+    public int PointsWide
+    {
+        get => pointsWide;
+        set
+        {
+            if (pointsWide != value)
+                isInitialized = false;
+            pointsWide = value;
+        }
+    }
+
+
     [SerializeField]
-    private float _transformScale = 0.0016F; // The change in x per transform point for the fourier transform;
+    private float outputScale = 1;
     [SerializeField]
-    private float _outputScale = 1;
+    private int pointsHigh = 512;
+    public int PointsHigh
+    {
+        get { return pointsHigh; }
+        set
+        {
+            if (pointsHigh != value)
+            {
+                if (pointsHigh != value)
+                    isInitialized = false;
+                pointsHigh = value;
+            }
+        }
+    }
     [SerializeField]
-    private int _xformHeight = 512;
+    private bool isInitialized = false;
     [SerializeField]
-    private bool _IsInitialized = false;
+    private bool isEnabled = true;
+    private float[] currentDistribution;
+    //[SerializeField] 
+    private int[] randomWidths;
     [SerializeField]
-    private bool _IsEnabled = true;
-    private double[] dCurrentDistribution;
-    [SerializeField]
-    private double _dCurrentMax;
+    private float currentMax;
     private int[] nDistributionLookup;
     [SerializeField]
     private int nDistributionSum = 0;
-    [SerializeField,Range(1f,24f)]
+    [SerializeField,Range(0.001f,1f)]
     private float lambdaMin = 1;
-    [SerializeField]
-    private float spatialFreqMax = 1;
-    [SerializeField]
-    private float spatialFreqIncident = 1;
-    public float SpatialFreqMax
-    {
-        get => spatialFreqMax;
-        set
-        {
-            if (value == 0)
-                return;
-            spatialFreqMax = value;
-        }
-    }
+
     public float LambdaMin 
     { 
         get => lambdaMin; 
@@ -56,98 +93,66 @@ public class QuantumScatter : UdonSharpBehaviour
             if (value == 0)
                 return;
             value = Mathf.Abs(value);
-            if (lambdaMin != value)
-            {
-                lambdaMin = value;
-                spatialFreqMax = 1 / lambdaMin;
-            }
+            if (value != lambdaMin)
+                isInitialized = false;
+            lambdaMin = value;
         } 
     }
 
     public bool EnableScatter
     {
-        get { return _IsEnabled; }
-        set { _IsEnabled = value; }
+        get { return isEnabled; }
+        set { isEnabled = value; }
     }
     public int NumSlits
     {
-        get { return _numSlits; }
+        get => numApertures;
+        set
+        {
+            if (numApertures != value)
+                isInitialized = false;
+            numApertures = value;
+        }
     }
+    /*
     public void SetGratingBySizes(int numSlts, float slitWidth, float barWidth)
     {
-        _numSlits = numSlts;
-        _slitWidth = slitWidth;
-        _slitPitch = slitWidth + barWidth;
-        if (_numSlits > 0)
+        numApertures = numSlts;
+        apertureWidth = slitWidth;
+        aperturePitch = slitWidth + barWidth;
+        if (numApertures > 0)
             Recalc();
     }
 
     public void SetGratingByRatio(int numSlts, float slitWidth, float barRatio)
     {
         Debug.Log("SetGratingByRatio");
-        _numSlits = numSlts;
-        _slitWidth = slitWidth;
-        _slitPitch = slitWidth + (barRatio * slitWidth);
-        if (_numSlits > 0)
+        numApertures = numSlts;
+        apertureWidth = slitWidth;
+        aperturePitch = slitWidth + (barRatio * slitWidth);
+        if (numApertures > 0)
+            Recalc();
+    }
+    */
+    public void SetGratingByPitch(int numSlts, float slitWidth, float slitPitch, float lambadMin)
+    {
+        LambdaMin = lambdaMin;
+        NumSlits = numSlts;
+        ApertureWidth = slitWidth;
+        AperturePitch = slitPitch;
+        if (numApertures > 0)
             Recalc();
     }
 
-    public void SetGratingByPitch(int numSlts, float slitWidth, float slitPitch)
-    {
-        _numSlits = numSlts;
-        _slitWidth = slitWidth;
-        _slitPitch = slitPitch;
-        if (_numSlits > 0)
-            Recalc();
-    }
-
-    /* <summary>
- * FilterSpatialScale is the spatial sampling scale used to analyze the slit pattern.
- * if it is large, the momentum distribution is narrow (quantum effect is reduced) 
- * and if small, then the distribution is wider.
- </summary> */
-    public float SpatialScale
-    {
-        get
-        {
-            return _transformScale;
-        }
-    }
-    public int PointsWide
-    {
-        get { return _xformPoints; }
-        set
-        {
-            if (_xformPoints != value)
-            {
-                _xformPoints = value;
-                if (_IsInitialized)
-                    Recalc();
-            }
-        }
-    }
-    public int PointsHigh
-    {
-        get { return _xformHeight; }
-        set
-        {
-            if (_xformHeight != value)
-            {
-                _xformHeight = value;
-                if (_IsInitialized)
-                    Recalc();
-            }
-        }
-    }
 
     /// Get integer that gives a value inside the integer (digitised) from the humongous array distribution lookups that is the indexes across the 8192 point array
     public int RandomSample
     {
         get
         {
-            if (!_IsEnabled || _numSlits <= 0)
+            if (!isEnabled || numApertures <= 0)
                 return 0;
-            if (!_IsInitialized)
+            if (!isInitialized)
                 Recalc();
             int min = (-nDistributionSum) + 1;
             int nRand = Random.Range(min, nDistributionSum);
@@ -160,10 +165,10 @@ public class QuantumScatter : UdonSharpBehaviour
 
     public float RandomImpulse()
     {
-        if (!_IsEnabled || _numSlits <= 0)
+        if (!isEnabled || numApertures <= 0)
             return 0.0f;
         float randSample = RandomSample;
-        return randSample * _outputScale;
+        return randSample * outputScale;
     }
 
     public Vector3 RandomReaction(float particleSpeed, Vector3 indcidentVelocity)
@@ -171,23 +176,23 @@ public class QuantumScatter : UdonSharpBehaviour
         int maxLookup = Mathf.FloorToInt(particleSpeed);
         return indcidentVelocity;
     }
-    public double[] Distribution
+    public float[] Distribution
     {
         get
         {
-            if ((!_IsInitialized) || (dCurrentDistribution.Length <= 0))
+            if (!isInitialized)
                 Recalc();
-            return dCurrentDistribution;
+            return currentDistribution;
         }
     }
 
-    public double currentMax
+    public float CurrentMax
     {
         get
         {
-            if ((!_IsInitialized) || (dCurrentDistribution.Length <= 0))
+            if (!isInitialized)
                 Recalc();
-            return _dCurrentMax;
+            return currentMax;
         }
     }
 
@@ -195,72 +200,66 @@ public class QuantumScatter : UdonSharpBehaviour
     {
         int[] nCurrentDistribution;
         nDistributionSum = 0;
-        _IsInitialized = true;
-        if (_xformPoints <= 0)
-            _xformPoints = 1024;
-        if (dCurrentDistribution == null)
-            dCurrentDistribution = new double[_xformPoints];
-        nCurrentDistribution = new int[_xformPoints];
-        dCurrentDistribution.Initialize();
-        // Single distribution is 7Pi wide double is 16Pi
-        float scaleSingle = (float)((7.0d * Math.PI) / (_slitWidth * _xformPoints));
-        float scaleGrating = (float)((18.0d * Math.PI) / (_slitPitch * _xformPoints));
-        if ((_numSlits == 1) || (scaleSingle > scaleGrating))
-        {
-            _transformScale = scaleSingle;
-        }
-        else
-        {
-            _transformScale = scaleGrating;
-        }
-        _outputScale = (float)(_transformScale / Math.PI);
+        isInitialized = true;
+        if (pointsWide <= 0)
+            pointsWide = 1024;
+        if (currentDistribution == null)
+            currentDistribution = new float[pointsWide];
+        // Calculte aperture parameters in terms of width per (min lambda)
+        if (lambdaMin == 0)
+            lambdaMin = apertureWidth;
+        apertureLambda = apertureWidth / lambdaMin;
+        pitchLamba = aperturePitch / lambdaMin;
+        nCurrentDistribution = new int[pointsWide];
+        currentDistribution.Initialize();
+        outputScale = 1/pointsWide*lambdaMin;
         // Assume momentum spectrum is symmetrical so calculate from zero.
-        _dCurrentMax = 0.0;
-        for (int q = 0; q < _xformPoints; q++)
+        currentMax = 0f;
+        float tau = Mathf.PI * 2;
+        for (int nPoint = 0; nPoint < pointsWide; nPoint++)
         {
-            double dSingleslitValue = 1;
-            double dX = _transformScale * q;
-            if (q != 0)
-                dSingleslitValue = Math.Sin(dX * _slitWidth) / (dX * _slitWidth);
+            float singleSlitValue = 1;
+            float dX = (tau * nPoint) / pointsWide; 
+            if (nPoint != 0)
+                singleSlitValue = Mathf.Sin(dX * apertureLambda) / (dX * apertureLambda);
 
-            if (_numSlits > 1)
+            if (numApertures > 1)
             {
-                double dManySlitValue = 1.0d;
-                double dSinNqd = Math.Sin(_numSlits * dX * _slitPitch);
-                double dSinqd = Math.Sin(dX * _slitPitch);
+                float manySlitValue = 1.0f;
+                float dSinqd = Mathf.Sin(dX * aperturePitch);
                 if (dSinqd == 0)
-                    dManySlitValue = _numSlits;
+                    manySlitValue = numApertures;
                 else
-                    dManySlitValue = dSinNqd / dSinqd;
-                dCurrentDistribution[q] = (dSingleslitValue * dSingleslitValue) * (dManySlitValue * dManySlitValue);
+                    manySlitValue = Mathf.Sin(numApertures * dX * aperturePitch) / dSinqd; 
+                currentDistribution[nPoint] = (singleSlitValue * singleSlitValue) * (manySlitValue * manySlitValue);
             }
             else
             {
-                dCurrentDistribution[q] = (dSingleslitValue * dSingleslitValue);
+                currentDistribution[nPoint] = (singleSlitValue * singleSlitValue);
             }
-            if (dCurrentDistribution[q] > _dCurrentMax)
-                _dCurrentMax = dCurrentDistribution[q];
+            if (currentDistribution[nPoint] > currentMax)
+                currentMax = currentDistribution[nPoint];
         }
         // Now Convert Distribution to Integer Distribution;
-        double dScale = ((double)_xformHeight) / _dCurrentMax;
-        for (int q = 0; q < _xformPoints; q++)
+        float dScale = pointsHigh / currentMax;
+        for (int nPoint = 0; nPoint < pointsWide; nPoint++)
         {
-            nCurrentDistribution[q] = (int)(dCurrentDistribution[q] * dScale);
-            nDistributionSum += nCurrentDistribution[q];
+            nCurrentDistribution[nPoint] = (int)(currentDistribution[nPoint] * dScale);
+            nDistributionSum += nCurrentDistribution[nPoint];
 
         }
         // Now make a linear array with the length of each segment equal to the height of probability density function.
         if (nDistributionLookup != null)
-        {
             nDistributionLookup = null;
-        }
         nDistributionLookup = new int[nDistributionSum];
+        randomWidths = new int[pointsWide];
         int nCtr = 0;
-        for (int q = 0; q < _xformPoints; q++)
+        for (int nPoint = 0; nPoint < pointsWide; nPoint++)
         {
-            for (int p = 0; p < nCurrentDistribution[q]; p++)
+            randomWidths[nPoint] = nCtr;
+            for (int p = 0; p < nCurrentDistribution[nPoint]; p++)
             {
-                nDistributionLookup[nCtr] = q;
+                nDistributionLookup[nCtr] = nPoint;
                 nCtr++;
             }
         }
@@ -268,6 +267,6 @@ public class QuantumScatter : UdonSharpBehaviour
 
     private void Start()
     {
-        dCurrentDistribution = new double[_xformPoints];
+        Recalc();
     }
 }

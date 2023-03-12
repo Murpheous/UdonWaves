@@ -1288,8 +1288,23 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 5264127327851712198, guid: 360236e3a72eee440a320d04ab222157,
         type: 3}
-      propertyPath: _IsEnabled
+      propertyPath: isEnabled
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5264127327851712198, guid: 360236e3a72eee440a320d04ab222157,
+        type: 3}
+      propertyPath: lambdaMin
+      value: 0.02083333
+      objectReference: {fileID: 0}
+    - target: {fileID: 5264127327851712198, guid: 360236e3a72eee440a320d04ab222157,
+        type: 3}
+      propertyPath: pointsHigh
+      value: 256
+      objectReference: {fileID: 0}
+    - target: {fileID: 5264127327851712198, guid: 360236e3a72eee440a320d04ab222157,
+        type: 3}
+      propertyPath: pointsWide
+      value: 512
       objectReference: {fileID: 0}
     - target: {fileID: 5264127327851712198, guid: 360236e3a72eee440a320d04ab222157,
         type: 3}
@@ -1302,6 +1317,11 @@ PrefabInstance:
       propertyPath: waveControl
       value: 
       objectReference: {fileID: 5239915332397845300}
+    - target: {fileID: 5264127328321770148, guid: 360236e3a72eee440a320d04ab222157,
+        type: 3}
+      propertyPath: frequencyMax
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 5264127328321770148, guid: 360236e3a72eee440a320d04ab222157,
         type: 3}
       propertyPath: apertureControl
@@ -1372,11 +1392,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: ParticlePlane
-      objectReference: {fileID: 0}
-    - target: {fileID: 5264127328321770171, guid: 360236e3a72eee440a320d04ab222157,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 360236e3a72eee440a320d04ab222157, type: 3}
