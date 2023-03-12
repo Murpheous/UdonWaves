@@ -2759,8 +2759,8 @@ MonoBehaviour:
   barHeight: 0.12
   barThickness: 0.005
   apertureCount: 2
-  apertureWidth: 0.05
-  aperturePitch: 0.125
+  apertureWidth: 0.04166666
+  aperturePitch: 0.16666664
   UiPanel: {fileID: 0}
   labelSlits: {fileID: 1675543140}
   labelSlitPitch: {fileID: 1391214951}
@@ -5237,7 +5237,8 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 5239915332397845299}
   texture: {fileID: 8600000, guid: be8c672ce9314b1409c245d2c813b108, type: 2}
-  SimDimensions: {x: 2, y: 2}
+  tankDimensions: {x: 2, y: 2}
+  tankResolution: {x: 1536, y: 1536}
   effect: {x: 5, y: 0, z: 0, w: 0}
   frequency: 2.263
   frequencyControl: {fileID: 862794446}
