@@ -1004,12 +1004,12 @@ MonoBehaviour:
   useAssignedLayers: 0
   DynamicPrefabs: []
   DynamicMaterials:
-  - {fileID: 2100000, guid: bf920649a2f22254f85a4e053660bcb5, type: 2}
-  - {fileID: 2100000, guid: 3ed24290b5b8eb0409d547190aea1922, type: 2}
-  - {fileID: 2100000, guid: efa07ce449c439644942e3d00435374a, type: 2}
   - {fileID: 2100000, guid: d9a3fdbbf8e90784ab94b3efffbfad17, type: 2}
   - {fileID: 2100000, guid: 4fa0e7fe273f6ff4a8e1eb320ed0d357, type: 2}
+  - {fileID: 2100000, guid: efa07ce449c439644942e3d00435374a, type: 2}
   - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: bf920649a2f22254f85a4e053660bcb5, type: 2}
+  - {fileID: 2100000, guid: 3ed24290b5b8eb0409d547190aea1922, type: 2}
   - {fileID: 2100000, guid: 941e37e4043fcf046800a2bfd105400d, type: 2}
   - {fileID: 2100000, guid: 6d92d30b2c87d194883953b2f09e7b1f, type: 2}
   - {fileID: 2100000, guid: 87294f02d9437b8479f6d772f8b00a8d, type: 2}
@@ -1076,6 +1076,10 @@ MonoBehaviour:
     ID: 12
   - gameObject: {fileID: 862794444}
     ID: 13
+  - gameObject: {fileID: 578771811}
+    ID: 14
+  - gameObject: {fileID: 578771812}
+    ID: 15
   portraitCameraPositionOffset: {x: 0, y: 0, z: 0}
   portraitCameraRotationOffset: {x: 0, y: 1, z: 0, w: -0.00000004371139}
 --- !u!4 &367000747
@@ -1393,8 +1397,25 @@ PrefabInstance:
       propertyPath: m_Name
       value: ParticlePlane
       objectReference: {fileID: 0}
+    - target: {fileID: 5264127328321770171, guid: 360236e3a72eee440a320d04ab222157,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 360236e3a72eee440a320d04ab222157, type: 3}
+--- !u!1 &578771811 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5264127328321770171, guid: 360236e3a72eee440a320d04ab222157,
+    type: 3}
+  m_PrefabInstance: {fileID: 578771810}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &578771812 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5264127327851712197, guid: 360236e3a72eee440a320d04ab222157,
+    type: 3}
+  m_PrefabInstance: {fileID: 578771810}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &662871518
 GameObject:
   m_ObjectHideFlags: 0
@@ -4612,7 +4633,7 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: PlayPauseChanged
+          m_StringArgument: PauseChanged
           m_BoolArgument: 0
         m_CallState: 2
   m_IsOn: 0
@@ -4994,7 +5015,7 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: PlayPauseChanged
+          m_StringArgument: PlayChanged
           m_BoolArgument: 0
         m_CallState: 2
   m_IsOn: 1

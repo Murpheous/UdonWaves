@@ -52,9 +52,6 @@ public class QuantumScatter : UdonSharpBehaviour
         }
     }
 
-
-    [SerializeField]
-    private float outputScale = 1;
     [SerializeField]
     private int pointsHigh = 512;
     public int PointsHigh
@@ -84,6 +81,10 @@ public class QuantumScatter : UdonSharpBehaviour
     private int nDistributionSum = 0;
     [SerializeField,Range(0.001f,1f)]
     private float lambdaMin = 1;
+    [SerializeField]
+    private float spatialFrequencyMax = 1;
+    [SerializeField]
+    private float outputScale = 1;
 
     public float LambdaMin 
     { 
@@ -146,36 +147,39 @@ public class QuantumScatter : UdonSharpBehaviour
 
 
     /// Get integer that gives a value inside the integer (digitised) from the humongous array distribution lookups that is the indexes across the 8192 point array
-    public int RandomSample
+    int SubsetSample(int DistributionRange)
     {
-        get
-        {
-            if (!isEnabled || numApertures <= 0)
-                return 0;
-            if (!isInitialized)
-                Recalc();
-            int min = (-nDistributionSum) + 1;
-            int nRand = Random.Range(min, nDistributionSum);
-            if (nRand >= 0)
-                return nDistributionLookup[nRand];
-            nRand = -nRand;
-            return -(nDistributionLookup[nRand]);
-        }
+        if (!isInitialized)
+            Recalc();
+        if (DistributionRange > nDistributionSum)
+            DistributionRange = nDistributionSum;
+        int min = (-DistributionRange) + 1;
+        int nRand = UnityEngine.Random.Range(min, DistributionRange);
+        if (nRand >= 0)
+            return nDistributionLookup[nRand];
+        nRand = -nRand;
+        return -(nDistributionLookup[nRand]);
     }
 
+    
     public float RandomImpulse()
     {
-        if (!isEnabled || numApertures <= 0)
-            return 0.0f;
-        float randSample = RandomSample;
+        if (numApertures <= 0)
+            return 0f;
+        float randSample = SubsetSample(nDistributionSum);
         return randSample * outputScale;
     }
 
-    public Vector3 RandomReaction(float particleSpeed, Vector3 indcidentVelocity)
+    public float RandomImpulse(float incidentFrequency)
     {
-        int maxLookup = Mathf.FloorToInt(particleSpeed);
-        return indcidentVelocity;
+        if (numApertures <= 0)
+            return 0f;
+        int distributionSegment = (int)Mathf.Clamp(incidentFrequency / spatialFrequencyMax,0f,1f)*pointsWide;
+        int distributionRange = randomWidths[distributionSegment];
+        int resultIndex = SubsetSample(distributionRange);
+        return resultIndex * outputScale;
     }
+
     public float[] Distribution
     {
         get
@@ -212,7 +216,8 @@ public class QuantumScatter : UdonSharpBehaviour
         pitchLamba = aperturePitch / lambdaMin;
         nCurrentDistribution = new int[pointsWide];
         currentDistribution.Initialize();
-        outputScale = 1/pointsWide*lambdaMin;
+        spatialFrequencyMax = 1 / lambdaMin;
+        outputScale = spatialFrequencyMax/pointsWide;
         // Assume momentum spectrum is symmetrical so calculate from zero.
         currentMax = 0f;
         float tau = Mathf.PI * 2;
