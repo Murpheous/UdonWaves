@@ -1293,7 +1293,7 @@ PrefabInstance:
     - target: {fileID: 5264127327851712198, guid: 360236e3a72eee440a320d04ab222157,
         type: 3}
       propertyPath: isEnabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5264127327851712198, guid: 360236e3a72eee440a320d04ab222157,
         type: 3}
@@ -1303,12 +1303,12 @@ PrefabInstance:
     - target: {fileID: 5264127327851712198, guid: 360236e3a72eee440a320d04ab222157,
         type: 3}
       propertyPath: pointsHigh
-      value: 256
+      value: 512
       objectReference: {fileID: 0}
     - target: {fileID: 5264127327851712198, guid: 360236e3a72eee440a320d04ab222157,
         type: 3}
       propertyPath: pointsWide
-      value: 512
+      value: 1024
       objectReference: {fileID: 0}
     - target: {fileID: 5264127327851712198, guid: 360236e3a72eee440a320d04ab222157,
         type: 3}
@@ -1401,6 +1401,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5264127329763401887, guid: 360236e3a72eee440a320d04ab222157,
+        type: 3}
+      propertyPath: EmissionModule.rateOverTime.scalar
+      value: 600
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 360236e3a72eee440a320d04ab222157, type: 3}
@@ -2795,8 +2800,8 @@ MonoBehaviour:
   barHeight: 0.12
   barThickness: 0.005
   apertureCount: 2
-  apertureWidth: 0.04166666
-  aperturePitch: 0.16666664
+  apertureWidth: 0.02
+  aperturePitch: 0.06
   UiPanel: {fileID: 0}
   labelSlits: {fileID: 1675543140}
   labelSlitPitch: {fileID: 1391214951}

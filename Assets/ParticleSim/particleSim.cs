@@ -15,10 +15,9 @@ public class particleSim : UdonSharpBehaviour
     private Transform sourceXfrm;
     private Transform apertureXfrm;
 
-    private float c = 1;
-    private float frequency = 1.5f;
     private Color sourceColour = Color.gray;
-    private float sourceSpeed = 0.25f;
+    [Header("Frequency")]
+    private float frequency = 1.5f;
     [SerializeField]
     private float frequencyMax = 2f;
     [SerializeField]
@@ -28,10 +27,14 @@ public class particleSim : UdonSharpBehaviour
     [SerializeField]
     private float lambdaMin = 1.0f;
     [SerializeField]
-    private float spatialFreqency = 3f;
+    private float freqencyFrac = 1f;
     // Only works if particles travel in decreasing X direction
+    [Header("Particle Start Conditions")]
     public float apertureX = -100;
+    [SerializeField]
     public float averageSpeed = 0.5f;
+    [SerializeField]
+    private float particleSpeed = 1;
 
     /* Functions from Duane VR for getting QM speckle dots */
     /*
@@ -212,7 +215,7 @@ public class particleSim : UdonSharpBehaviour
                 {// At Grating
                     nUpdated++;
                     particles[i].startLifetime = 10f;
-                    particles[i].remainingLifetime = 3f;
+                    particles[i].remainingLifetime = 20f;
                     float freq = particles[i].rotation;
                     if (quantumDistribution !=null)
                     {
@@ -222,7 +225,10 @@ public class particleSim : UdonSharpBehaviour
 
                         if (quantumDistribution.EnableScatter)
                         {
-                            vUpdated.z += (quantumDistribution.RandomImpulse(spatialFreqency)); // * planckValue);
+                            Vector3 unit = Vector3.right;
+                            unit.z = (quantumDistribution.RandomImpulseFrac(freqencyFrac)); // * planckValue);
+                            unit.x = -Mathf.Sqrt(1 - (unit.z * unit.z));
+                            vUpdated = unit * particleSpeed;
                         }
                         particles[i].velocity = vUpdated;   
                     }
@@ -258,7 +264,7 @@ public class particleSim : UdonSharpBehaviour
         {
             waveSpeed = waveControl.WaveSpeed;
             frequency = waveControl.Frequency;
-            spatialFreqency = frequency / waveSpeed; // 1/lambda
+            freqencyFrac = Mathf.Clamp(frequency /frequencyMax,0f,1f);
             float rangeFrac = (frequency - frequencyMin) / (frequencyMax - frequencyMin);
             sourceColour = lerpColour(rangeFrac);
             float speedFrac = 2*frequency/frequencyMax;
@@ -266,7 +272,8 @@ public class particleSim : UdonSharpBehaviour
             if (particleEmitter != null)
             {
                 main.startColor = sourceColour * 1.2f;
-                main.startSpeed = averageSpeed* speedFrac;
+                particleSpeed = averageSpeed * speedFrac;
+                main.startSpeed = particleSpeed;
             }
         }
     }

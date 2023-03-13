@@ -75,6 +75,10 @@ public class QuantumScatter : UdonSharpBehaviour
     //[SerializeField] 
     private int[] randomWidths;
     [SerializeField]
+    int distributionSegment;
+    [SerializeField]
+    int distributionRange;
+    [SerializeField]
     private float currentMax;
     private int[] nDistributionLookup;
     [SerializeField]
@@ -154,7 +158,7 @@ public class QuantumScatter : UdonSharpBehaviour
         if (DistributionRange > nDistributionSum)
             DistributionRange = nDistributionSum;
         int min = (-DistributionRange) + 1;
-        int nRand = UnityEngine.Random.Range(min, DistributionRange);
+        int nRand = Random.Range(min, DistributionRange);
         if (nRand >= 0)
             return nDistributionLookup[nRand];
         nRand = -nRand;
@@ -170,14 +174,14 @@ public class QuantumScatter : UdonSharpBehaviour
         return randSample * outputScale;
     }
 
-    public float RandomImpulse(float incidentFrequency)
+    public float RandomImpulseFrac(float incidentSpeedFrac)
     {
         if (numApertures <= 0)
             return 0f;
-        int distributionSegment = (int)Mathf.Clamp(incidentFrequency / spatialFrequencyMax,0f,1f)*pointsWide;
-        int distributionRange = randomWidths[distributionSegment];
-        int resultIndex = SubsetSample(distributionRange);
-        return resultIndex * outputScale;
+        distributionSegment = (int)(incidentSpeedFrac*(pointsWide-1));
+        distributionRange = randomWidths[distributionSegment];
+        float resultIndex = SubsetSample(distributionRange);
+        return resultIndex/pointsWide;
     }
 
     public float[] Distribution

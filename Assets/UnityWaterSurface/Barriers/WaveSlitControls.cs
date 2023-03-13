@@ -134,15 +134,15 @@ public class WaveSlitControls : UdonSharpBehaviour
     }
     public void OnPitchPlus()
     {
-        if (checkGratingWidth(ApertureWidth,AperturePitch+0.01f, ApertureCount))
-            AperturePitch = aperturePitch + 0.01f;
+        if (checkGratingWidth(ApertureWidth,AperturePitch+0.05f, ApertureCount))
+            AperturePitch = aperturePitch + 0.05f;
     }
     public void OnPitchMinus()
     {
-        if (aperturePitch <= 0.01f)
+        if (aperturePitch <= 0.005f)
             return;
         //if (checkGratingWidth(ApertureWidth, AperturePitch - 0.01f, ApertureCount))
-            AperturePitch = aperturePitch - 0.01f;
+            AperturePitch = aperturePitch - 0.005f;
     }
 
 
@@ -187,7 +187,7 @@ public class WaveSlitControls : UdonSharpBehaviour
             return true;
         if (numGaps == 1)
             return apertureWidth <= tankWidth;
-        return tankWidth >= (numGaps - 1) * aperturePitch + numGaps * apertureWidth;
+        return tankWidth >= (((numGaps - 1) * aperturePitch) + (numGaps * apertureWidth));
     }
 
     
@@ -274,6 +274,7 @@ public class WaveSlitControls : UdonSharpBehaviour
     {
         MAX_SLITS = 7;
         gratingValid= false;
+        
         UpdateOwnerShip();
         if (TankScale <= 0) TankScale = 1;
         if (tankWidth <= 0) tankWidth = 1.0f;
