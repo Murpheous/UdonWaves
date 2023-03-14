@@ -211,11 +211,17 @@ public class particleSim : UdonSharpBehaviour
             numParticles = particleEmitter.GetParticles(particles);
             for (int i=0; i<numParticles; i++)
             {
-                if ((particles[i].startLifetime < 10) && (particles[i].position.x < apertureX))
+                Vector3 pos = particles[i].position;
+                if (Mathf.Abs(pos.z) > 1) 
+                {
+                    particles[i].remainingLifetime = 0;
+                    nUpdated++;
+                }
+                else if ((particles[i].startLifetime < 10) && (particles[i].position.x < apertureX))
                 {// At Grating
                     nUpdated++;
                     particles[i].startLifetime = 10f;
-                    particles[i].remainingLifetime = 20f;
+                    particles[i].remainingLifetime = 40f;
                     float freq = particles[i].rotation;
                     if (quantumDistribution !=null)
                     {

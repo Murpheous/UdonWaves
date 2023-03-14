@@ -80,9 +80,12 @@ public class QuantumScatter : UdonSharpBehaviour
     int distributionRange;
     [SerializeField]
     private float currentMax;
-    private int[] nDistributionLookup;
     [SerializeField]
-    private int nDistributionSum = 0;
+    private int[][] nDistributionLookup;
+    [SerializeField]
+    private int nDistributionSum = 1;
+    [SerializeField]
+    private int nRow = 0;
     [SerializeField,Range(0.001f,1f)]
     private float lambdaMin = 1;
     [SerializeField]
@@ -159,10 +162,12 @@ public class QuantumScatter : UdonSharpBehaviour
             DistributionRange = nDistributionSum;
         int min = (-DistributionRange) + 1;
         int nRand = Random.Range(min, DistributionRange);
+        int abs = Mathf.Abs(nRand);
+        int row = abs / 256;
+        int col = abs % 256;
         if (nRand >= 0)
-            return nDistributionLookup[nRand];
-        nRand = -nRand;
-        return -(nDistributionLookup[nRand]);
+            return nDistributionLookup[row][col];
+        return -(nDistributionLookup[row][col]);
     }
 
     
@@ -181,7 +186,8 @@ public class QuantumScatter : UdonSharpBehaviour
         distributionSegment = (int)(incidentSpeedFrac*(pointsWide-1));
         distributionRange = randomWidths[distributionSegment];
         float resultIndex = SubsetSample(distributionRange);
-        return resultIndex/pointsWide;
+        //float resultF = resultIndex - Mathf.Sign(resultIndex);
+        return resultIndex/(distributionSegment + 1);
     }
 
     public float[] Distribution
@@ -203,10 +209,11 @@ public class QuantumScatter : UdonSharpBehaviour
             return currentMax;
         }
     }
-
+    int[] nCurrentDistribution;
     private void Recalc()
     {
-        int[] nCurrentDistribution;
+        if (nDistributionLookup == null)
+            return;
         nDistributionSum = 0;
         isInitialized = true;
         if (pointsWide <= 0)
@@ -224,22 +231,25 @@ public class QuantumScatter : UdonSharpBehaviour
         outputScale = spatialFrequencyMax/pointsWide;
         // Assume momentum spectrum is symmetrical so calculate from zero.
         currentMax = 0f;
-        float tau = Mathf.PI * 2;
+        float scaleTheta = Mathf.PI;
+        float singleSlitValue;
+        float manySlitValue;
+        float dSinqd;
+        float dX;
         for (int nPoint = 0; nPoint < pointsWide; nPoint++)
         {
-            float singleSlitValue = 1;
-            float dX = (tau * nPoint) / pointsWide; 
+            singleSlitValue = 1;
+            dX = (scaleTheta * nPoint) / pointsWide; 
             if (nPoint != 0)
                 singleSlitValue = Mathf.Sin(dX * apertureLambda) / (dX * apertureLambda);
 
             if (numApertures > 1)
             {
-                float manySlitValue = 1.0f;
-                float dSinqd = Mathf.Sin(dX * aperturePitch);
+                dSinqd = Mathf.Sin(dX * pitchLamba);
                 if (dSinqd == 0)
                     manySlitValue = numApertures;
                 else
-                    manySlitValue = Mathf.Sin(numApertures * dX * aperturePitch) / dSinqd; 
+                    manySlitValue = Mathf.Sin(numApertures * dX * pitchLamba) / dSinqd; 
                 currentDistribution[nPoint] = (singleSlitValue * singleSlitValue) * (manySlitValue * manySlitValue);
             }
             else
@@ -253,29 +263,37 @@ public class QuantumScatter : UdonSharpBehaviour
         float dScale = pointsHigh / currentMax;
         for (int nPoint = 0; nPoint < pointsWide; nPoint++)
         {
-            nCurrentDistribution[nPoint] = (int)(currentDistribution[nPoint] * dScale);
-            nDistributionSum += nCurrentDistribution[nPoint];
-
+            nCurrentDistribution[nPoint] = Mathf.RoundToInt(currentDistribution[nPoint] * dScale);
         }
         // Now make a linear array with the length of each segment equal to the height of probability density function.
-        if (nDistributionLookup != null)
-            nDistributionLookup = null;
-        nDistributionLookup = new int[nDistributionSum];
         randomWidths = new int[pointsWide];
-        int nCtr = 0;
+        int nCol;
+        nDistributionSum = 0;
         for (int nPoint = 0; nPoint < pointsWide; nPoint++)
         {
-            randomWidths[nPoint] = nCtr;
+            randomWidths[nPoint] = nDistributionSum;
             for (int p = 0; p < nCurrentDistribution[nPoint]; p++)
             {
-                nDistributionLookup[nCtr] = nPoint;
-                nCtr++;
+                nRow = nDistributionSum / 256;
+                nCol = nDistributionSum % 256;
+                nDistributionLookup[nRow][nCol] = nPoint;
+                nDistributionSum += 1;
             }
         }
     }
 
     private void Start()
     {
+        nDistributionLookup = new int[8][];
+        for (int i = 0; i < 8; i++)
+            nDistributionLookup[i] = new int[256];
+/*        for (int i = 0; i < 33; i++)
+        {
+            for (int j = 0; j < 256; j++)
+            {
+                nDistributionLookup[i][j] = -1;
+            }
+        } */
         Recalc();
     }
 }
