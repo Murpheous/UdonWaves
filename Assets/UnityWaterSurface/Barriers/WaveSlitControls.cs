@@ -41,7 +41,8 @@ public class WaveSlitControls : UdonSharpBehaviour
     [SerializeField] TextMeshProUGUI labelSlits;
     [SerializeField] TextMeshProUGUI labelSlitPitch;
     [SerializeField] TextMeshProUGUI labelSlitWidth;
-
+    [Header("Quantum Particle Lookup"), SerializeField]
+    private QuantumScatter particleScatter;
     private int MAX_SLITS = 7;
     bool gratingValid;
 
@@ -297,7 +298,9 @@ public class WaveSlitControls : UdonSharpBehaviour
             gratingValid = true;
             setupLattice();
             UpdateLabels();
-        }
+            if (particleScatter != null)
+                particleScatter.SetGratingByPitch(apertureCount,apertureWidth,aperturePitch);
+                }
     }
 
 }

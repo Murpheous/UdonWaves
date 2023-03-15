@@ -404,6 +404,7 @@ public class WaveMonitor : UdonSharpBehaviour
         UpdateOwnerShip();
     }
 
+
     void Start()
     {
         if (frequencyControl != null)
