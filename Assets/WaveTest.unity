@@ -941,6 +941,7 @@ GameObject:
   - component: {fileID: 367000745}
   - component: {fileID: 367000749}
   - component: {fileID: 367000748}
+  - component: {fileID: 367000750}
   m_Layer: 0
   m_Name: VRCWorld
   m_TagString: Untagged
@@ -1004,14 +1005,14 @@ MonoBehaviour:
   useAssignedLayers: 0
   DynamicPrefabs: []
   DynamicMaterials:
-  - {fileID: 2100000, guid: efa07ce449c439644942e3d00435374a, type: 2}
-  - {fileID: 2100000, guid: 3ed24290b5b8eb0409d547190aea1922, type: 2}
   - {fileID: 2100000, guid: bf920649a2f22254f85a4e053660bcb5, type: 2}
-  - {fileID: 2100000, guid: 186ea0c4424d0cd4e8baef514df7e854, type: 2}
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
-  - {fileID: 2100000, guid: 73f15352496d2c3488a48c90aedf2234, type: 2}
+  - {fileID: 2100000, guid: 3ed24290b5b8eb0409d547190aea1922, type: 2}
+  - {fileID: 2100000, guid: efa07ce449c439644942e3d00435374a, type: 2}
   - {fileID: 2100000, guid: d9a3fdbbf8e90784ab94b3efffbfad17, type: 2}
   - {fileID: 2100000, guid: 4fa0e7fe273f6ff4a8e1eb320ed0d357, type: 2}
+  - {fileID: 2100000, guid: 73f15352496d2c3488a48c90aedf2234, type: 2}
+  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 186ea0c4424d0cd4e8baef514df7e854, type: 2}
   - {fileID: 2100000, guid: 941e37e4043fcf046800a2bfd105400d, type: 2}
   - {fileID: 2100000, guid: 6d92d30b2c87d194883953b2f09e7b1f, type: 2}
   - {fileID: 2100000, guid: 87294f02d9437b8479f6d772f8b00a8d, type: 2}
@@ -1151,6 +1152,19 @@ MonoBehaviour:
   strafeSpeed: 1
   gravity: 1
   useLegacyLocomotion: 0
+--- !u!114 &367000750
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 367000744}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 229740497, guid: 4ecd63eff847044b68db9453ce219299, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  contentType: 1
 --- !u!1 &443930014
 GameObject:
   m_ObjectHideFlags: 0
@@ -1309,7 +1323,7 @@ PrefabInstance:
     - target: {fileID: 5264127327851712198, guid: 360236e3a72eee440a320d04ab222157,
         type: 3}
       propertyPath: pointsWide
-      value: 256
+      value: 128
       objectReference: {fileID: 0}
     - target: {fileID: 5264127327851712198, guid: 360236e3a72eee440a320d04ab222157,
         type: 3}
@@ -1317,6 +1331,11 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 5264127327851712198, guid: 360236e3a72eee440a320d04ab222157,
         type: 3}
+    - target: {fileID: 5264127327851712199, guid: 360236e3a72eee440a320d04ab222157,
+        type: 3}
+      propertyPath: _syncMethod
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 5264127328321770148, guid: 360236e3a72eee440a320d04ab222157,
         type: 3}
       propertyPath: waveControl
@@ -1338,6 +1357,11 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 5264127328321770148, guid: 360236e3a72eee440a320d04ab222157,
         type: 3}
+    - target: {fileID: 5264127328321770149, guid: 360236e3a72eee440a320d04ab222157,
+        type: 3}
+      propertyPath: _syncMethod
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 5264127328321770170, guid: 360236e3a72eee440a320d04ab222157,
         type: 3}
       propertyPath: m_RootOrder
@@ -1402,6 +1426,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5264127329763401887, guid: 360236e3a72eee440a320d04ab222157,
+        type: 3}
+      propertyPath: startDelay.scalar
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5264127329763401887, guid: 360236e3a72eee440a320d04ab222157,
         type: 3}
@@ -2807,6 +2836,7 @@ MonoBehaviour:
   labelSlits: {fileID: 1675543140}
   labelSlitPitch: {fileID: 1391214951}
   labelSlitWidth: {fileID: 253721118}
+  MAX_SLITS: 7
 --- !u!1001 &1254740835
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5280,7 +5310,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 5239915332397845299}
   texture: {fileID: 8600000, guid: be8c672ce9314b1409c245d2c813b108, type: 2}
   tankDimensions: {x: 2, y: 2}
-  tankResolution: {x: 1536, y: 1536}
+  tankResolutionX: 1536
+  tankResolutionY: 1536
   effect: {x: 5, y: 0, z: 0, w: 0}
   frequency: 2.4
   frequencyControl: {fileID: 862794446}

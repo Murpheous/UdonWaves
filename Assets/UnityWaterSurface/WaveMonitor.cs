@@ -11,7 +11,8 @@ public class WaveMonitor : UdonSharpBehaviour
 {
     public CustomRenderTexture texture;
     public Vector2 tankDimensions = new Vector2(2,2);
-    public Vector2Int tankResolution = new Vector2Int(1536, 1536);
+    public int tankResolutionX = 1536;
+    public int tankResolutionY = 1536;
 
     [Header("Stimulus")]
     public Vector4 effect;
@@ -24,6 +25,8 @@ public class WaveMonitor : UdonSharpBehaviour
 
     private float minFrequency = 1;
     private float maxFrequency = 3;
+    private bool isStarted = false;
+    public bool IsStarted { get => isStarted; private set => isStarted = value; }
     public float Frequency 
     { 
         get
@@ -45,6 +48,7 @@ public class WaveMonitor : UdonSharpBehaviour
                 if (frequencyQuenchTime <= 0)
                     CalcParameters();
             }
+            RequestSerialization();
         } 
     }
 
@@ -76,22 +80,31 @@ public class WaveMonitor : UdonSharpBehaviour
     }
 
 
-    public float MaxFrequency { get => maxFrequency;private set => maxFrequency = value;}
+    public float MaxFrequency { get => maxFrequency;}
     public float MinFrequency { get => minFrequency; private set => minFrequency = value; }
 
+    public float LambdaMin
+    {
+        get => WaveSpeed / maxFrequency;
+    }
     [Header("Wave paraemters")]
 
     public float CFL = 0.5f;
     float CFLSq = 0.25f;
     float AbsorbFactor = 0.25f;
-    public float waveSpeedPixels = 40; // Speed
+    [SerializeField]
+    private float waveSpeedPixels = 40; // Speed
 
     float dt; // Time step
     float effectPeriod = 1;
     // Wave properties
     public float WaveSpeed
     {
-        get => (waveSpeedPixels * tankDimensions.x) / tankResolution.x;
+        get
+        {
+            Debug.Log(string.Format("WaveSpeed= WSP({0})*D({1}/R({2})", waveSpeedPixels, tankDimensions.x, tankResolutionX));
+            return (waveSpeedPixels * tankDimensions.x) / tankResolutionX;
+        }
     }
     float lambdaEffect = 1;
     public Material simulationMaterial = null;
@@ -441,6 +454,7 @@ public class WaveMonitor : UdonSharpBehaviour
                 //obstaclesCamera.orthographicSize = SimDimensions.y / 2f;
             }
         }
+        IsStarted = true;
     }
 
     void UpdateWaves(float dt)

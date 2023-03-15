@@ -23,8 +23,6 @@ public class particleSim : UdonSharpBehaviour
     [SerializeField]
     private float frequencyMin = 1.0f;
     [SerializeField]
-    private float waveSpeed = 1.0f;
-    [SerializeField]
     private float lambdaMin = 1.0f;
     [SerializeField]
     private float freqencyFrac = 1f;
@@ -35,7 +33,7 @@ public class particleSim : UdonSharpBehaviour
     public float averageSpeed = 0.5f;
     [SerializeField]
     private float particleSpeed = 1;
-
+    private bool isStarted = false;
     /* Functions from Duane VR for getting QM speckle dots */
     /*
     float randomSample()
@@ -115,7 +113,7 @@ public class particleSim : UdonSharpBehaviour
     private float currentGratingWidth = -1;
     private void checkSourceDimensions()
     {
-        if (apertureControl == null)
+        if (!isStarted || (apertureControl == null))
             return;
         if (apertureControl.GratingWidth != currentGratingWidth)
         {
@@ -130,19 +128,29 @@ public class particleSim : UdonSharpBehaviour
                 shapeModule.scale = shapeScale;
             }
         }
-        if ((apertureControl.ApertureCount != currentSlitCount) ||
-            (apertureControl.ApertureWidth != currentSlitWidth) ||
-            (apertureControl.AperturePitch != currentSlitPitch))
+        if (quantumDistribution != null)
         {
-            currentSlitPitch = apertureControl.AperturePitch;
-            currentSlitWidth = apertureControl.ApertureWidth;
-            currentSlitCount = apertureControl.ApertureCount;
-            //generateSpeckleDistribution();
-            
-            if (quantumDistribution != null)
+            float slitPitch = apertureControl.AperturePitch;
+            float slitWidth = apertureControl.ApertureWidth;
+            int slitCount = apertureControl.ApertureCount;
+            float lmin = 0;
+            if ((slitCount != currentSlitCount) ||
+                (slitWidth != currentSlitWidth) ||
+                (slitPitch != currentSlitPitch))
             {
-                quantumDistribution.SetGratingByPitch(currentSlitCount, currentSlitWidth, currentSlitPitch,lambdaMin);
-                quantumDistribution.EnableScatter = true;
+
+                if (waveControl != null)
+                {
+                    lmin = waveControl.LambdaMin;
+                    Debug.Log("Lmin=" + lambdaMin);
+                }
+                //generateSpeckleDistribution();
+                if (quantumDistribution.SetGratingByPitch(slitCount, slitWidth, slitPitch,lmin))
+                {
+                    currentSlitPitch = slitPitch;
+                    currentSlitWidth = slitWidth;
+                    currentSlitCount = slitCount;
+                }
             } 
 
         }
@@ -222,20 +230,15 @@ public class particleSim : UdonSharpBehaviour
                     nUpdated++;
                     particles[i].startLifetime = 10f;
                     particles[i].remainingLifetime = 40f;
-                    float freq = particles[i].rotation;
                     if (quantumDistribution !=null)
                     {
                         
 						Vector3 vUpdated;
-						vUpdated = particles[i].velocity;
+                        Vector3 unit = Vector3.right;
+                        unit.z = (quantumDistribution.RandomImpulseFrac(freqencyFrac)); // * planckValue);
+                        unit.x = -Mathf.Sqrt(1 - (unit.z * unit.z));
+                        vUpdated = unit * particleSpeed;
 
-                        if (quantumDistribution.EnableScatter)
-                        {
-                            Vector3 unit = Vector3.right;
-                            unit.z = (quantumDistribution.RandomImpulseFrac(freqencyFrac)); // * planckValue);
-                            unit.x = -Mathf.Sqrt(1 - (unit.z * unit.z));
-                            vUpdated = unit * particleSpeed;
-                        }
                         particles[i].velocity = vUpdated;   
                     }
                     // Set Velocity
@@ -251,24 +254,29 @@ public class particleSim : UdonSharpBehaviour
 
     private void initialize()
     {
-        if (waveControl == null)
+        if ((waveControl == null) || (!waveControl.IsStarted))
             return;
+        Debug.Log("Initializing");
         frequencyMax = waveControl.MaxFrequency;
-        frequencyMin = waveControl.MinFrequency;
-        waveSpeed = waveControl.WaveSpeed;
-        lambdaMin = waveSpeed / frequencyMax;
-        if (quantumDistribution != null)
-        {
-            quantumDistribution.LambdaMin = lambdaMin;
-        }
-    }
-    public void checkFrequency()
-    {
-        if (waveControl == null)
+        if (frequencyMax <= 0)
             return;
+        frequencyMin = waveControl.MinFrequency;
+        lambdaMin = waveControl.LambdaMin;
+        isStarted = true;
+    }
+    public bool checkFrequency()
+    {
+        if (waveControl == null || (!waveControl.IsStarted))
+            return false;
+        bool changed = (frequencyMax != waveControl.MaxFrequency);
+        if (!changed)
+            changed = (frequencyMin != waveControl.MinFrequency);
+        if (!changed)
+            changed = (lambdaMin != waveControl.LambdaMin);
+        if (changed)
+            initialize();
         if (frequency != waveControl.Frequency) 
         {
-            waveSpeed = waveControl.WaveSpeed;
             frequency = waveControl.Frequency;
             freqencyFrac = Mathf.Clamp(frequency /frequencyMax,0f,1f);
             float rangeFrac = (frequency - frequencyMin) / (frequencyMax - frequencyMin);
@@ -282,12 +290,27 @@ public class particleSim : UdonSharpBehaviour
                 main.startSpeed = particleSpeed;
             }
         }
+        return true;
     }
 
+    float timeLeft = 2;
     private void Update()
     {
-        checkSourceDimensions();
-        checkFrequency();
+        timeLeft -= Time.deltaTime;
+        if (timeLeft < 0)
+        {
+            timeLeft = 2;
+            if (!isStarted || frequencyMax <= 0)
+               initialize();
+            if (!isStarted)
+                return;
+            Debug.Log("Check Dimensions & Frequency");
+            if (!checkFrequency())
+                return;
+            if (frequencyMax <= 0)
+                return;
+            checkSourceDimensions();
+        }
     }
     void Start()
     {
@@ -301,6 +324,5 @@ public class particleSim : UdonSharpBehaviour
             apertureXfrm= apertureControl.transform;
         if ((sourceXfrm != null) && (apertureXfrm != null))
             apertureX = apertureXfrm.position.x;
-        initialize();
     }
 }

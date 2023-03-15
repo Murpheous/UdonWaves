@@ -12,9 +12,8 @@ public class QuantumScatter : UdonSharpBehaviour
     private int numApertures = 8;
     [SerializeField]
     private float apertureWidth = 0.8f;
-    private float apertureLambda;
     [SerializeField]
-    QuantumScatter scatterLookup;
+    private float apertureLambda;
     
     public float ApertureWidth
     {
@@ -43,10 +42,9 @@ public class QuantumScatter : UdonSharpBehaviour
     [Header("Number of Lookup Points")]
     [SerializeField]
     private int pointsWide = 256;
-    //[SerializeField]
-    private bool isInitialized = false;
     [SerializeField]
-    private bool isEnabled = true;
+    private bool isInitialized = false;
+    private bool gotSettings = false;
     //[SerializeField]
     private float[] currentIntegral;
     //[SerializeField] 
@@ -57,8 +55,6 @@ public class QuantumScatter : UdonSharpBehaviour
     int distributionSegment;
     [SerializeField]
     int distributionRange;
-    [SerializeField]
-    private int nRow = 0;
     [SerializeField,Range(0.001f,1f)]
     private float lambdaMin = 1;
 
@@ -76,11 +72,6 @@ public class QuantumScatter : UdonSharpBehaviour
         } 
     }
 
-    public bool EnableScatter
-    {
-        get { return isEnabled; }
-        set { isEnabled = value; }
-    }
     public int NumApertures
     {
         get => numApertures;
@@ -92,21 +83,27 @@ public class QuantumScatter : UdonSharpBehaviour
         }
     }
 
-    public void SetGratingByPitch(int apertureCount, float slitWidth, float slitPitch)
+    public bool SetGratingByPitch(int apertureCount, float slitWidth, float slitPitch, float lambdaMinInitial)
     {
-        //LambdaMin = lambdaMinVal;
+        Debug.Log(string.Format("SetGrating: lmin={0} s={1} w={2} p={3}", lambdaMinInitial, apertureCount,slitWidth,slitPitch));
+        if ((lambdaMinInitial > 100) || (apertureCount <= 0) || (slitWidth <= 0))
+            return false;
+        LambdaMin = lambdaMinInitial;
         NumApertures = apertureCount;
         ApertureWidth = slitWidth;
         AperturePitch = slitPitch;
-        Recalc();
+        gotSettings = true;
+        isInitialized = false;
+        return true;
     }
+
 
 
     /// Get integer that gives a value inside the integer (digitised) from the humongous array distribution lookups that is the indexes across the 8192 point array
     float SubsetSample(int DistributionRange)
     {
         if (!isInitialized)
-            Recalc();
+            return 0;
         if (DistributionRange > pointsWide)
             DistributionRange = pointsWide;
         int min = (-DistributionRange) + 1;
@@ -140,17 +137,16 @@ public class QuantumScatter : UdonSharpBehaviour
 
     private void Recalc()
     {
-        if (numApertures <= 0)
+        Debug.Log("Recalc");
+        if (!gotSettings)
             return;
         isInitialized = true;
-        if (pointsWide <= 0)
-            pointsWide = 128;
         // Calculte aperture parameters in terms of width per (min lambda)
         if (lambdaMin == 0)
             lambdaMin = apertureWidth;
         apertureLambda = apertureWidth / lambdaMin;
         pitchLamba = aperturePitch / lambdaMin;
-
+        Debug.Log(string.Format("apertureLambda={0} pitchLambda={1}",apertureLambda, pitchLamba));
         // Assume momentum spectrum is symmetrical so calculate from zero.
         float integralSum = 0f;
         float scaleTheta = Mathf.PI;
@@ -187,6 +183,7 @@ public class QuantumScatter : UdonSharpBehaviour
         float normScale = pointsWide / integralSum;
         for (int nPoint = 0; nPoint <= pointsWide; nPoint++)
             currentIntegral[nPoint] = currentIntegral[nPoint] * normScale;
+        Debug.Log(string.Format("integralSum={0} normScale={1}", integralSum, normScale));
 
         // Now invert the table.
         int indexAbove = 0;
@@ -217,6 +214,7 @@ public class QuantumScatter : UdonSharpBehaviour
                 inverseDistribution[i] = Mathf.Lerp(indexBelow,indexAbove,frac);
             }
         }
+        Debug.Log("Recalc Done");
     }
     float nextTick = 2;
     private void Update()
@@ -225,7 +223,8 @@ public class QuantumScatter : UdonSharpBehaviour
         if (nextTick < 0)
         {
             nextTick = 1;
-
+            if (gotSettings && (!isInitialized))
+                Recalc();
         }
     }
 
@@ -235,6 +234,5 @@ public class QuantumScatter : UdonSharpBehaviour
         currentIntegral = new float[pointsWide+1];
         inverseDistribution = new float[pointsWide+1];
         isInitialized = false;
-        Recalc();
     }
 }

@@ -36,14 +36,14 @@ public class WaveSlitControls : UdonSharpBehaviour
     // dimensions
 
 
-    [Header("UI Interface")]
+    [Header("UI Conponents")]
     [SerializeField] GameObject UiPanel;
     [SerializeField] TextMeshProUGUI labelSlits;
     [SerializeField] TextMeshProUGUI labelSlitPitch;
     [SerializeField] TextMeshProUGUI labelSlitWidth;
-    [Header("Quantum Particle Lookup"), SerializeField]
-    private QuantumScatter particleScatter;
+    [Header("Constants"), SerializeField]
     private int MAX_SLITS = 7;
+    //private QuantumScatter particleScatter;
     bool gratingValid;
 
     void setText(TextMeshProUGUI tmproLabel, string text)
@@ -298,9 +298,9 @@ public class WaveSlitControls : UdonSharpBehaviour
             gratingValid = true;
             setupLattice();
             UpdateLabels();
-            if (particleScatter != null)
-                particleScatter.SetGratingByPitch(apertureCount,apertureWidth,aperturePitch);
-                }
+            // if (particleScatter != null)
+            //    particleScatter.SetGratingByPitch(apertureCount, apertureWidth, aperturePitch);
+        }
     }
 
 }
