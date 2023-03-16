@@ -18,6 +18,8 @@ public class particleSim : UdonSharpBehaviour
     private Toggle togglePlay;
     [SerializeField]
     private Toggle toggleStop;
+    [SerializeField]
+    private Toggle toggleReset;
     [SerializeField,UdonSynced,FieldChangeCallback(nameof(ParticlesPlaying))]
     private bool particlesPlaying;
 
@@ -227,6 +229,14 @@ public class particleSim : UdonSharpBehaviour
             if ((!value) && (toggleStop != null) && (!toggleStop.isOn))
                 toggleStop.isOn = true;
             particlesPlaying = value;
+            if (particleEmitter != null)
+            {
+                if (particlesPlaying)
+                    particleEmitter.Play();
+                else
+                    particleEmitter.Pause();
+            }
+
             RequestSerialization();
         }
     }
@@ -252,6 +262,24 @@ public class particleSim : UdonSharpBehaviour
         }
     }
 
+    public void ResetChanged()
+    {
+        if (toggleReset != null)
+        {
+            if (toggleReset.isOn)
+            {
+                resetParticles();
+                toggleReset.isOn = false;
+            }
+        }
+    }
+
+    public void resetParticles()
+    {
+        if (particleEmitter != null)
+            particleEmitter.Clear();
+    }
+
     public override void OnOwnershipTransferred(VRCPlayerApi player)
     {
         bool isLocal = Networking.IsOwner(this.gameObject);
@@ -262,9 +290,15 @@ public class particleSim : UdonSharpBehaviour
             toggleStop.interactable = isLocal;
     }
 
+    private float timeRemaining = 0.5f;
+
     private void LateUpdate()
     {
-        if (apertureX <= 0)
+        timeRemaining -= Time.deltaTime;
+        if (timeRemaining > 0)
+            return;
+        timeRemaining += 0.1f;
+        if ((apertureX <= 0) || !particlesPlaying)
             return;
         if (particleEmitter != null)
         {
