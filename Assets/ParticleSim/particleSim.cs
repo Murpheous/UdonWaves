@@ -2,6 +2,8 @@
 using System;
 using UdonSharp;
 using UnityEngine;
+using UnityEngine.SocialPlatforms;
+using UnityEngine.UI;
 using VRC.SDKBase;
 using VRC.Udon;
 
@@ -11,6 +13,13 @@ public class particleSim : UdonSharpBehaviour
     [SerializeField] private WaveSlitControls apertureControl;
     [SerializeField] private WaveMonitor waveControl;
     [SerializeField] private QuantumScatter quantumDistribution;
+    [Header("UI Components")]
+    [SerializeField]
+    private Toggle togglePlay;
+    [SerializeField]
+    private Toggle toggleStop;
+    [SerializeField,UdonSynced,FieldChangeCallback(nameof(ParticlesPlaying))]
+    private bool particlesPlaying;
 
     private Transform sourceXfrm;
     private Transform apertureXfrm;
@@ -206,6 +215,52 @@ public class particleSim : UdonSharpBehaviour
         }
     }
     */
+    /* UI Related
+*/
+    public bool ParticlesPlaying
+    {
+        get => particlesPlaying;
+        set
+        {
+            if ((value) && (togglePlay != null) && (!togglePlay.isOn))
+                togglePlay.isOn = true;
+            if ((!value) && (toggleStop != null) && (!toggleStop.isOn))
+                toggleStop.isOn = true;
+            particlesPlaying = value;
+            RequestSerialization();
+        }
+    }
+
+
+    public void PlayChanged()
+    {
+        if (togglePlay != null)
+        {
+            if (togglePlay.isOn)
+            {
+                ParticlesPlaying = true;
+            }
+        }
+    }
+
+    public void StopChanged()
+    {
+        if (toggleStop != null)
+        {
+            if (toggleStop.isOn)
+                ParticlesPlaying = false;
+        }
+    }
+
+    public override void OnOwnershipTransferred(VRCPlayerApi player)
+    {
+        bool isLocal = Networking.IsOwner(this.gameObject);
+
+        if (togglePlay != null)
+            togglePlay.interactable = isLocal;
+        if (toggleStop != null)
+            toggleStop.interactable = isLocal;
+    }
 
     private void LateUpdate()
     {
@@ -324,5 +379,6 @@ public class particleSim : UdonSharpBehaviour
             apertureXfrm= apertureControl.transform;
         if ((sourceXfrm != null) && (apertureXfrm != null))
             apertureX = apertureXfrm.position.x;
+        ParticlesPlaying = particlesPlaying;
     }
 }

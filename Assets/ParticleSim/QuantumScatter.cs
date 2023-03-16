@@ -217,6 +217,7 @@ public class QuantumScatter : UdonSharpBehaviour
         Debug.Log("Recalc Done");
     }
     float nextTick = 2;
+
     private void Update()
     {
         nextTick -= Time.deltaTime;
