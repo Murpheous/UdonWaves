@@ -102,7 +102,6 @@ public class WaveMonitor : UdonSharpBehaviour
     {
         get
         {
-            Debug.Log(string.Format("WaveSpeed= WSP({0})*D({1}/R({2})", waveSpeedPixels, tankDimensions.x, tankResolutionX));
             return (waveSpeedPixels * tankDimensions.x) / tankResolutionX;
         }
     }
