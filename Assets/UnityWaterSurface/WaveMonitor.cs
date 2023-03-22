@@ -13,9 +13,14 @@ public class WaveMonitor : UdonSharpBehaviour
     public Vector2 tankDimensions = new Vector2(2,2);
     public int tankResolutionX = 1536;
     public int tankResolutionY = 1536;
+    [SerializeField]
+    WaveSlitControls gratingControl;
 
     [Header("Stimulus")]
-    public Vector4 effect;
+    public float effectX = 3;
+    //[SerializeField]
+    private Vector4 effect;
+    private float effectPhase;
     [Range(1f, 3f), SerializeField,UdonSynced,FieldChangeCallback(nameof(Frequency))]
     float frequency = 1f;
     //public Slider frequencySlider;
@@ -27,6 +32,8 @@ public class WaveMonitor : UdonSharpBehaviour
     private float maxFrequency = 3;
     private bool isStarted = false;
     public bool IsStarted { get => isStarted; private set => isStarted = value; }
+    float LambdaPixels { get => waveSpeedPixels / Mathf.Clamp(frequency, minFrequency, maxFrequency); }
+
     public float Frequency 
     { 
         get
@@ -66,7 +73,7 @@ public class WaveMonitor : UdonSharpBehaviour
                     {
                         frequencyQuenchTime = effectRampDuration;
                         frequencyQuenchDuration = effectRampDuration;
-                        frequencyQuenchStartValue = effect.z;
+                        frequencyQuenchStartValue = effectPhase;
                     }
                 }
                 else
@@ -278,24 +285,6 @@ public class WaveMonitor : UdonSharpBehaviour
     float effectRampDuration = 5;
     float requestedFrequency;
 
-/*    public void OnFrequencyChanged()
-    {
-        float newFreq = frequency;
-   /*     if (frequencySlider!= null)
-        {
-            if (frequency != frequencySlider.value) 
-            {
-                newFreq = frequencySlider.value;
-            }
-        }
-        if (newFreq != requestedFrequency)
-        {
-            requestedFrequency = newFreq;
-            UpdateFrequencyUI();
-            if (frequencyQuenchTime <= 0)
-                CalcParameters();
-        }
-    } */
     //* UI Toggle Handlers
 
     public void PlayChanged()
@@ -385,6 +374,7 @@ public class WaveMonitor : UdonSharpBehaviour
             simulationMaterial.SetFloat("_DeltaT", dt);
             simulationMaterial.SetFloat("_Lambda2PI", lambdaEffect/(2*Mathf.PI));
             simulationMaterial.SetVector("_Effect", effect);
+            simulationMaterial.SetFloat("_EffectPhase", effectPhase);
             simulationMaterial.SetFloat("_CFAbsorb", AbsorbFactor);
         }
     }
@@ -471,17 +461,49 @@ public class WaveMonitor : UdonSharpBehaviour
         updateTime = 0;
     }
 
+    float pollTime = 0;
+    float currentGratingWidth = 0;
     void Update()
     {
         if (animationPlay)
         {
-            waveTime += Time.deltaTime;
+            float delta = Time.deltaTime;
+            waveTime += delta;
+            pollTime -= delta;
+            if (pollTime < 0)
+            {
+                effect.x = effectX;
+                pollTime = 0.5f;
+                if (gratingControl != null)
+                {
+                    if (gratingControl.GratingWidth != currentGratingWidth)
+                    {
+                        currentGratingWidth = gratingControl.GratingWidth;
+                        int effectLen = Mathf.FloorToInt(Mathf.Clamp01(currentGratingWidth / tankDimensions.y) * tankResolutionY);
+                        effect.y = Mathf.Floor(Mathf.Clamp(tankResolutionY / 2 - (effectLen / 2 + (3 * LambdaPixels)), 0, tankResolutionY / 2));
+                        effect.z = tankResolutionY - effect.y;
+
+                        if (simulationMaterial != null)
+                        {
+                            simulationMaterial.SetVector("_Effect", effect);
+                        }
+                    }
+                }
+                else
+                {
+                    effect.y = 0; effect.z = tankResolutionY - 1;
+                    if (simulationMaterial != null)
+                    {
+                        simulationMaterial.SetVector("_Effect", effect);
+                    }
+                }
+            }
             if (frequencyQuenchTime > 0)
             {
                 frequencyQuenchTime -= Time.deltaTime;
-                effect.z = Mathf.Lerp(0, frequencyQuenchStartValue, frequencyQuenchTime / frequencyQuenchDuration);
+                effectPhase = Mathf.Lerp(0, frequencyQuenchStartValue, frequencyQuenchTime / frequencyQuenchDuration);
                 if (simulationMaterial != null)
-                    simulationMaterial.SetVector("_Effect", effect);
+                    simulationMaterial.SetFloat("_EffectPhase", effectPhase);
                 if (frequencyQuenchTime <= 0)
                 {
                     frequency = requestedFrequency;
@@ -494,9 +516,9 @@ public class WaveMonitor : UdonSharpBehaviour
 
             if (waveTime <= effectRampDuration)
             {
-                effect.z = Mathf.Lerp(0, 1, waveTime / effectRampDuration);
+                effectPhase = Mathf.Lerp(0, 1, waveTime / effectRampDuration);
                 if (simulationMaterial != null)
-                    simulationMaterial.SetVector("_Effect", effect);
+                    simulationMaterial.SetFloat("_EffectPhase", effectPhase);
             }
             
             while (updateTime < waveTime)
