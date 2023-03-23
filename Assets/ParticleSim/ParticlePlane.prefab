@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   serializationData:
-    SerializedFormat: 2
+    SerializedFormat: 0
     SerializedBytes: 
     ReferencedUnityObjects: []
     SerializedBytesString: 
@@ -56,18 +56,13 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 5264127327851712199}
   numApertures: 2
   apertureWidth: 0.04166666
+  apertureLambda: 0
   aperturePitch: 0.1666666
   pointsWide: 1024
-  thetaPerDistributionStep: 0.0016
-  outputScale: 1
-  pointsHigh: 512
   isInitialized: 0
-  isEnabled: 1
-  randomWidths: 
-  currentMax: 0
-  nDistributionSum: 0
+  distributionSegment: 0
+  distributionRange: 0
   lambdaMin: 1
-  spatialFreqMax: 1
 --- !u!114 &5264127327851712199
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -141,7 +136,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   serializationData:
-    SerializedFormat: 2
+    SerializedFormat: 0
     SerializedBytes: 
     ReferencedUnityObjects: []
     SerializedBytesString: 
@@ -154,12 +149,17 @@ MonoBehaviour:
   apertureControl: {fileID: 0}
   waveControl: {fileID: 0}
   quantumDistribution: {fileID: 5264127327851712198}
+  togglePlay: {fileID: 0}
+  toggleStop: {fileID: 0}
+  toggleReset: {fileID: 0}
+  particlesPlaying: 0
   frequencyMax: 2
   frequencyMin: 1
-  waveSpeed: 1
   lambdaMin: 1
+  freqencyFrac: 1
   apertureX: -100
   averageSpeed: 0.5
+  particleSpeed: 1
 --- !u!114 &5264127328321770149
 MonoBehaviour:
   m_ObjectHideFlags: 0
