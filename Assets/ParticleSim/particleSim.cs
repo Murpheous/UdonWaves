@@ -45,22 +45,7 @@ public class particleSim : UdonSharpBehaviour
     [SerializeField]
     private float particleSpeed = 1;
     private bool isStarted = false;
-    /* Functions from Duane VR for getting QM speckle dots */
-    /*
-    float randomSample()
-    {
-        if (cumulativeDistribution == null)
-            return 0;
-        if (cumulativeDistribution.Length <= 0)
-            return 0;
-        int nRand = UnityEngine.Random.Range(0, cumulativeDistribution.Length);
-        if (UnityEngine.Random.Range(0, 2) == 1)
-            return cumulativeDistribution[nRand];
-        else
-            return -cumulativeDistribution[nRand];
-    }
 
-    */
     public Color lerpColour(float frac)
     {
         return spectrumColour(Mathf.Lerp(700, 400, frac));
@@ -166,59 +151,6 @@ public class particleSim : UdonSharpBehaviour
 
         }
     }
-    /*
-    private float[] cumulativeDistribution;
-    float[] fExpectPlot;
-    long[] nExpectPlot;
-    private void generateSpeckleDistribution()
-    {
-        if (apertureControl == null)
-            return;
-
-        // float lambdaNanoMetres = 1; // (QM.nmRatioToEv / photonEV);
-        int resolutionAcross = 512; // _speckleDisplay.PixelsAcross;
-        int xFormHeight = 256;
-
-        // Fist calculate the horizontal distribution
-        // Horizontal Distruibution note that because of symmetry, only half of the display width is required
-        int numPointsSpeckleX = (resolutionAcross / 2) + 1;
-        if (fExpectPlot == null)
-            fExpectPlot = new float[numPointsSpeckleX];
-        fExpectPlot[0] = 1;
-        if (nExpectPlot == null)
-            nExpectPlot = new long[numPointsSpeckleX];
-        long nExpectPlotSum = 0;
-        int nCumulativeIndex = 0;
-
-        //calcExpectFourierP(ref fExpectPlot, lambda, screenDistance, _speckleDisplay.targetAreaWidth, currentSlitCount, currentSlitPitch, currentSlitWidth);
-
-            // Now Convert Distribution to Integer Distribution;
-        for (int q = 0; q < numPointsSpeckleX; q++)
-        {
-            //try
-            {
-                nExpectPlot[q] = Convert.ToInt64(fExpectPlot[q] * xFormHeight);
-                nExpectPlotSum += nExpectPlot[q];
-            }
-            //catch
-            //{
-            //    nExpectPlot[q] = 0;
-            //}
-
-        }
-        cumulativeDistribution = new float[nExpectPlotSum];
-        for (int q = 0; q < numPointsSpeckleX; q++)
-        {
-            for (int p = 0; p < nExpectPlot[q]; p++)
-            {
-            cumulativeDistribution[nCumulativeIndex] = q; // / pixelsPerMetreDisplay;
-                nCumulativeIndex++;
-            }
-        }
-    }
-    */
-    /* UI Related
-*/
     public bool ParticlesPlaying
     {
         get => particlesPlaying;
@@ -309,7 +241,7 @@ public class particleSim : UdonSharpBehaviour
             for (int i=0; i<numParticles; i++)
             {
                 Vector3 pos = particles[i].position;
-                if (Mathf.Abs(pos.z) > 1) 
+                if (Mathf.Abs(pos.z) > 0.75f) 
                 {
                     particles[i].remainingLifetime = 0;
                     nUpdated++;
@@ -317,8 +249,8 @@ public class particleSim : UdonSharpBehaviour
                 else if ((particles[i].startLifetime < 10) && (particles[i].position.x < apertureX))
                 {// At Grating
                     nUpdated++;
-                    particles[i].startLifetime = 10f;
-                    particles[i].remainingLifetime = 40f;
+                    particles[i].startLifetime = 20f;
+                    particles[i].remainingLifetime = 100f;
                     if (quantumDistribution !=null)
                     {
                         

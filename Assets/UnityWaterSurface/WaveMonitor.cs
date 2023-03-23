@@ -480,7 +480,7 @@ public class WaveMonitor : UdonSharpBehaviour
                     {
                         currentGratingWidth = gratingControl.GratingWidth;
                         int effectLen = Mathf.FloorToInt(Mathf.Clamp01(currentGratingWidth / tankDimensions.y) * tankResolutionY);
-                        effect.y = Mathf.Floor(Mathf.Clamp(tankResolutionY / 2 - (effectLen / 2 + (3 * LambdaPixels)), 0, tankResolutionY / 2));
+                        effect.y = Mathf.Floor(Mathf.Clamp(tankResolutionY / 2 - (effectLen / 2 + (1.5f * LambdaPixels)), 0, tankResolutionY / 2));
                         effect.z = tankResolutionY - effect.y;
 
                         if (simulationMaterial != null)
