@@ -13,6 +13,7 @@ public class particleSim : UdonSharpBehaviour
     [SerializeField] private WaveSlitControls apertureControl;
     [SerializeField] private WaveMonitor waveControl;
     [SerializeField] private QuantumScatter quantumDistribution;
+
     [Header("UI Components")]
     [SerializeField]
     private Toggle togglePlay;
