@@ -5556,11 +5556,14 @@ MonoBehaviour:
   tankDimensions: {x: 2.4, y: 1.5}
   tankResolutionX: 2048
   tankResolutionY: 1280
-  effect: {x: 0, y: 0, z: 0, w: 0}
+  gratingControl: {fileID: 0}
+  effectX: 3
   frequency: 2
   frequencyControl: {fileID: 862794446}
   CFL: 0.6
   waveSpeedPixels: 50
+  dt: 0
+  effectPeriod: 1
   simulationMaterial: {fileID: 2100000, guid: 2dcfa7fe472afa24cab4179976935e21, type: 2}
   surfaceMaterial: {fileID: 2100000, guid: 87440f63aab3d884c8843f939cc5af01, type: 2}
   obstaclesTex: {fileID: 8400000, guid: 75384e9f3fbb12d4b819f3eaa345f5e7, type: 2}
