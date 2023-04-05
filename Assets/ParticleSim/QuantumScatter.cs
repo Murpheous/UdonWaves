@@ -47,6 +47,7 @@ public class QuantumScatter : UdonSharpBehaviour
     private bool gotSettings = false;
     //[SerializeField]
     private float[] currentIntegral;
+    private float[] currentDistribution;
     //[SerializeField] 
     private int[] randomWidths;
     //[SerializeField]
@@ -146,7 +147,7 @@ public class QuantumScatter : UdonSharpBehaviour
             lambdaMin = apertureWidth;
         apertureLambda = apertureWidth / lambdaMin;
         pitchLamba = aperturePitch / lambdaMin;
-        Debug.Log(string.Format("apertureLambda={0} pitchLambda={1}",apertureLambda, pitchLamba));
+        // Debug.Log(string.Format("apertureLambda={0} pitchLambda={1}",apertureLambda, pitchLamba));
         // Assume momentum spectrum is symmetrical so calculate from zero.
         float integralSum = 0f;
         float scaleTheta = Mathf.PI;
@@ -177,6 +178,7 @@ public class QuantumScatter : UdonSharpBehaviour
                 thisValue = (singleSlitValue * singleSlitValue);
             }
             integralSum += thisValue;
+            currentDistribution[nPoint] = thisValue;
             currentIntegral[nPoint+1] = integralSum;
         }
         // Now Convert Distribution to a Normalized Distribution 0 to pointsWide;
@@ -233,6 +235,8 @@ public class QuantumScatter : UdonSharpBehaviour
     {
         randomWidths = new int[pointsWide+1];
         currentIntegral = new float[pointsWide+1];
+        currentDistribution = new float[pointsWide+1];
+
         inverseDistribution = new float[pointsWide+1];
         isInitialized = false;
     }
