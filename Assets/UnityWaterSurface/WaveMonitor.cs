@@ -102,8 +102,8 @@ public class WaveMonitor : UdonSharpBehaviour
     [SerializeField]
     private float waveSpeedPixels = 40; // Speed
 
-    float dt; // Time step
-    float effectPeriod = 1;
+    [SerializeField] float dt; // Time step
+    [SerializeField] float effectPeriod = 1;
     // Wave properties
     public float WaveSpeed
     {

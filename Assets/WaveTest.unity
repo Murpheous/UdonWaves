@@ -939,6 +939,7 @@ GameObject:
   - component: {fileID: 367000745}
   - component: {fileID: 367000749}
   - component: {fileID: 367000748}
+  - component: {fileID: 367000750}
   m_Layer: 0
   m_Name: VRCWorld
   m_TagString: Untagged
@@ -1148,6 +1149,19 @@ MonoBehaviour:
   strafeSpeed: 1
   gravity: 1
   useLegacyLocomotion: 0
+--- !u!114 &367000750
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 367000744}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 229740497, guid: 4ecd63eff847044b68db9453ce219299, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  contentType: 1
 --- !u!4 &434430524 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8684122271376428603, guid: 724c8d0c7367580468c8a70f70f9199e,
@@ -1312,7 +1326,7 @@ PrefabInstance:
     - target: {fileID: 5264127327851712198, guid: 360236e3a72eee440a320d04ab222157,
         type: 3}
       propertyPath: pointsWide
-      value: 128
+      value: 512
       objectReference: {fileID: 0}
     - target: {fileID: 5264127327851712198, guid: 360236e3a72eee440a320d04ab222157,
         type: 3}
@@ -2971,7 +2985,7 @@ MonoBehaviour:
   barThickness: 0.005
   apertureCount: 1
   apertureWidth: 0.07
-  aperturePitch: 0.12
+  aperturePitch: 0.14
   UiPanel: {fileID: 1791901997}
   labelSlits: {fileID: 1675543140}
   labelSlitPitch: {fileID: 1391214951}
@@ -4975,7 +4989,7 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.01
-  far clip plane: 1
+  far clip plane: 0.4
   field of view: 60
   orthographic: 1
   orthographic size: 0.75
@@ -5544,10 +5558,12 @@ MonoBehaviour:
   tankResolutionY: 1280
   gratingControl: {fileID: 1224076779}
   effectX: 2
-  frequency: 2.4
+  frequency: 2
   frequencyControl: {fileID: 862794446}
   CFL: 0.6
   waveSpeedPixels: 50
+  dt: 0
+  effectPeriod: 1
   simulationMaterial: {fileID: 2100000, guid: 2dcfa7fe472afa24cab4179976935e21, type: 2}
   surfaceMaterial: {fileID: 2100000, guid: 87440f63aab3d884c8843f939cc5af01, type: 2}
   obstaclesTex: {fileID: 8400000, guid: 75384e9f3fbb12d4b819f3eaa345f5e7, type: 2}
