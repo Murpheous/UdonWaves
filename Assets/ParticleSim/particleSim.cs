@@ -46,6 +46,7 @@ public class particleSim : UdonSharpBehaviour
     [SerializeField]
     private float particleSpeed = 1;
     private bool isStarted = false;
+    private bool hasParticles = false;
 
     public Color lerpColour(float frac)
     {
@@ -115,7 +116,7 @@ public class particleSim : UdonSharpBehaviour
         if (apertureControl.GratingWidth != currentGratingWidth)
         {
             currentGratingWidth = apertureControl.GratingWidth;
-            if (particleEmitter == null)
+            if (!hasParticles)
                 return;
             var shapeModule = particleEmitter.shape;
             if (shapeModule.shapeType == ParticleSystemShapeType.Box)
@@ -162,7 +163,7 @@ public class particleSim : UdonSharpBehaviour
             if ((!value) && (toggleStop != null) && (!toggleStop.isOn))
                 toggleStop.isOn = true;
             particlesPlaying = value;
-            if (particleEmitter != null)
+            if (hasParticles)
             {
                 if (particlesPlaying)
                     particleEmitter.Play();
@@ -209,7 +210,7 @@ public class particleSim : UdonSharpBehaviour
 
     public void resetParticles()
     {
-        if (particleEmitter != null)
+        if (hasParticles)
             particleEmitter.Clear();
     }
 
@@ -224,7 +225,7 @@ public class particleSim : UdonSharpBehaviour
     }
 
     private float timeRemaining = 0.5f;
-
+    ParticleSystem.Particle[] particles;
     private void LateUpdate()
     {
         timeRemaining -= Time.deltaTime;
@@ -233,44 +234,44 @@ public class particleSim : UdonSharpBehaviour
         timeRemaining += 0.1f;
         if ((apertureX <= 0) || !particlesPlaying)
             return;
-        if (particleEmitter != null)
+        if (!hasParticles)
+            return;
+        var numParticles = particleEmitter.particleCount;
+        var nUpdated = 0;
+        if ((particles == null) || (particles.Length < numParticles))
+            particles = new ParticleSystem.Particle[numParticles+200];
+        numParticles = particleEmitter.GetParticles(particles);
+        for (int i=0; i<numParticles; i++)
         {
-            var numParticles = particleEmitter.particleCount;
-            var nUpdated = 0;
-            var particles = new ParticleSystem.Particle[numParticles];
-            numParticles = particleEmitter.GetParticles(particles);
-            for (int i=0; i<numParticles; i++)
+            Vector3 pos = particles[i].position;
+            if (Mathf.Abs(pos.z) > 0.75f) 
             {
-                Vector3 pos = particles[i].position;
-                if (Mathf.Abs(pos.z) > 0.75f) 
+                particles[i].remainingLifetime = 0;
+                nUpdated++;
+            }
+            else if ((particles[i].startLifetime < 10) && (particles[i].position.x < apertureX))
+            {// At Grating
+                nUpdated++;
+                particles[i].startLifetime = 20f;
+                particles[i].remainingLifetime = 100f;
+                if (quantumDistribution !=null)
                 {
-                    particles[i].remainingLifetime = 0;
-                    nUpdated++;
-                }
-                else if ((particles[i].startLifetime < 10) && (particles[i].position.x < apertureX))
-                {// At Grating
-                    nUpdated++;
-                    particles[i].startLifetime = 20f;
-                    particles[i].remainingLifetime = 100f;
-                    if (quantumDistribution !=null)
-                    {
                         
-						Vector3 vUpdated;
-                        Vector3 unit = Vector3.right;
-                        unit.z = (quantumDistribution.RandomImpulseFrac(freqencyFrac)); // * planckValue);
-                        unit.x = -Mathf.Sqrt(1 - (unit.z * unit.z));
-                        vUpdated = unit * particleSpeed;
+					Vector3 vUpdated;
+                    Vector3 unit = Vector3.right;
+                    unit.z = (quantumDistribution.RandomImpulseFrac(freqencyFrac)); // * planckValue);
+                    unit.x = -Mathf.Sqrt(1 - (unit.z * unit.z));
+                    vUpdated = unit * particleSpeed;
 
-                        particles[i].velocity = vUpdated;   
-                    }
-                    // Set Velocity
-                    nUpdated++;
+                    particles[i].velocity = vUpdated;   
                 }
+                // Set Velocity
+                nUpdated++;
             }
-            if (nUpdated > 0)
-            {
-                particleEmitter.SetParticles(particles, numParticles);
-            }
+        }
+        if (nUpdated > 0)
+        {
+            particleEmitter.SetParticles(particles, numParticles);
         }
     }
 
@@ -338,6 +339,7 @@ public class particleSim : UdonSharpBehaviour
     {
         if (particleEmitter != null)
         {
+            hasParticles = true;
             sourceXfrm = particleEmitter.transform;
             var main = particleEmitter.main;
             averageSpeed = main.startSpeed.constant;

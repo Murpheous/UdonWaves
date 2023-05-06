@@ -8,8 +8,8 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: M_Mote
-  m_Shader: {fileID: 4800000, guid: 9200bec112b65ec4fbbbd33fa89c20f4, type: 3}
-  m_ShaderKeywords: _ALPHATEST_ON _EMISSION
+  m_Shader: {fileID: 10720, guid: 0000000000000000f000000000000000, type: 0}
+  m_ShaderKeywords: _ALPHATEST_ON _COLOROVERLAY_ON
   m_LightmapFlags: 0
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -66,7 +66,7 @@ Material:
     - _CameraFadingEnabled: 0
     - _CameraFarFadeDistance: 2
     - _CameraNearFadeDistance: 1
-    - _ColorMode: 0
+    - _ColorMode: 3
     - _Cull: 2
     - _Cutoff: 0.359
     - _DetailNormalMapScale: 1
@@ -75,7 +75,7 @@ Material:
     - _DistortionStrength: 1
     - _DistortionStrengthScaled: 0
     - _DstBlend: 0
-    - _EmissionEnabled: 1
+    - _EmissionEnabled: 0
     - _EnableExternalAlpha: 0
     - _FlipbookMode: 0
     - _GlossMapScale: 1
