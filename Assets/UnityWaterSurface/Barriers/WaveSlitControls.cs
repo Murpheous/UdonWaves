@@ -1,4 +1,5 @@
 ﻿
+using System.Collections.Generic;
 using TMPro;
 using UdonSharp;
 using UnityEngine;
@@ -34,7 +35,6 @@ public class WaveSlitControls : UdonSharpBehaviour
     private GameObject panelLeft;
     private GameObject panelRight;
     // dimensions
-
 
     [Header("UI Conponents")]
     [SerializeField] GameObject UiPanel;
@@ -270,6 +270,19 @@ public class WaveSlitControls : UdonSharpBehaviour
     {
         UpdateOwnerShip();
     }
+    /*
+    public int eventCount;
+    public void OnParticleCollision(GameObject other)
+    {
+        if (ps == null)
+            return;
+        eventCount++;
+        int safeSize = ps.GetSafeCollisionEventSize();
+        ParticleCollisionEvent[] collisionEvents = new ParticleCollisionEvent[safeSize];
+        int numEvents = ps.GetCollisionEvents(gameObject,collisionEvents);
+        eventCount += numEvents;
+    }
+    */
 
     void Start()
     {

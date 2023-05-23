@@ -175,7 +175,6 @@ public class particleSim : UdonSharpBehaviour
         }
     }
 
-
     public void PlayChanged()
     {
         if (togglePlay != null)
