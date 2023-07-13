@@ -188,7 +188,7 @@ public class WaveSlitControls : UdonSharpBehaviour
             return true;
         if (numGaps == 1)
             return apertureWidth <= tankWidth;
-        return tankWidth >= (((numGaps - 1) * aperturePitch) + (numGaps * apertureWidth));
+        return tankWidth >= (((numGaps - 1) * aperturePitch) + apertureWidth);
     }
 
     
