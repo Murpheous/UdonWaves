@@ -326,7 +326,7 @@ public class particleSim : UdonSharpBehaviour
                initialize();
             if (!isStarted)
                 return;
-            Debug.Log("Check Dimensions & Frequency");
+            //Debug.Log("Check Dimensions & Frequency");
             if (!checkFrequency())
                 return;
             if (frequencyMax <= 0)
