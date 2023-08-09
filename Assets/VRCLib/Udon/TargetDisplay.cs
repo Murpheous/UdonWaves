@@ -11,26 +11,40 @@ using VRC.Udon.Wrapper.Modules;
 public class TargetDisplay : UdonSharpBehaviour
 {
     [SerializeField] private ParticleSystem displayParticles;
-    [SerializeField] private int bufferMax = 20;
-    [SerializeField]
-    private Vector3 decalRotation3D = Vector3.zero;
+    [SerializeField] private int bufferMax = 40;
+    [SerializeField] private Vector3 decalRotation3D = Vector3.zero;
+    [SerializeField] private Vector3 groundRotation3D = Vector3.zero;
     private Color[] colourBuf;
     private Vector3[] locationBuf;
+    private Vector3[] rotationBuf;
+    private Vector2[] sizeLifeBuf;
     private int bufferCount = 0;
     private bool started = false;
     [SerializeField]
     float particleSize = 0.001f;
+
     [SerializeField]
-    float markerLifetime = 10f;
+    private float markerLifetime = 10f;
     public float MarkerLifetime { 
-        get => markerLifetime; 
-        set => markerLifetime = value;
+        get => markerLifetime;
+        set
+        {
+            if (value == markerLifetime) 
+                return;
+            markerLifetime = value;
+            needsReview = true;
+        }
     } 
-    Vector3 particleSize3D = Vector3.zero;
-    [SerializeField]
-    bool sizeUpdateRequired = false;
-    [SerializeField]
+
+    bool needsReview = false;
     bool dissolveRequired = false;
+    public void SetPlay(bool isPlaying)
+    {
+        if (isPlaying)
+            displayParticles.Play();
+        else
+            displayParticles.Pause();
+    }
     public float ParticleSize
     {
         get => particleSize; 
@@ -39,22 +53,37 @@ public class TargetDisplay : UdonSharpBehaviour
             if (particleSize != value)
             {
                 particleSize = value;
-                sizeUpdateRequired = true;
+                needsReview = true;
             }
-            particleSize3D = Vector3.one * particleSize;
         }
     }
 //    [SerializeField] bool useLocalX;
   //  Vector3 localPos = Vector3.zero;
-    public void PlotParticle(Vector3 location, Color color, float lifetime = 5)
+    public void PlotParticle(Vector3 location, Color color, bool onGround)
     {
         if (!started)
             return;
         if (bufferCount >= bufferMax) 
             return;
-        markerLifetime = lifetime;
         locationBuf[bufferCount] = location; 
         colourBuf[bufferCount] = color;
+        rotationBuf[bufferCount] = onGround ? groundRotation3D : decalRotation3D;
+        sizeLifeBuf[bufferCount].x = particleSize;
+        sizeLifeBuf[bufferCount].y = markerLifetime;
+        bufferCount++;
+    }
+
+    public void FadeParticle(Vector3 location, Color color, bool onGround, float particleSize, float lifetime)
+    {
+        if (!started)
+            return;
+        if (bufferCount >= bufferMax)
+            return;
+        locationBuf[bufferCount] = location;
+        colourBuf[bufferCount] = color;
+        rotationBuf[bufferCount] = onGround ? groundRotation3D : decalRotation3D;
+        sizeLifeBuf[bufferCount].x = particleSize;
+        sizeLifeBuf[bufferCount].y = lifetime;
         bufferCount++;
     }
 
@@ -82,7 +111,7 @@ public class TargetDisplay : UdonSharpBehaviour
             polltime += 0.3f;
         if (bufferCount <= 0)
             return;
-        if (!isTime && (sizeUpdateRequired || !dissolveRequired) && (bufferCount < bufferMax))
+        if (!isTime && (needsReview || !dissolveRequired) && (bufferCount < bufferMax))
             return;
         //localPos = transform.position;
         if (displayParticles == null)
@@ -93,7 +122,8 @@ public class TargetDisplay : UdonSharpBehaviour
         //float myScale = displayParticles.transform.localScale.x;
         //float particleScale = myScale * displayParticles.main.startSize.constant;
         particleCount = displayParticles.particleCount;
-        particles = new ParticleSystem.Particle[bufferCount + particleCount];
+        if ((particles == null) || (particles.Length < bufferMax + particleCount ))
+            particles = new ParticleSystem.Particle[bufferMax + particleCount];
         particleCount = displayParticles.GetParticles(particles);
         int updateCount = 0;
         for (int i = 0; i < bufferCount; i++)
@@ -102,25 +132,29 @@ public class TargetDisplay : UdonSharpBehaviour
             particle.position = locationBuf[i];
             particle.startColor = colourBuf[i];
             //particle.startSize = locationBuf[i].w;
-            particle.startSize3D = particleSize3D;
-            particle.startLifetime = markerLifetime;
+            particle.startSize = sizeLifeBuf[i].x;
+            particle.startLifetime = sizeLifeBuf[i].y;
             particle.remainingLifetime = markerLifetime;
-            particle.rotation3D = decalRotation3D;
+            particle.rotation3D = rotationBuf[i];
             particles[particleCount++] = particle;
             updateCount++;
         }
         bufferCount = 0;
-        if (sizeUpdateRequired || dissolveRequired)
+        if (needsReview || dissolveRequired)
         {
             updateCount++;
             for (int i = 0; i < particleCount; i++)
             {
-                if (sizeUpdateRequired)
-                    particles[i].startSize3D = particleSize3D;
+                if (needsReview)
+                {
+                    particles[i].startSize = particleSize;
+                    if (particles[i].remainingLifetime > markerLifetime)
+                        particles[i].remainingLifetime = markerLifetime;
+                }
                 if (dissolveRequired)
                     particles[i].remainingLifetime /= 5;
             }
-            sizeUpdateRequired = false;
+            needsReview = false;
             dissolveRequired = false;
         }
         if (updateCount > 0)
@@ -128,11 +162,13 @@ public class TargetDisplay : UdonSharpBehaviour
     }
     void Start()
     {
+        polltime = Random.Range(1f, 3f);
         if (displayParticles == null)
             displayParticles = GetComponent<ParticleSystem>();
         colourBuf = new Color[bufferMax+1];
         locationBuf = new Vector3[bufferMax+1];
-        ParticleSize = particleSize;
+        rotationBuf = new Vector3[bufferMax+1];
+        sizeLifeBuf = new Vector2[bufferMax+1];
         started = true;
     }
 }
