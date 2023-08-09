@@ -225,6 +225,7 @@ public class particleSim : UdonSharpBehaviour
 
     private float timeRemaining = 0.5f;
     ParticleSystem.Particle[] particles;
+    ParticleSystem.Particle particle;
     private void LateUpdate()
     {
         timeRemaining -= Time.deltaTime;
@@ -242,17 +243,16 @@ public class particleSim : UdonSharpBehaviour
         numParticles = particleEmitter.GetParticles(particles);
         for (int i=0; i<numParticles; i++)
         {
-            Vector3 pos = particles[i].position;
+            particle = particles[i];
+            float startLifeTime = particle.startLifetime;
+            Vector3 pos = particle.position;
             if (Mathf.Abs(pos.z) > 0.75f) 
             {
                 particles[i].remainingLifetime = 0;
                 nUpdated++;
             }
-            else if ((particles[i].startLifetime < 10) && (particles[i].position.x < apertureX))
+            else if ((startLifeTime < 10) && (pos.x < apertureX))
             {// At Grating
-                nUpdated++;
-                particles[i].startLifetime = 20f;
-                particles[i].remainingLifetime = 100f;
                 if (quantumDistribution !=null)
                 {
                         
@@ -261,11 +261,12 @@ public class particleSim : UdonSharpBehaviour
                     unit.z = (quantumDistribution.RandomImpulseFrac(freqencyFrac)); // * planckValue);
                     unit.x = -Mathf.Sqrt(1 - (unit.z * unit.z));
                     vUpdated = unit * particleSpeed;
-
                     particles[i].velocity = vUpdated;   
                 }
                 // Set Velocity
                 nUpdated++;
+                particles[i].startLifetime = 20f;
+                particles[i].remainingLifetime = 60f;
             }
         }
         if (nUpdated > 0)

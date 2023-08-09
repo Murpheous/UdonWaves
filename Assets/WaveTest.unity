@@ -1247,7 +1247,6 @@ GameObject:
   - component: {fileID: 367000745}
   - component: {fileID: 367000749}
   - component: {fileID: 367000748}
-  - component: {fileID: 367000750}
   m_Layer: 0
   m_Name: VRCWorld
   m_TagString: Untagged
@@ -1311,16 +1310,16 @@ MonoBehaviour:
   useAssignedLayers: 0
   DynamicPrefabs: []
   DynamicMaterials:
+  - {fileID: 2100000, guid: 0174816599450f24d9e87af9d8bb7450, type: 2}
+  - {fileID: 2100000, guid: a8369b958175ff74eafc4ab4ddd09a6b, type: 2}
+  - {fileID: 2100000, guid: ea0664f5fe016184c890683a8ddd2d59, type: 2}
+  - {fileID: 2100000, guid: 7835a3aa7fcfcde4cb81d63b59d2c6c0, type: 2}
+  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 73f15352496d2c3488a48c90aedf2234, type: 2}
   - {fileID: 2100000, guid: 4fa0e7fe273f6ff4a8e1eb320ed0d357, type: 2}
   - {fileID: 2100000, guid: d9a3fdbbf8e90784ab94b3efffbfad17, type: 2}
-  - {fileID: 2100000, guid: a8369b958175ff74eafc4ab4ddd09a6b, type: 2}
   - {fileID: 2100000, guid: eac9e323764af3045b88e8a6cabd5728, type: 2}
-  - {fileID: 2100000, guid: ea0664f5fe016184c890683a8ddd2d59, type: 2}
   - {fileID: 2100000, guid: 941e37e4043fcf046800a2bfd105400d, type: 2}
-  - {fileID: 2100000, guid: 73f15352496d2c3488a48c90aedf2234, type: 2}
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
-  - {fileID: 2100000, guid: 7835a3aa7fcfcde4cb81d63b59d2c6c0, type: 2}
-  - {fileID: 2100000, guid: 0174816599450f24d9e87af9d8bb7450, type: 2}
   - {fileID: 2100000, guid: 6d92d30b2c87d194883953b2f09e7b1f, type: 2}
   - {fileID: 2100000, guid: 87294f02d9437b8479f6d772f8b00a8d, type: 2}
   - {fileID: 2100000, guid: 87440f63aab3d884c8843f939cc5af01, type: 2}
@@ -1465,19 +1464,6 @@ MonoBehaviour:
   strafeSpeed: 1
   gravity: 1
   useLegacyLocomotion: 0
---- !u!114 &367000750
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 367000744}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 229740497, guid: 4ecd63eff847044b68db9453ce219299, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  contentType: 1
 --- !u!4 &434430524 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8684122271376428603, guid: 724c8d0c7367580468c8a70f70f9199e,
@@ -1877,10 +1863,32 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 5264127327851712198, guid: 360236e3a72eee440a320d04ab222157,
         type: 3}
+      propertyPath: pointsWide
+      value: 1024
+      objectReference: {fileID: 0}
+    - target: {fileID: 5264127327851712198, guid: 360236e3a72eee440a320d04ab222157,
+        type: 3}
       propertyPath: serializationData.Prefab
       value: 
       objectReference: {fileID: 5264127327851712198, guid: 360236e3a72eee440a320d04ab222157,
         type: 3}
+    - target: {fileID: 5264127327851712199, guid: 360236e3a72eee440a320d04ab222157,
+        type: 3}
+      propertyPath: _syncMethod
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5264127327851712199, guid: 360236e3a72eee440a320d04ab222157,
+        type: 3}
+      propertyPath: programSource
+      value: 
+      objectReference: {fileID: 11400000, guid: 027f58ffdae802043b8beec00c6e72e0,
+        type: 2}
+    - target: {fileID: 5264127327851712199, guid: 360236e3a72eee440a320d04ab222157,
+        type: 3}
+      propertyPath: serializedProgramAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: 45a96d20f5c491042ab8f2469b7d3bd9,
+        type: 2}
     - target: {fileID: 5264127328321770148, guid: 360236e3a72eee440a320d04ab222157,
         type: 3}
       propertyPath: togglePlay
@@ -2011,6 +2019,11 @@ PrefabInstance:
         type: 3}
       propertyPath: CollisionModule.collisionMessages
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5264127329763401887, guid: 360236e3a72eee440a320d04ab222157,
+        type: 3}
+      propertyPath: EmissionModule.rateOverTime.scalar
+      value: 350
       objectReference: {fileID: 0}
     - target: {fileID: 5264127329763401887, guid: 360236e3a72eee440a320d04ab222157,
         type: 3}
