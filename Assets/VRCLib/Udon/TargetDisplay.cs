@@ -103,6 +103,7 @@ public class TargetDisplay : UdonSharpBehaviour
     private int particleCount;
 
     private ParticleSystem.Particle[] particles;
+    private ParticleSystem.Particle thisParticle;
     private void LateUpdate()
     {
         polltime -= Time.deltaTime;
@@ -145,10 +146,11 @@ public class TargetDisplay : UdonSharpBehaviour
             updateCount++;
             for (int i = 0; i < particleCount; i++)
             {
+                thisParticle = particles[i];
                 if (needsReview)
                 {
                     particles[i].startSize = particleSize;
-                    if (particles[i].remainingLifetime > markerLifetime)
+                    if (thisParticle.remainingLifetime > markerLifetime)
                         particles[i].remainingLifetime = markerLifetime;
                 }
                 if (dissolveRequired)
