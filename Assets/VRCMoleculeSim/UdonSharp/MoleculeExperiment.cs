@@ -11,8 +11,28 @@ public class MoleculeExperiment : UdonSharpBehaviour
 {
     [Tooltip("Particle speed at middle of range")]
     public float avgMoleculeSpeed=150;
-    [SerializeField, Range(0f, 0.7f), Tooltip("Fraction of avg velocity +- e.g. 0.5 = +-50% of average")]
-    private float randomRange = 0.6f;
+    [SerializeField, Range(0, 70), Tooltip("% Fraction of avg velocity +-"),UdonSynced,FieldChangeCallback(nameof(RandomRangePercent))]
+    private int randomRangePercent = 50;
+    [SerializeField, UdonSynced,  FieldChangeCallback(nameof(RandomizeSpeed))] bool randomizeSpeed = true;
+    
+    [UdonSynced, FieldChangeCallback(nameof(UserSpeedPercent))] private int userSpeedPercent = 0;
+
+    [SerializeField] private SyncedSlider speedSlider;
+
+    private bool RandomizeSpeed
+    {
+        get => randomizeSpeed;
+        set
+        {
+            randomizeSpeed = value;
+            if (togRandomSpeed != null)
+                togRandomSpeed.isOn = randomizeSpeed;
+            if (speedSlider != null)
+                speedSlider.gameObject.SetActive(!randomizeSpeed);
+            RequestSerialization();
+        }
+    }
+
     [Tooltip("Slow Motion"), SerializeField, Range(0.001f, 1f)]
     private float slowMotion = 0.025f;
 
@@ -20,12 +40,52 @@ public class MoleculeExperiment : UdonSharpBehaviour
     public string moleculeName = "Pthalocyanine";
     [Header("Operating Settings-------")]
     [Tooltip("Default Particle Size"), SerializeField, UdonSynced, FieldChangeCallback(nameof(ParticleStartSize))] private float particleStartSize = 0.001f;
-    [SerializeField, Range(0.1f, 2f), UdonSynced, FieldChangeCallback(nameof(MarkerPlotScale))] float markerPlotScale = 2;
+    [SerializeField, Range(0.1f, 5f), UdonSynced, FieldChangeCallback(nameof(MarkerPointSize))] float markerPointSize = 2;
+    [SerializeField] private SyncedSlider pointSizeSlider;
+
+    public float MarkerPointSize
+    {
+        get => markerPointSize;
+        set
+        {
+            value = Mathf.Clamp(value, 0.1f, 5.0f);
+            if (markerPointSize != value)
+            {
+                markerPointSize = value;
+                checkMarkerSizes();
+            }
+            if (pointSizeSlider != null)
+                pointSizeSlider.SetValues(markerPointSize, 0.1f, 5.0f);
+            RequestSerialization();
+        }
+    }
+
     [Tooltip("Decay time of particles at target"), SerializeField, Range(0.5f, 20f), UdonSynced, FieldChangeCallback(nameof(MarkerLifetime))] float markerLifetime = 15;
-    [Tooltip("Exxagerate/Suppress Beam Particle Size"),SerializeField, Range(0.1f, 3f), UdonSynced, FieldChangeCallback(nameof(BeamVisibility))] float beamVisibility = 3;
+    [Tooltip("Exaggerate/Suppress Beam Particle Size"),SerializeField, Range(0.1f, 5f), UdonSynced, FieldChangeCallback(nameof(ParticleDisplaySize))] float particleDisplaySize = 3;
+    public SyncedSlider particleSizeSlider;
+
+    private float ParticleDisplaySize
+    {
+        get => particleDisplaySize;
+        set
+        {
+            value = Mathf.Clamp(value, 0.1f, 5.0f);
+            if (particleDisplaySize != value)
+            {
+                particleDisplaySize = value;
+                checkMarkerSizes();
+            }
+            if (particleSizeSlider != null)
+                particleSizeSlider.SetValues(particleDisplaySize, 0.1f, 5.0f);
+            RequestSerialization();
+        }
+    }
+
+
+
     [SerializeField, ColorUsage(true, true)] Color defaultColour = Color.green;
 
-    [SerializeField] bool useMonochrome = false;
+    [SerializeField, UdonSynced, FieldChangeCallback(nameof(UseMonochrome))] private bool useMonochrome = false;
     [SerializeField, UdonSynced, FieldChangeCallback(nameof(UseQuantumScatter))] private bool useQuantumScatter;
     [SerializeField, UdonSynced, FieldChangeCallback(nameof(UseGravity))]
     private bool  useGravity = true;
@@ -187,14 +247,38 @@ public class MoleculeExperiment : UdonSharpBehaviour
     private float maxSimSpeed;
     [SerializeField]
     private float minSimSpeed;
-    [SerializeField,Range(0,1)] float userSpeed;
-    [SerializeField] bool randomizeSpeeds = true;
-    public float RandomRange
+    
+    [SerializeField]
+    private float userSpeedFraction = 0;
+    [SerializeField]
+    private float userSpeedTrim = 0.5f;
+    [SerializeField]
+    private float randomRange = 0.7f;
+
+    [SerializeField]    
+    private int UserSpeedPercent
     {
-        get => randomRange;
+        get => userSpeedPercent;
         set
         {
-            randomRange = Mathf.Clamp(value, 0,0.7f);        
+            int lim = RandomRangePercent;
+            userSpeedPercent = value;
+            userSpeedFraction = userSpeedPercent/100f;
+            userSpeedTrim = (Mathf.Clamp(userSpeedFraction / randomRange,-1f,1f)+1f)/2f;
+            if (isStarting && speedSlider != null)
+                speedSlider.SetValues(userSpeedPercent,-lim,lim);
+            if (isStarting)
+                RequestSerialization();
+        }
+    }
+
+    private int RandomRangePercent
+    {
+        get => randomRangePercent;
+        set
+        {
+            randomRangePercent = value;
+            randomRange = (float)randomRangePercent/100f;
         }
     }
 
@@ -210,6 +294,21 @@ public class MoleculeExperiment : UdonSharpBehaviour
             if ((togQuantum != null) && (togQuantum.isOn != value))
                 togQuantum.isOn = value;
             RequestSerialization();
+        }
+    }
+
+    public bool UseMonochrome
+    {
+        get => useMonochrome;
+        set
+        {
+            if (useMonochrome != value)
+            {
+                useMonochrome = value;
+                RequestSerialization();
+            }
+            if ((togMonochrome != null) && (togMonochrome.isOn != value))
+                togMonochrome.isOn = value;
         }
     }
 
@@ -293,43 +392,8 @@ public class MoleculeExperiment : UdonSharpBehaviour
     [SerializeField] TextMeshProUGUI planckScaleLabel;
     [SerializeField] Toggle togGravity;
     [SerializeField] Toggle togQuantum;
-    public SyncedSlider targetScaleSlider;
-
-    public float MarkerPlotScale
-    {
-        get => markerPlotScale;
-        set
-        {
-            value = Mathf.Clamp(value,0.1f,2.0f);
-            if (markerPlotScale != value)
-            {
-                markerPlotScale = value;
-                checkMarkerSizes();
-            }
-            if (targetScaleSlider != null)
-                targetScaleSlider.SetValues(markerPlotScale, 0.1f, 2.0f);
-            RequestSerialization();
-        }
-    }
-
-    public SyncedSlider beamScaleSlider;
-
-    public float BeamVisibility
-    {
-        get => beamVisibility;
-        set
-        {
-            value = Mathf.Clamp(value, 0.1f, 4.0f);
-            if (beamVisibility != value)
-            {
-                beamVisibility = value;
-                checkMarkerSizes();
-            }
-            if (beamScaleSlider != null)
-                beamScaleSlider.SetValues(beamVisibility, 0.1f, 4.0f);
-            RequestSerialization();
-        }
-    }
+    [SerializeField] Toggle togRandomSpeed;
+    [SerializeField] Toggle togMonochrome;
 
     //[Header("Debug Values")]
     //[SerializeField]
@@ -386,8 +450,12 @@ public class MoleculeExperiment : UdonSharpBehaviour
     public override void OnOwnershipTransferred(VRCPlayerApi player)
     {
         bool isLocal = Networking.IsOwner(this.gameObject);
-        if (targetScaleSlider != null)
-            targetScaleSlider.IsInteractible = isLocal;
+        if (pointSizeSlider != null)
+            pointSizeSlider.IsInteractible = isLocal;
+        if (speedSlider != null)
+            speedSlider.IsInteractible = isLocal;
+        if (particleSizeSlider != null)
+            particleSizeSlider.IsInteractible = isLocal;
     }
     private void UpdateLabels()
     {
@@ -438,6 +506,22 @@ public class MoleculeExperiment : UdonSharpBehaviour
         UseQuantumScatter = newQuantum;
     }
 
+    public void OnTogSpeed()
+    {
+        bool newRandom = !randomizeSpeed;
+        if (togRandomSpeed != null)
+            newRandom = togRandomSpeed.isOn;
+        RandomizeSpeed = newRandom;
+    }
+
+    public void OnTogMonochrome()
+    {
+        bool newMono = !useMonochrome;
+        if (togMonochrome != null)
+            newMono = togMonochrome.isOn;
+        useMonochrome = newMono;
+    }
+
     /* %%%%%% Local methods not supported in U#
     int fadeParticle(int particleIndex)
     {
@@ -462,7 +546,6 @@ public class MoleculeExperiment : UdonSharpBehaviour
         int nUpdated = 0;
         Vector3 launchVelocity;
         Vector3 launchPosition;
-        float speedScale;
 
         if (hasSource)
         {
@@ -486,18 +569,20 @@ public class MoleculeExperiment : UdonSharpBehaviour
                     launchPosition = new Vector3(gratingThickness, spreadHigh, spreadWide);
                     particles[i].axisOfRotation = launchPosition;
                     launchPosition += sourceXfrm.position;
-                    float speedTrim = randomizeSpeeds ? UnityEngine.Random.Range(0f, 1f) : userSpeed;
-                    speedScale = 1 + Mathf.Lerp(-randomRange, randomRange, speedTrim);
-                    float particleSpeed = avgSimulationSpeed * speedScale;
-                    launchVelocity = new Vector3(particleSpeed, 0, 0);
                     Color launchColour = defaultColour;
                     uint particleIndex = 0;
                     if (trajectoryValid)
                     {
+                        float speedTrim = randomizeSpeed ? UnityEngine.Random.Range(0f, 1f) : userSpeedTrim;
                         int velocityIndex = (int)Mathf.Lerp(0, trajectoryModule.LookupPoints, speedTrim);
                         launchVelocity = trajectoryModule.lookupVelocity(velocityIndex);
                         if (!useMonochrome)
                             launchColour = trajectoryModule.lookupColour(velocityIndex);
+                    }
+                    else
+                    {
+                        float speedFraction = randomizeSpeed ? UnityEngine.Random.Range(-randomRange, randomRange) : userSpeedFraction;
+                        launchVelocity = new Vector3(avgSimulationSpeed * speedFraction + 1, 0, 0);
                     }
                     particles[i].velocity = launchVelocity;
                     launchVelocity.y = -launchVelocity.y;
@@ -692,7 +777,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
     }
     private void checkMarkerSizes()
     {
-        float trimValue = markerPlotScale / 2.0f;
+        float trimValue = markerPointSize / 2.0f;
         float mul = particleStartSize * experimentScale / nativeGraphicsRatio;
         targetMarkerSize = Mathf.Lerp(0.1f,1,trimValue) * mul;
         if (hasTargetDecorator)
@@ -700,7 +785,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
         //if (hasFloorDecorator)
         //    floorDisplay.ParticleSize = targetMarkerSize;
         if (hasSource)
-            mainModule.startSize = particleStartSize * beamVisibility * Mathf.Sqrt(experimentScale);
+            mainModule.startSize = particleStartSize * particleDisplaySize * Mathf.Sqrt(experimentScale);
     }
 
     private void dissolveDisplays()
@@ -862,8 +947,10 @@ public class MoleculeExperiment : UdonSharpBehaviour
         }
     }
 
+    bool isStarting = false;
     void Start()
     {
+        isStarting = true;
         if (trajectoryModule == null)
             trajectoryModule = GetComponent<TrajectoryModule>();
         hasTrajectoryModule = trajectoryModule != null;
@@ -877,6 +964,8 @@ public class MoleculeExperiment : UdonSharpBehaviour
             gratingPosition = gratingXfrm.position;
             //gratingPosition.x -= 0.001f;
         }
+        UserSpeedPercent = userSpeedPercent;
+        RandomRangePercent = randomRangePercent;
         float tmp = experimentScale;
         experimentScale = 0;
         ExperimentScale = tmp;
@@ -891,10 +980,10 @@ public class MoleculeExperiment : UdonSharpBehaviour
             mainModule.startSpeed = 0.1f;
             mainModule.playOnAwake = true;
         }
-        if (targetScaleSlider != null)
-            targetScaleSlider.SetValues(markerPlotScale, 0.1f, 3.0f);
-        if (beamScaleSlider != null)
-            beamScaleSlider.SetValues(beamVisibility, 0.1f, 4f);
+        if (pointSizeSlider != null)
+            pointSizeSlider.SetValues(markerPointSize, 0.1f, 5f);
+        if (particleSizeSlider != null)
+            particleSizeSlider.SetValues(particleDisplaySize, 0.1f, 5f);
 
         hasHorizontalScatter = (horizontalScatter != null);
         hasVerticalScatter = (verticalScatter != null);
@@ -906,7 +995,6 @@ public class MoleculeExperiment : UdonSharpBehaviour
         {
             targetPosition = targetTransform.position;
         }
-        RandomRange = randomRange;
         // Initialise checkboxes if present.
         UseGravity = useGravity;
         UseQuantumScatter = useQuantumScatter;

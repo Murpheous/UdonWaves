@@ -7,12 +7,18 @@ using VRC.Udon;
 using VRC.Udon.Serialization.OdinSerializer.Utilities;
 using System;
 
+[UdonBehaviourSyncMode(BehaviourSyncMode.Manual)] // Keeps performance up
+
 public class SyncedSlider : UdonSharpBehaviour
 {
     [SerializeField]    
     private Slider slider;
     [SerializeField]
     private TextMeshProUGUI sliderLabel;
+    [SerializeField]
+    private bool hideLabel = false;
+    [SerializeField]
+    private bool unitsInteger = false;
     [SerializeField]
     private string sliderUnit;
     [SerializeField]
@@ -23,9 +29,16 @@ public class SyncedSlider : UdonSharpBehaviour
     string clientVariableName = "SliderValueVar";
     [SerializeField]
     string clientPointerStateVar = "PointerStateVar";
+    [SerializeField]
     private float currentValue;
+    [SerializeField]
+    private float maxValue = 1;
+    [SerializeField]
+    private float minValue = 0;
+
     private float reportedValue = 0.0f;
     private bool isInteractible;
+    private bool isInitialized = false;
     public bool IsInteractible
     {
         get => isInteractible; 
@@ -38,15 +51,16 @@ public class SyncedSlider : UdonSharpBehaviour
     }
     public void SetValues(float value, float min, float max)
     {
+        isInitialized = true;
         currentValue = value;
         reportedValue= value;
         minValue= min;
         maxValue= max;
         if (slider != null)
         {
-            slider.minValue= minValue;
-            slider.maxValue= maxValue;
-            slider.value= value*sliderScale;
+            slider.minValue= minValue/sliderScale;
+            slider.maxValue= maxValue/sliderScale;
+            slider.value= currentValue/sliderScale;
         }
     }
     public float CurrentValue { 
@@ -56,19 +70,35 @@ public class SyncedSlider : UdonSharpBehaviour
             currentValue = value;
             if (slider != null)
             {
-                slider.value = currentValue / sliderScale;
-                sliderLabel.text = string.Format("{0:0.0}{1}", currentValue, sliderUnit);
+                float sliderValue = currentValue / sliderScale;
+                if (slider.value != sliderValue)
+                    slider.value = sliderValue;
+                if (!hideLabel)
+                {
+                    if (unitsInteger)
+                        sliderLabel.text = string.Format("{0}{1}", (int)currentValue, sliderUnit);
+                     else
+                        sliderLabel.text = string.Format("{0:0.0}{1}", currentValue, sliderUnit);
+                }
+                else
+                {
+                    if (sliderLabel != null)
+                        sliderLabel.text = "";
+                }
             }
-            if (reportedValue != value)
+            if (reportedValue != currentValue)
             {
-                reportedValue = value;
+                reportedValue = currentValue;
                 if ((SliderClient != null) && (!string.IsNullOrEmpty(clientVariableName)))
-                    SliderClient.SetProgramVariable<Single>(clientVariableName, currentValue);
+                {
+                    if (unitsInteger)
+                        SliderClient.SetProgramVariable<int>(clientVariableName, Mathf.RoundToInt(currentValue));
+                    else
+                        SliderClient.SetProgramVariable<Single>(clientVariableName, currentValue);
+                }
             }
         }
     }
-    private float maxValue = 1;
-    private float minValue = 0;
     public float MaxValue
     {
         get => maxValue;
@@ -78,7 +108,7 @@ public class SyncedSlider : UdonSharpBehaviour
             { 
                 maxValue = value;
                 if (slider != null)
-                    slider.maxValue= maxValue;
+                    slider.maxValue= maxValue/sliderScale;
             }
         }
     }
@@ -92,7 +122,7 @@ public class SyncedSlider : UdonSharpBehaviour
             {
                 minValue = value;
                 if (slider != null)
-                    slider.minValue = minValue;
+                    slider.minValue = minValue/sliderScale;
             }
         }
     }
@@ -117,11 +147,17 @@ public class SyncedSlider : UdonSharpBehaviour
     }
     public void Start()
     {
+        if (sliderLabel == null)
+            hideLabel = true;
         if (slider != null)
         {
             isInteractible = slider.interactable;
-            maxValue = slider.maxValue;
-            minValue = slider.minValue;
+            if (!isInitialized)
+            {
+                isInitialized = true;
+                maxValue = slider.maxValue * sliderScale;
+                minValue = slider.minValue * sliderScale;
+            }
         }
         SliderValueChange();
     }
