@@ -1295,7 +1295,6 @@ GameObject:
   - component: {fileID: 367000745}
   - component: {fileID: 367000749}
   - component: {fileID: 367000748}
-  - component: {fileID: 367000750}
   m_Layer: 0
   m_Name: VRCWorld
   m_TagString: Untagged
@@ -1515,19 +1514,6 @@ MonoBehaviour:
   strafeSpeed: 1
   gravity: 1
   useLegacyLocomotion: 0
---- !u!114 &367000750
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 367000744}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 229740497, guid: 4ecd63eff847044b68db9453ce219299, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  contentType: 1
 --- !u!4 &434430524 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8684122271376428603, guid: 724c8d0c7367580468c8a70f70f9199e,
@@ -3200,7 +3186,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &957093612
 Transform:
   m_ObjectHideFlags: 0
@@ -3223,7 +3209,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 957093611}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 45115577ef41a5b4ca741ed302693907, type: 3}
   m_Name: 
@@ -3249,7 +3235,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 957093611}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: eda9c2f15b3a370458195b20adb75f88, type: 3}
   m_Name: 
@@ -4799,7 +4785,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1452438952
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4807,7 +4793,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1452438951}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8b9a305e18de0c04dbd257a21cd47087, type: 3}
   m_Name: 
