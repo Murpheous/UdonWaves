@@ -16,6 +16,8 @@ public class SyncedSlider : UdonSharpBehaviour
     [SerializeField]
     private TextMeshProUGUI sliderLabel;
     [SerializeField]
+    private TextMeshProUGUI sliderTitle;
+    [SerializeField]
     private bool hideLabel = false;
     [SerializeField]
     private bool unitsInteger = false;
@@ -73,17 +75,20 @@ public class SyncedSlider : UdonSharpBehaviour
                 float sliderValue = currentValue / sliderScale;
                 if (slider.value != sliderValue)
                     slider.value = sliderValue;
-                if (!hideLabel)
+                if (sliderLabel != null)
                 {
-                    if (unitsInteger)
-                        sliderLabel.text = string.Format("{0}{1}", (int)currentValue, sliderUnit);
-                     else
-                        sliderLabel.text = string.Format("{0:0.0}{1}", currentValue, sliderUnit);
-                }
-                else
-                {
-                    if (sliderLabel != null)
+
+                    if (!hideLabel)
+                    {
+                        if (unitsInteger)
+                            sliderLabel.text = string.Format("{0}{1}", (int)currentValue, sliderUnit);
+                        else
+                            sliderLabel.text = string.Format("{0:0.0}{1}", currentValue, sliderUnit);
+                    }
+                    else
+                    {
                         sliderLabel.text = "";
+                    }
                 }
             }
             if (reportedValue != currentValue)
