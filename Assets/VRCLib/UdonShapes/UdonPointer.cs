@@ -28,8 +28,6 @@ public class UdonPointer : UdonSharpBehaviour
     private Vector2 startLocal = Vector2.zero;
     [SerializeField]
     private Vector2 endLocal = Vector2.right;
-    
-    public Vector2 vector { get { return endLocal - startLocal; } }
     public float ThetaDegrees
     {
         get => thetaDegrees; 

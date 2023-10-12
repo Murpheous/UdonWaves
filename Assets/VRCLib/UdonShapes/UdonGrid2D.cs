@@ -1,5 +1,6 @@
 ﻿
 using Newtonsoft.Json.Linq;
+using System.Runtime.Remoting.Messaging;
 using UdonSharp;
 using UnityEngine;
 using VRC.SDKBase;
@@ -10,40 +11,34 @@ public class UdonGrid2D : UdonSharpBehaviour
 {
     [Header("Background Lattice")]
     [SerializeField] private GameObject linePrefab;
-    [SerializeField] int numRows = 4;
+    [SerializeField,Range(1,9)] int numRows = 4;
     [SerializeField] float rowSpacingInitial = 0.12f;
     [SerializeField] Vector2 horizEndPoints = new Vector2(-0.648f, 0.561f);
-    [SerializeField] int numBars = 6;
+    [SerializeField,Range(1,11)] int numBars = 6;
     [SerializeField] float colSpacingInitial = 0.18f;
     [SerializeField] Vector2 vertEndPoints = new Vector2(-.18f, 0.2f);
     [Header("Style")]
     [Range(0.001f, .05f)] public float lineThickness = 0.002f;
     [Range(0.5f, 2.0f)] public float fontSizeGridLabel = 0.3f;
-    [SerializeField] float labelScale;
     [ColorUsage(true, false)]
     [SerializeField] public Color gridColour = Color.gray;
-
-    //graphicAlpha[] backDrop;
-
-    // Miller Indices of plane 0 - freeform
+    Vector2 vertExtensions = Vector2.zero;
+    Vector2 horizExtensions = Vector2.zero;
     public Vector2Int plane = Vector2Int.zero;
     Vector2 gridSpacing;
     bool needsUpdate = false;
-    float barSpacing;
-
     public Vector2 GridSpacing
     {
         get => gridSpacing;
         set
         {
-            needsUpdate = gridSpacing != value;
+            needsUpdate = gridSpacing.x != value.x || gridSpacing.y != value.y;
             gridSpacing = value;
+            Debug.Log("GridSpacing"+value.x+", "+value.y + "U:" + needsUpdate);
         }
     }
-    public float RowSpacing { get => gridSpacing.y; set => gridSpacing.y = value; }
-    public float BarSpacing { get => barSpacing; set => barSpacing = value; }
-    public float BarSpaceAngstroms { get => barSpacing / labelScale; }
-    public float RowSpaceAngstroms { get => gridSpacing.y / labelScale; }
+    public float RowSpacing { get => gridSpacing.y;}
+    public float BarSpacing { get => gridSpacing.x;}
     public Vector2 HendPoints { get => horizEndPoints; set => horizEndPoints = value; }
     public Vector2 VendPoints { get => vertEndPoints; set => vertEndPoints = value; }
     public float TiltAngle
@@ -61,17 +56,19 @@ public class UdonGrid2D : UdonSharpBehaviour
     private LineRenderer[] barLines;
     private void updateGrid()
     {
-        Vector3 vStart = Vector3.zero;
-        Vector3 vEnd = Vector3.zero;
+        Vector3 lineStart = Vector3.zero;
+        Vector3 lineEnd = Vector3.zero;
         needsUpdate = false;
-
-        GameObject goLine = null;
+        Debug.Log(string.Format("{0}->UpdateGrid->Spacing[{1:3},{2:3}", gameObject.name, gridSpacing.x, gridSpacing.y));
+        GameObject goLine;
         if (numRows > 0)
         {
             if ((rowLines == null) || rowLines.Length < numRows)
                 rowLines = new LineRenderer[numRows];
-            vStart.x = horizEndPoints.x;
-            vEnd.x = horizEndPoints.y;
+            float extentHalf = ((numBars - 1) * BarSpacing)/2f;
+            horizEndPoints = new Vector2(-extentHalf, extentHalf) + horizExtensions;
+            lineStart.x = horizEndPoints.x;
+            lineEnd.x = horizEndPoints.y;
             float rowPos = (gridSpacing.y * (numRows - 1) / 2.0f);
             for (int nRow = 0; nRow < numRows; nRow++)
             {
@@ -87,8 +84,8 @@ public class UdonGrid2D : UdonSharpBehaviour
                         rowLines[nRow] = goLine.GetComponent<LineRenderer>();
                     }
                 }
-                vStart.y = rowPos;
-                vEnd.y = rowPos;
+                lineStart.y = rowPos;
+                lineEnd.y = rowPos;
                 if (rowLines[nRow] != null)
                 {
                     rowLines[nRow].startWidth = lineThickness;
@@ -96,8 +93,8 @@ public class UdonGrid2D : UdonSharpBehaviour
                     rowLines[nRow].startColor = gridColour;
                     rowLines[nRow].endColor = gridColour;
                     rowLines[nRow].positionCount = 2;
-                    rowLines[nRow].SetPosition(0, vStart);
-                    rowLines[nRow].SetPosition(1, vEnd);
+                    rowLines[nRow].SetPosition(0, lineStart);
+                    rowLines[nRow].SetPosition(1, lineEnd);
                 }
                 rowPos -= gridSpacing.y;
             }
@@ -106,9 +103,11 @@ public class UdonGrid2D : UdonSharpBehaviour
         {
             if ((barLines == null) || (barLines.Length < numBars))
                 barLines = new LineRenderer[numBars];
-            vStart.y = vertEndPoints.x;
-            vEnd.y = vertEndPoints.y;
-            float barPos = (barSpacing * (numBars - 1) / 2.0f);
+            float extentHalf = ((numRows - 1) * RowSpacing)/2f;
+            vertEndPoints = new Vector2(-extentHalf, extentHalf) + vertExtensions;
+            lineStart.y = vertEndPoints.x;
+            lineEnd.y = vertEndPoints.y;
+            float barPos = (BarSpacing * (numBars - 1) / 2.0f);
             for (int nBar = 0; nBar < numBars; nBar++)
             {
                 if (barLines[nBar] == null)
@@ -120,8 +119,8 @@ public class UdonGrid2D : UdonSharpBehaviour
                         barLines[nBar] = goLine.GetComponent<LineRenderer>();
                     }
                 }
-                vStart.x = barPos;
-                vEnd.x = barPos;
+                lineStart.x = barPos;
+                lineEnd.x = barPos;
                 if (barLines[nBar] != null)
                 {
                     barLines[nBar].startWidth = lineThickness;
@@ -129,10 +128,10 @@ public class UdonGrid2D : UdonSharpBehaviour
                     barLines[nBar].startColor = gridColour;
                     barLines[nBar].endColor = gridColour;
                     barLines[nBar].positionCount = 2;
-                    barLines[nBar].SetPosition(0, vStart);
-                    barLines[nBar].SetPosition(1, vEnd);
+                    barLines[nBar].SetPosition(0, lineStart);
+                    barLines[nBar].SetPosition(1, lineEnd);
                 }
-                barPos -= barSpacing;
+                barPos -= gridSpacing.x;
             }
         }
     }
@@ -176,7 +175,7 @@ public class UdonGrid2D : UdonSharpBehaviour
 
     public void SetAlpha(float value)
     {
-        
+        Alpha = value;
     }
     public float Alpha
     {
@@ -198,8 +197,11 @@ public class UdonGrid2D : UdonSharpBehaviour
 
     void Start()
     {
-        RowSpacing = rowSpacingInitial;
-        BarSpacing = colSpacingInitial;
+        gridSpacing = new Vector2(colSpacingInitial,rowSpacingInitial);
+        float halfExtent = ((numRows - 1) * RowSpacing)/2f;
+        vertExtensions = new Vector2(vertEndPoints.x + halfExtent, vertEndPoints.y - halfExtent);
+        halfExtent = ((numBars - 1) * BarSpacing)/2f;
+        horizExtensions = new Vector2(horizEndPoints.x + halfExtent, horizEndPoints.y - halfExtent);
         updateGrid();
         RefreshColours();
     }

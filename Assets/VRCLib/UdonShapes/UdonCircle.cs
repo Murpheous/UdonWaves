@@ -28,19 +28,25 @@ public class UdonCircle : UdonSharpBehaviour
     private float Theta = 0f;
     [SerializeField,Range(0.001f,0.01f)]
     private float lineThickness = 0.005f;
+    bool started = false;
     void Start()
     {
         LineDrawer = GetComponent<LineRenderer>();
-        if (LineDrawer != null )
+        if (LineDrawer != null)
         {
             LineDrawer.startWidth = lineThickness;
             LineDrawer.endWidth = lineThickness;
         }
+        else
+            Debug.Log("UdonCircle !No LineRenderer");
+        started = true;
         UpdateCircle();
     }
 
     void UpdateCircle()
     {
+        if (!started)
+            return;
         Theta = 0f;
         Size = (int)((1f / ThetaScale) + 1f);
         LineDrawer.positionCount = Size;

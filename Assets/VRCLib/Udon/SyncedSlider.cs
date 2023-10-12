@@ -24,6 +24,8 @@ public class SyncedSlider : UdonSharpBehaviour
     [SerializeField]
     private string sliderUnit;
     [SerializeField]
+    private float unitDisplayScale = 1;
+    [SerializeField]
     private float sliderScale = 1.0f;
     [SerializeField]
     UdonBehaviour SliderClient;
@@ -43,13 +45,29 @@ public class SyncedSlider : UdonSharpBehaviour
     private bool isInitialized = false;
     public bool IsInteractible
     {
-        get => isInteractible; 
+        get {
+            if (slider != null) 
+                isInteractible = slider.interactable;
+            return isInteractible;
+            } 
         set 
         { 
             isInteractible = value;
             if (slider!= null ) 
                 slider.interactable = value; 
         }
+    }
+
+    public float UnitDisplayScale 
+    { 
+        get => unitDisplayScale; 
+        set 
+        {
+            if (unitDisplayScale != value)
+            {
+                unitDisplayScale = value;
+            }
+        } 
     }
     public void SetValues(float value, float min, float max)
     {
@@ -63,6 +81,28 @@ public class SyncedSlider : UdonSharpBehaviour
             slider.minValue= minValue/sliderScale;
             slider.maxValue= maxValue/sliderScale;
             slider.value= currentValue/sliderScale;
+        }
+    }
+    public string TitleText
+    {
+        get 
+        { 
+            if (sliderTitle == null)
+                return "";
+            return sliderTitle.text;
+        }
+        set 
+        { 
+            sliderTitle.text = value; 
+        }
+    }
+    public string SliderUnit
+    {
+        get => sliderUnit;
+        set
+        {
+            sliderUnit = value;
+            CurrentValue = currentValue;
         }
     }
     public float CurrentValue { 
@@ -80,10 +120,11 @@ public class SyncedSlider : UdonSharpBehaviour
 
                     if (!hideLabel)
                     {
+                        float displayValue = currentValue * unitDisplayScale;
                         if (unitsInteger)
-                            sliderLabel.text = string.Format("{0}{1}", (int)currentValue, sliderUnit);
+                            sliderLabel.text = string.Format("{0}{1}", (int)displayValue, sliderUnit);
                         else
-                            sliderLabel.text = string.Format("{0:0.0}{1}", currentValue, sliderUnit);
+                            sliderLabel.text = string.Format("{0:0.0}{1}", displayValue, sliderUnit);
                     }
                     else
                     {
