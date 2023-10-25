@@ -19,8 +19,8 @@ public class WaveMonitor : UdonSharpBehaviour
     [Header("Stimulus")]
     public float effectX = 3;
     //[SerializeField]
-    private Vector4 effect;
-    private float effectPhase;
+    private Vector4 driveSettings;
+    private float driverAmplitude;
     [Range(1f, 3f), SerializeField,UdonSynced,FieldChangeCallback(nameof(Frequency))]
     float frequency = 1f;
     //public Slider frequencySlider;
@@ -73,7 +73,7 @@ public class WaveMonitor : UdonSharpBehaviour
                     {
                         frequencyQuenchTime = effectRampDuration;
                         frequencyQuenchDuration = effectRampDuration;
-                        frequencyQuenchStartValue = effectPhase;
+                        frequencyQuenchStartValue = driverAmplitude;
                     }
                 }
                 else
@@ -373,8 +373,8 @@ public class WaveMonitor : UdonSharpBehaviour
             simulationMaterial.SetFloat("_T2Radians", frequency*(Mathf.PI*2));
             simulationMaterial.SetFloat("_DeltaT", dt);
             simulationMaterial.SetFloat("_Lambda2PI", lambdaEffect/(2*Mathf.PI));
-            simulationMaterial.SetVector("_Effect", effect);
-            simulationMaterial.SetFloat("_EffectPhase", effectPhase);
+            simulationMaterial.SetVector("_DriveSettings", driveSettings);
+            simulationMaterial.SetFloat("_DriveAmplitude", driverAmplitude);
             simulationMaterial.SetFloat("_CFAbsorb", AbsorbFactor);
         }
     }
@@ -472,7 +472,7 @@ public class WaveMonitor : UdonSharpBehaviour
             pollTime -= delta;
             if (pollTime < 0)
             {
-                effect.x = effectX;
+                driveSettings.x = effectX;
                 pollTime = 0.5f;
                 if (gratingControl != null)
                 {
@@ -480,30 +480,30 @@ public class WaveMonitor : UdonSharpBehaviour
                     {
                         currentGratingWidth = gratingControl.GratingWidth;
                         int effectLen = Mathf.FloorToInt(Mathf.Clamp01(currentGratingWidth / tankDimensions.y) * tankResolutionY);
-                        effect.y = Mathf.Floor(Mathf.Clamp(tankResolutionY / 2 - (effectLen / 2 + (1.5f * LambdaPixels)), 0, tankResolutionY / 2));
-                        effect.z = tankResolutionY - effect.y;
+                        driveSettings.y = Mathf.Floor(Mathf.Clamp(tankResolutionY / 2 - (effectLen / 2 + (1.5f * LambdaPixels)), 0, tankResolutionY / 2));
+                        driveSettings.z = tankResolutionY - driveSettings.y;
 
                         if (simulationMaterial != null)
                         {
-                            simulationMaterial.SetVector("_Effect", effect);
+                            simulationMaterial.SetVector("_DriveSettings", driveSettings);
                         }
                     }
                 }
                 else
                 {
-                    effect.y = 0; effect.z = tankResolutionY - 1;
+                    driveSettings.y = 0; driveSettings.z = tankResolutionY - 1;
                     if (simulationMaterial != null)
                     {
-                        simulationMaterial.SetVector("_Effect", effect);
+                        simulationMaterial.SetVector("_DriveSettings", driveSettings);
                     }
                 }
             }
             if (frequencyQuenchTime > 0)
             {
                 frequencyQuenchTime -= Time.deltaTime;
-                effectPhase = Mathf.Lerp(0, frequencyQuenchStartValue, frequencyQuenchTime / frequencyQuenchDuration);
+                driverAmplitude = Mathf.Lerp(0, frequencyQuenchStartValue, frequencyQuenchTime / frequencyQuenchDuration);
                 if (simulationMaterial != null)
-                    simulationMaterial.SetFloat("_EffectPhase", effectPhase);
+                    simulationMaterial.SetFloat("_DriveAmplitude", driverAmplitude);
                 if (frequencyQuenchTime <= 0)
                 {
                     frequency = requestedFrequency;
@@ -516,9 +516,9 @@ public class WaveMonitor : UdonSharpBehaviour
 
             if (waveTime <= effectRampDuration)
             {
-                effectPhase = Mathf.Lerp(0, 1, waveTime / effectRampDuration);
+                driverAmplitude = Mathf.Lerp(0, 1, waveTime / effectRampDuration);
                 if (simulationMaterial != null)
-                    simulationMaterial.SetFloat("_EffectPhase", effectPhase);
+                    simulationMaterial.SetFloat("_DriveAmplitude", driverAmplitude);
             }
             
             while (updateTime < waveTime)

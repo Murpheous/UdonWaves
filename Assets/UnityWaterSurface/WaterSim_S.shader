@@ -10,8 +10,8 @@
         _DeltaT("DeltaT",Float) = 1
         _T2Radians("T2Radians",Float) = 6.283
         _Lambda2PI("Lambda2PI",Float) = 10
-        _Effect("Effect",Vector) = (0,0,0,0)
-        _EffectPhase("EffectPhase",Float) = 0
+        _DriveSettings("DriveSettings",Vector) = (0,0,0,0)
+        _DriveAmplitude("DriveAmplitude",Float) = 0
         _CFAbsorb("CFAbsorb", Range(0.0,1.0)) = 0.2
         _ObstacleTex2D("Obstacle Image", 2D) = "black" {}
     }
@@ -30,8 +30,8 @@
     float _DeltaT;
     float _T2Radians;
     float _Lambda2PI;
-    float4 _Effect;
-    float _EffectPhase;
+    float4 _DriveSettings;
+    float _DriveAmplitude;
     float _CFAbsorb;
     sampler2D _ObstacleTex2D;
     
@@ -43,15 +43,14 @@ float laplacian(float2 pos, float3 duv)
 
 float2 newField(float2 pos, float3 duv)
 {
-
     float2 field = A(pos).xy;
     float currentTime = A(pos).a;
     float cycletime = currentTime * _T2Radians; // _Time = (t/20, t, t*2, t*3
     int2 pixelPos = int2(floor(pos.x * _CustomRenderTextureWidth), floor(pos.y * _CustomRenderTextureHeight));
-    int  effectRow = (int)((int)floor(_Effect.x) == pixelPos.x);
-    int  effectCol = (int)((floor(_Effect.y) <= pixelPos.y) && (floor(_Effect.z) >= pixelPos.y));
-    float force =  lerp(0, _EffectPhase * sin(cycletime),(int)(effectRow==1 && effectCol==1));
-
+    // DriveSettings x= distance down tank, y & z region across tank;
+    int  inDriveRow = (int)((int)floor(_DriveSettings.x) == pixelPos.x);
+    int  inDriveColumns = (int)((floor(_DriveSettings.y) <= pixelPos.y) && (floor(_DriveSettings.z) >= pixelPos.y));
+    float force =  lerp(0, _DriveAmplitude * sin(cycletime),(int)(inDriveRow==1 && inDriveColumns==1));
     field.y += _CdTdX * (laplacian(pos,duv) + force); //velocity += force * time step
     field.x += _CdTdX * field.y; //position += velocity*time step
     return field;
@@ -119,7 +118,6 @@ ENDCG
 SubShader
 {
     Cull Off ZWrite Off ZTest Always
-
     Pass
     {
         Name "UpdateNew"
