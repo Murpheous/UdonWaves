@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 0.64
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 1260129841}
-  m_IndirectSpecularColor: {r: 0.022814702, g: 0.021555312, b: 0.016972102, a: 0.64}
+  m_IndirectSpecularColor: {r: 0.014732044, g: 0.010305478, b: 0.010615175, a: 0.64}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -2074,6 +2074,11 @@ PrefabInstance:
         type: 3}
       propertyPath: EmissionModule.rateOverTime.scalar
       value: 350
+      objectReference: {fileID: 0}
+    - target: {fileID: 5264127329763401887, guid: 360236e3a72eee440a320d04ab222157,
+        type: 3}
+      propertyPath: CollisionModule.collidesWith.m_Bits
+      value: 805437440
       objectReference: {fileID: 0}
     - target: {fileID: 5264127329763401887, guid: 360236e3a72eee440a320d04ab222157,
         type: 3}
@@ -4395,8 +4400,8 @@ Light:
   serializedVersion: 10
   m_Type: 1
   m_Shape: 0
-  m_Color: {r: 0.6792453, g: 0.4192705, b: 0.1954432, a: 1}
-  m_Intensity: 0.3
+  m_Color: {r: 0.8773585, g: 0.6663968, b: 0.48420256, a: 1}
+  m_Intensity: 0.5
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -4438,7 +4443,7 @@ Light:
   m_Lightmapping: 1
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
-  m_BounceIntensity: 2
+  m_BounceIntensity: 1
   m_ColorTemperature: 5243
   m_UseColorTemperature: 0
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
@@ -7214,6 +7219,7 @@ MonoBehaviour:
   tankResolutionY: 1280
   gratingControl: {fileID: 1224076779}
   effectX: 3
+  effectAmplitude: 1
   frequency: 2.4
   frequencyControl: {fileID: 862794446}
   CFL: 0.4

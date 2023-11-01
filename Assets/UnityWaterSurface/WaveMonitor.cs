@@ -18,6 +18,7 @@ public class WaveMonitor : UdonSharpBehaviour
 
     [Header("Stimulus")]
     public float effectX = 3;
+    public float effectAmplitude = 1f;
     //[SerializeField]
     private Vector4 driveSettings;
     private float driverAmplitude;
@@ -501,7 +502,7 @@ public class WaveMonitor : UdonSharpBehaviour
             if (frequencyQuenchTime > 0)
             {
                 frequencyQuenchTime -= Time.deltaTime;
-                driverAmplitude = Mathf.Lerp(0, frequencyQuenchStartValue, frequencyQuenchTime / frequencyQuenchDuration);
+                driverAmplitude = effectAmplitude *  Mathf.Lerp(0, frequencyQuenchStartValue, frequencyQuenchTime / frequencyQuenchDuration);
                 if (simulationMaterial != null)
                     simulationMaterial.SetFloat("_DriveAmplitude", driverAmplitude);
                 if (frequencyQuenchTime <= 0)
@@ -516,7 +517,7 @@ public class WaveMonitor : UdonSharpBehaviour
 
             if (waveTime <= effectRampDuration)
             {
-                driverAmplitude = Mathf.Lerp(0, 1, waveTime / effectRampDuration);
+                driverAmplitude = effectAmplitude * Mathf.Lerp(0, 1, waveTime / effectRampDuration);
                 if (simulationMaterial != null)
                     simulationMaterial.SetFloat("_DriveAmplitude", driverAmplitude);
             }

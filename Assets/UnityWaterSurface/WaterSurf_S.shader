@@ -98,7 +98,7 @@ void surf(Input IN, inout SurfaceOutputStandard o)
         v2 = tex2D(_DispTex, IN.uv_DispTex + duv.xz).r;
         v3 = tex2D(_DispTex, IN.uv_DispTex - duv.zy).r;
         v4 = tex2D(_DispTex, IN.uv_DispTex + duv.zy).r;
-        range = val;
+        range = val*2;
     }
     else if (showVel)
     {
@@ -107,7 +107,7 @@ void surf(Input IN, inout SurfaceOutputStandard o)
         v2 = tex2D(_DispTex, IN.uv_DispTex + duv.xz).b;
         v3 = tex2D(_DispTex, IN.uv_DispTex - duv.zy).b;
         v4 = tex2D(_DispTex, IN.uv_DispTex + duv.zy).b;
-        range = val;
+        range = val*2;
         theColor = _ColorVel;
     }
     else //(showEnergy)
@@ -117,7 +117,7 @@ void surf(Input IN, inout SurfaceOutputStandard o)
         v2 = sq(tex2D(_DispTex, IN.uv_DispTex + duv.xz).r) + sq(tex2D(_DispTex, IN.uv_DispTex + duv.xz).b);
         v3 = sq(tex2D(_DispTex, IN.uv_DispTex - duv.zy).r) + sq(tex2D(_DispTex, IN.uv_DispTex - duv.zy).b);
         v4 = sq(tex2D(_DispTex, IN.uv_DispTex + duv.zy).r) + sq(tex2D(_DispTex, IN.uv_DispTex + duv.zy).b);
-        range = val;
+        range = val*2;
         theColor = _ColorFlow;
     }
     if (showSquared)
@@ -127,7 +127,7 @@ void surf(Input IN, inout SurfaceOutputStandard o)
         v2 *= v2;
         v3 *= v3;
         v4 *= v4;
-        range = val;
+        range = val*4;
 
     }
     o.Albedo = lerp(_ColorNeg.rgb, theColor, range);

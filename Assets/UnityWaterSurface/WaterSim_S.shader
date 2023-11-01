@@ -44,14 +44,15 @@ float laplacian(float2 pos, float3 duv)
 float2 newField(float2 pos, float3 duv)
 {
     float2 field = A(pos).xy;
-    float currentTime = A(pos).a;
-    float cycletime = currentTime * _T2Radians; // _Time = (t/20, t, t*2, t*3
+    //float currentTime = A(pos).a;
+    //float cycletime = currentTime * _T2Radians; // _Time = (t/20, t, t*2, t*3
     int2 pixelPos = int2(floor(pos.x * _CustomRenderTextureWidth), floor(pos.y * _CustomRenderTextureHeight));
     // DriveSettings x= distance down tank, y & z region across tank;
-    int  inDriveRow = (int)((int)floor(_DriveSettings.x) == pixelPos.x);
-    int  inDriveColumns = (int)((floor(_DriveSettings.y) <= pixelPos.y) && (floor(_DriveSettings.z) >= pixelPos.y));
-    float force =  lerp(0, _DriveAmplitude * sin(cycletime),(int)(inDriveRow==1 && inDriveColumns==1));
-    field.y += _CdTdX * (laplacian(pos,duv) + force); //velocity += force * time step
+    //int  inDriveRow = (int)((int)floor(_DriveSettings.x) == pixelPos.x);
+    //int  inDriveColumns = (int)((floor(_DriveSettings.y) <= pixelPos.y) && (floor(_DriveSettings.z) >= pixelPos.y));
+    //float force =  lerp(0, _DriveAmplitude * sin(cycletime),(int)(inDriveRow==1 && inDriveColumns==1));
+    //field.y += _CdTdX * (laplacian(pos,duv) + force); //velocity += force * time step
+    field.y += _CdTdX * laplacian(pos,duv); //velocity += force * time step
     field.x += _CdTdX * field.y; //position += velocity*time step
     return field;
 }
@@ -95,8 +96,16 @@ float4 fragNew(v2f_customrendertexture i) : SV_Target
     bool atObstacleMinX = (!isOnObstacle && (O(pos - duv.xz).b > 0.5));
     bool atObstacleMaxY = (!isOnObstacle && (O(pos + duv.zy).b > 0.5));
     bool atObstacleMinY = (!isOnObstacle && (O(pos - duv.zy).b > 0.5));
+    bool  inDriveRow = ((int)floor(_DriveSettings.x) == xPixel);
+    bool  inDriveColumns = inDriveRow && ((floor(_DriveSettings.y) <= yPixel) && (floor(_DriveSettings.z) >= yPixel));
 
-    if (!isOnObstacle)
+    if (inDriveColumns)
+    {
+        float tRadians = A(pos).a * _T2Radians;
+        updated.x = _DriveAmplitude * sin(tRadians);
+        updated.y = 0; // _DriveAmplitude * cos(tRadians);
+    }
+    else if (!isOnObstacle)
     {
         if ((xPixel <= 1) || atObstacleMinX)
             updated.xy = newAbsorbed(pos, duv.xz, duv);
