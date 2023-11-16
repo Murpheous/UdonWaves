@@ -35,6 +35,7 @@ public class WaveMonitor : UdonSharpBehaviour
     public bool IsStarted { get => isStarted; private set => isStarted = value; }
     private float LambdaPixels { get => waveSpeedPixels / Mathf.Clamp(frequency, minFrequency, maxFrequency); }
     private bool iamOwner;
+    private VRCPlayerApi player;
     private VRC.Udon.Common.Interfaces.NetworkEventTarget toTheOwner = VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner;
     private VRC.Udon.Common.Interfaces.NetworkEventTarget toAll = VRC.Udon.Common.Interfaces.NetworkEventTarget.All;
 
@@ -343,6 +344,27 @@ public class WaveMonitor : UdonSharpBehaviour
         }
     }
 
+    bool pointerDown = false;
+    public void OnFreqPointerDown()
+    {
+        pointerDown = true;
+        if (iamOwner)
+        {
+            FreqPointerIsDown = true;
+        }
+        else
+        {
+            Networking.SetOwner(player, gameObject);
+        }
+    }
+
+    public void OnFreqPointerUp()
+    {
+        pointerDown = false;
+        FreqPointerIsDown = false;
+    }
+
+
     public void PauseWaves()
     {
         AnimationPlay = false;
@@ -451,27 +473,10 @@ public class WaveMonitor : UdonSharpBehaviour
     private void UpdateOwnerShip()
     {
         iamOwner = Networking.IsOwner(this.gameObject);
-        if (iamOwner)
-            return;
-        /*
-        if (frequencyControl != null)
-            frequencyControl.IsInteractible = !iamOwner;
-
-        if (TogViewDisplacement != null)
-            TogViewDisplacement.interactable = !iamOwner;
-        if ( TogViewVelocity != null)
-            TogViewVelocity.interactable = !iamOwner;
-        if (TogViewSquare != null)
-            TogViewSquare.interactable = !iamOwner;
-        if (TogViewEnergy != null)
-            TogViewEnergy.interactable = !iamOwner;
-        if (TogglePlay != null)
-            TogglePlay.interactable = !iamOwner;
-        if (TogglePause != null)
-            TogglePause.interactable = !iamOwner;
-        if (ToggleReset != null)
-            ToggleReset.interactable = !iamOwner;
-        */
+        if (iamOwner && pointerDown)
+            FreqPointerIsDown = true;
+        //if (frequencyControl != null)
+        //    frequencyControl.IsInteractible = iamOwner;
     }
 
     public override void OnOwnershipTransferred(VRCPlayerApi player)
@@ -482,6 +487,7 @@ public class WaveMonitor : UdonSharpBehaviour
 
     void Start()
     {
+        player = Networking.LocalPlayer;
         if (frequencyControl != null)
         {
             requestedFrequency = frequency;
@@ -582,6 +588,7 @@ public class WaveMonitor : UdonSharpBehaviour
                     frequency = requestedFrequency;
                     RequestSerialization();
                     CalcParameters();
+                    UpdateViewControl();
                     if (!freqPointerIsDown)
                         ResetEffect();
                 }

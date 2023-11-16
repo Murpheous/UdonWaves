@@ -8,7 +8,6 @@ using VRC.Udon.Serialization.OdinSerializer.Utilities;
 using System;
 
 [UdonBehaviourSyncMode(BehaviourSyncMode.Manual)] // Keeps performance up
-
 public class SyncedSlider : UdonSharpBehaviour
 {
     [SerializeField]    
