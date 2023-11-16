@@ -44,7 +44,9 @@ public class WaveSlitControls : UdonSharpBehaviour
     [Header("Constants"), SerializeField]
     private int MAX_SLITS = 7;
     //private QuantumScatter particleScatter;
-    bool gratingValid;
+    private bool gratingValid;
+    private bool iamOwner;
+    private VRC.Udon.Common.Interfaces.NetworkEventTarget toTheOwner = VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner;
 
     void setText(TextMeshProUGUI tmproLabel, string text)
     {
@@ -69,9 +71,9 @@ public class WaveSlitControls : UdonSharpBehaviour
                 {
                     aperturePitch = value;
                     gratingValid = false;
-                    RequestSerialization();
                 }
             }
+            RequestSerialization();
         }
     }
 
@@ -86,9 +88,9 @@ public class WaveSlitControls : UdonSharpBehaviour
                 {
                     apertureWidth = value;
                     gratingValid = false;
-                    RequestSerialization();
                 }
             }
+            RequestSerialization();
         }
     }
 
@@ -106,28 +108,50 @@ public class WaveSlitControls : UdonSharpBehaviour
             {
                 apertureCount = value;
                 gratingValid = false;
-                RequestSerialization();
             }
+            RequestSerialization();
         }
     }
 
     public void OnAperturesPlus()
     {
-       if ((ApertureCount < MAX_SLITS) && checkGratingWidth(ApertureWidth, AperturePitch, ApertureCount+1))
-            ApertureCount = apertureCount + 1;
+        if (!iamOwner)
+        {
+            SendCustomNetworkEvent(toTheOwner, nameof(OnAperturesPlus));
+            return;
+        }
+        if ((ApertureCount < MAX_SLITS) && checkGratingWidth(ApertureWidth, AperturePitch, ApertureCount + 1))
+        {
+                ApertureCount = apertureCount + 1; 
+        }
     }
 
     public void OnAperturesMinus()
     {
+        if (!iamOwner)
+        {
+            SendCustomNetworkEvent(toTheOwner, nameof(OnAperturesMinus));
+            return;
+        }
         ApertureCount = apertureCount - 1;
     }
     public void OnWidthPlus()
     {
+        if (!iamOwner)
+        {
+            SendCustomNetworkEvent(toTheOwner, nameof(OnWidthPlus));
+            return;
+        }
         if (checkGratingWidth(ApertureWidth + 0.005f, AperturePitch, ApertureCount))
             ApertureWidth = apertureWidth + 0.005f;
     }
     public void OnWidthMinus()
     {
+        if (!iamOwner)
+        {
+            SendCustomNetworkEvent(toTheOwner, nameof(OnWidthMinus));
+            return;
+        }
         if (ApertureWidth <= 0.005f)
             return;
         if (checkGratingWidth(ApertureWidth-0.005f, AperturePitch, ApertureCount))
@@ -135,15 +159,26 @@ public class WaveSlitControls : UdonSharpBehaviour
     }
     public void OnPitchPlus()
     {
+        if (!iamOwner)
+        {
+            SendCustomNetworkEvent(toTheOwner, nameof(OnPitchPlus));
+            return;
+        }
         if (checkGratingWidth(ApertureWidth,AperturePitch+0.05f, ApertureCount))
             AperturePitch = aperturePitch + 0.05f;
     }
     public void OnPitchMinus()
     {
+        if (!iamOwner)
+        {
+            SendCustomNetworkEvent(toTheOwner, nameof(OnPitchMinus));
+            return;
+        }
+
         if (aperturePitch <= 0.005f)
             return;
         //if (checkGratingWidth(ApertureWidth, AperturePitch - 0.01f, ApertureCount))
-            AperturePitch = aperturePitch - 0.005f;
+        AperturePitch = aperturePitch - 0.005f;
     }
 
 
@@ -255,41 +290,22 @@ public class WaveSlitControls : UdonSharpBehaviour
 
     private void UpdateOwnerShip()
     {
-        bool isLocal = Networking.IsOwner(this.gameObject);
-
-        if (UiPanel != null)
-        {
-            Toggle[] toggles = UiPanel.GetComponentsInChildren<Toggle>();
-            if (toggles != null)
-                foreach (Toggle t in toggles)
-                    t.interactable = isLocal;
-        }
+        iamOwner = Networking.IsOwner(this.gameObject);
+        if (iamOwner)
+            return;
     }
 
     public override void OnOwnershipTransferred(VRCPlayerApi player)
     {
         UpdateOwnerShip();
     }
-    /*
-    public int eventCount;
-    public void OnParticleCollision(GameObject other)
-    {
-        if (ps == null)
-            return;
-        eventCount++;
-        int safeSize = ps.GetSafeCollisionEventSize();
-        ParticleCollisionEvent[] collisionEvents = new ParticleCollisionEvent[safeSize];
-        int numEvents = ps.GetCollisionEvents(gameObject,collisionEvents);
-        eventCount += numEvents;
-    }
-    */
 
     void Start()
     {
         MAX_SLITS = 7;
         gratingValid= false;
-        
         UpdateOwnerShip();
+
         if (TankScale <= 0) TankScale = 1;
         if (tankWidth <= 0) tankWidth = 1.0f;
         if (tankLength <= 0) tankLength = 2.0f;

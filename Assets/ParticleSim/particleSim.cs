@@ -47,6 +47,9 @@ public class particleSim : UdonSharpBehaviour
     private float particleSpeed = 1;
     private bool isStarted = false;
     private bool hasParticles = false;
+    private bool iamOwner;
+    private VRC.Udon.Common.Interfaces.NetworkEventTarget toTheOwner = VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner;
+    private VRC.Udon.Common.Interfaces.NetworkEventTarget toAll = VRC.Udon.Common.Interfaces.NetworkEventTarget.All;
 
     public Color lerpColour(float frac)
     {
@@ -175,13 +178,26 @@ public class particleSim : UdonSharpBehaviour
         }
     }
 
+    public void PlayParticles()
+    {
+        ParticlesPlaying = true;
+    }
+
+    public void PauseParticles()
+    {
+        ParticlesPlaying = false;
+    }
+
     public void PlayChanged()
     {
         if (togglePlay != null)
         {
             if (togglePlay.isOn)
             {
-                ParticlesPlaying = true;
+                if (iamOwner)
+                    PlayParticles();
+                else
+                    SendCustomNetworkEvent(toTheOwner,nameof(PlayParticles));
             }
         }
     }
@@ -191,7 +207,12 @@ public class particleSim : UdonSharpBehaviour
         if (toggleStop != null)
         {
             if (toggleStop.isOn)
-                ParticlesPlaying = false;
+            { 
+                if (iamOwner)
+                    PauseParticles();
+                else
+                    SendCustomNetworkEvent(toTheOwner,nameof(PauseParticles));
+            }
         }
     }
 
@@ -201,13 +222,13 @@ public class particleSim : UdonSharpBehaviour
         {
             if (toggleReset.isOn)
             {
-                resetParticles();
+                SendCustomNetworkEvent(toAll, nameof(ResetParticles));
                 toggleReset.isOn = false;
             }
         }
     }
 
-    public void resetParticles()
+    public void ResetParticles()
     {
         if (hasParticles)
             particleEmitter.Clear();
@@ -215,12 +236,7 @@ public class particleSim : UdonSharpBehaviour
 
     public override void OnOwnershipTransferred(VRCPlayerApi player)
     {
-        bool isLocal = Networking.IsOwner(this.gameObject);
-
-        if (togglePlay != null)
-            togglePlay.interactable = isLocal;
-        if (toggleStop != null)
-            toggleStop.interactable = isLocal;
+        UpdateOwnerShip();
     }
 
     private float timeRemaining = 0.5f;
@@ -340,8 +356,17 @@ public class particleSim : UdonSharpBehaviour
             checkSourceDimensions();
         }
     }
+    private void UpdateOwnerShip()
+    {
+        iamOwner = Networking.IsOwner(this.gameObject);
+        if (iamOwner)
+            return;
+    }
+
+
     void Start()
     {
+        UpdateOwnerShip();
         if (particleEmitter != null)
         {
             hasParticles = true;

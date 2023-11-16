@@ -1,4 +1,4 @@
-﻿Shader "Water/Surface"
+﻿Shader"Water/Surface"
 {
 
 Properties
@@ -8,6 +8,7 @@ Properties
     _ColorVel("ColorVelocity", color) = (0, 0.3, 1, 0)
     _ColorFlow("ColorFlow", color) = (1, 0.3, 0, 0)
     _ViewSelection("Show A=0, A^2=1, E=2",Range(0.0,2.0)) = 0.0    
+    _K("WaveNumber K",Range(0.001,1)) = 0.1
     _DispTex("Disp Texture", 2D) = "gray" {}
     _Glossiness("Smoothness", Range(0,1)) = 0.5
     _Metallic("Metallic", Range(0,1)) = 0.0
@@ -29,6 +30,7 @@ SubShader
     #include "Tessellation.cginc"
 
 float _ViewSelection;
+float _K;
 float _TessFactor;
 float _Displacement;
 float _MinDist;
@@ -102,21 +104,21 @@ void surf(Input IN, inout SurfaceOutputStandard o)
     }
     else if (showVel)
     {
-        val = tex2D(_DispTex, IN.uv_DispTex).b;
-        v1 = tex2D(_DispTex, IN.uv_DispTex - duv.xz).b;
-        v2 = tex2D(_DispTex, IN.uv_DispTex + duv.xz).b;
-        v3 = tex2D(_DispTex, IN.uv_DispTex - duv.zy).b;
-        v4 = tex2D(_DispTex, IN.uv_DispTex + duv.zy).b;
+        val = tex2D(_DispTex, IN.uv_DispTex).g/ _K;
+        v1 = tex2D(_DispTex, IN.uv_DispTex - duv.xz).g / _K;
+        v2 = tex2D(_DispTex, IN.uv_DispTex + duv.xz).g / _K;
+        v3 = tex2D(_DispTex, IN.uv_DispTex - duv.zy).g / _K;
+        v4 = tex2D(_DispTex, IN.uv_DispTex + duv.zy).g / _K;
         range = val*2;
         theColor = _ColorVel;
     }
     else //(showEnergy)
     {
-        val = sq(tex2D(_DispTex, IN.uv_DispTex).r) + sq(tex2D(_DispTex, IN.uv_DispTex).b);
-        v1 = sq(tex2D(_DispTex, IN.uv_DispTex - duv.xz).r) + sq(tex2D(_DispTex, IN.uv_DispTex - duv.xz).b);
-        v2 = sq(tex2D(_DispTex, IN.uv_DispTex + duv.xz).r) + sq(tex2D(_DispTex, IN.uv_DispTex + duv.xz).b);
-        v3 = sq(tex2D(_DispTex, IN.uv_DispTex - duv.zy).r) + sq(tex2D(_DispTex, IN.uv_DispTex - duv.zy).b);
-        v4 = sq(tex2D(_DispTex, IN.uv_DispTex + duv.zy).r) + sq(tex2D(_DispTex, IN.uv_DispTex + duv.zy).b);
+        val = sq(tex2D(_DispTex, IN.uv_DispTex).g / _K) + sq(tex2D(_DispTex, IN.uv_DispTex).r);
+        v1 = sq(tex2D(_DispTex, IN.uv_DispTex - duv.xz).g / _K) + sq(tex2D(_DispTex, IN.uv_DispTex - duv.xz).r);
+        v2 = sq(tex2D(_DispTex, IN.uv_DispTex + duv.xz).g / _K) + sq(tex2D(_DispTex, IN.uv_DispTex + duv.xz).r);
+        v3 = sq(tex2D(_DispTex, IN.uv_DispTex - duv.zy).g / _K) + sq(tex2D(_DispTex, IN.uv_DispTex - duv.zy).r);
+        v4 = sq(tex2D(_DispTex, IN.uv_DispTex + duv.zy).g / _K) + sq(tex2D(_DispTex, IN.uv_DispTex + duv.zy).r);
         range = val*2;
         theColor = _ColorFlow;
     }

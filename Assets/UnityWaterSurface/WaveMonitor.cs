@@ -33,7 +33,10 @@ public class WaveMonitor : UdonSharpBehaviour
     private float maxFrequency = 3;
     private bool isStarted = false;
     public bool IsStarted { get => isStarted; private set => isStarted = value; }
-    float LambdaPixels { get => waveSpeedPixels / Mathf.Clamp(frequency, minFrequency, maxFrequency); }
+    private float LambdaPixels { get => waveSpeedPixels / Mathf.Clamp(frequency, minFrequency, maxFrequency); }
+    private bool iamOwner;
+    private VRC.Udon.Common.Interfaces.NetworkEventTarget toTheOwner = VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner;
+    private VRC.Udon.Common.Interfaces.NetworkEventTarget toAll = VRC.Udon.Common.Interfaces.NetworkEventTarget.All;
 
     public float Frequency 
     { 
@@ -95,16 +98,18 @@ public class WaveMonitor : UdonSharpBehaviour
     {
         get => WaveSpeed / maxFrequency;
     }
-    [Header("Wave paraemters")]
+    [Header("Wave parameters")]
+    [SerializeField] private float waveSpeedPixels = 40; // Speed
+    [SerializeField] private float CFL = 0.5f;
 
-    public float CFL = 0.5f;
-    float CFLSq = 0.25f;
-    float AbsorbFactor = 0.25f;
-    [SerializeField]
-    private float waveSpeedPixels = 40; // Speed
+    [Header("Calculated-Debug")]
+    [SerializeField] private float CFLSq = 0.25f;
+    [SerializeField] private float effectPeriod = 1;
+    [SerializeField] private float absorbFactor = 0.25f;
+    [SerializeField] private float dt; // Time step
+    [SerializeField] private float angularWaveNumber = 40; // Speed
+    [SerializeField] private float lambdaEffect = 1;
 
-    [SerializeField] float dt; // Time step
-    [SerializeField] float effectPeriod = 1;
     // Wave properties
     public float WaveSpeed
     {
@@ -113,27 +118,30 @@ public class WaveMonitor : UdonSharpBehaviour
             return (waveSpeedPixels * tankDimensions.x) / tankResolutionX;
         }
     }
-    float lambdaEffect = 1;
-    public Material simulationMaterial = null;
-    public Material surfaceMaterial = null;
+    [Header("Wave Sim Materials")]
+    [Tooltip("Custom Render Texture")] public Material simulationMaterial = null;
+    [Tooltip("Wave Surface Texture")] public Material surfaceMaterial = null;
 
-    [Header("Obstacles")]
+    [Header("Render Texture Obstacles and Camera")]
     public RenderTexture obstaclesTex;
     public Camera obstaclesCamera;
 
     [Header("UI Toggles")]
     public Toggle TogViewDisplacement;
-    public Toggle TogViewTension;
-    public Toggle TogViewAmplitudeSquare;
+    public Toggle TogViewForce;
+    public Toggle TogViewVelocity;
+    public Toggle TogViewSquare;
     public Toggle TogViewEnergy;
     public Toggle TogglePlay;
     public Toggle TogglePause;
     public Toggle ToggleReset;
     [SerializeField, UdonSynced,FieldChangeCallback(nameof(ShowDisplacement))]
     private bool showDisplacement = true;
-    [SerializeField, UdonSynced, FieldChangeCallback(nameof(ShowTension))]
-    private bool showTension = false;
-    [SerializeField, UdonSynced, FieldChangeCallback(nameof(ShowSquaredAmplitudes))]
+    [SerializeField, UdonSynced, FieldChangeCallback(nameof(ShowVelocity))]
+    private bool showVelocity = false;
+    [SerializeField, UdonSynced, FieldChangeCallback(nameof(ShowForce))]
+    private bool showForce = false;
+    [SerializeField, UdonSynced, FieldChangeCallback(nameof(ShowSquareAmplitudes))]
     private bool showSquaredAmplitudes = false;
     [SerializeField, UdonSynced, FieldChangeCallback(nameof(ShowEnergy))]
     private bool showEnergy = false;
@@ -169,7 +177,7 @@ public class WaveMonitor : UdonSharpBehaviour
         get => animationPlay;
         set
         {
-            if ((value) && (TogglePlay != null) &&  (!TogglePlay.isOn)) 
+            if (value && (TogglePlay != null) &&  (!TogglePlay.isOn)) 
                 TogglePlay.isOn = true;
             if ((!value) && (TogglePause != null) && (!TogglePause.isOn))
                 TogglePause.isOn = true;
@@ -177,25 +185,28 @@ public class WaveMonitor : UdonSharpBehaviour
             RequestSerialization();
         }
     }
-    private void UpdateUI()
+    private void UpdateToggles()
     {
-        if (TogViewDisplacement != null)
-            TogViewDisplacement.isOn = ShowDisplacement;
-        if (TogViewTension != null)
-            TogViewTension.isOn = ShowTension;
-        if (TogViewAmplitudeSquare != null)
-            TogViewAmplitudeSquare.isOn = ShowSquaredAmplitudes;
-        if (TogViewEnergy != null)
-            TogViewEnergy.isOn = ShowEnergy;
+        if (TogViewDisplacement != null && showDisplacement)
+            TogViewDisplacement.isOn = true;
+        if (TogViewForce != null && showForce)
+            TogViewForce.isOn = true;
+        if (TogViewVelocity != null && showVelocity)
+            TogViewVelocity.isOn = true;
+        if (TogViewEnergy != null && showEnergy)
+            TogViewEnergy.isOn = true;
+        if (TogViewSquare != null && TogViewSquare.isOn != showSquaredAmplitudes)
+            TogViewSquare.isOn = showSquaredAmplitudes;
     }
 
     private void UpdateViewControl()
     {
         if (surfaceMaterial == null)
             return;
+        surfaceMaterial.SetFloat("_K", angularWaveNumber);
         if (showDisplacement)
             surfaceMaterial.SetFloat("_ViewSelection", showSquaredAmplitudes ? 1f : 0f );
-        else if (showTension)
+        else if (showVelocity)
              surfaceMaterial.SetFloat("_ViewSelection", showSquaredAmplitudes ? 3f : 2f);
         else if (ShowEnergy)
             surfaceMaterial.SetFloat("_ViewSelection", showSquaredAmplitudes ? 5f : 4f); 
@@ -215,7 +226,7 @@ public class WaveMonitor : UdonSharpBehaviour
 
     bool ShowDisplacement
     {
-        get { return showDisplacement; }
+        get => showDisplacement;
         set
         {
             if (showDisplacement != value)
@@ -224,24 +235,46 @@ public class WaveMonitor : UdonSharpBehaviour
                 UpdateViewControl();
                 if (!animationPlay)
                     UpdateWaves(0);
-                RequestSerialization();
             }
+            if (showDisplacement)
+                UpdateToggles();
+            RequestSerialization();
         }
     }
 
-    bool ShowTension
+    bool ShowForce
     {
-        get { return showTension; }
+        get { return showForce; }
         set
         {
-            if (value != showTension)
+            if (value != showForce)
             {
-                showTension = value;
+                showForce = value;
                 UpdateViewControl();
                 if (!animationPlay)
                     UpdateWaves(0);
-                RequestSerialization();
             }
+            if (showForce)
+                UpdateToggles();
+            RequestSerialization();
+        }
+    }
+
+    bool ShowVelocity
+    {
+        get { return showVelocity; }
+        set
+        {
+            if (value != showVelocity)
+            {
+                showVelocity = value;
+                UpdateViewControl();
+                if (!animationPlay)
+                    UpdateWaves(0);
+            }
+            if (showVelocity)
+                UpdateToggles();
+            RequestSerialization();
         }
     }
 
@@ -256,12 +289,14 @@ public class WaveMonitor : UdonSharpBehaviour
                 UpdateViewControl();
                 if (!animationPlay)
                     UpdateWaves(0);
-                RequestSerialization();
             }
+            if (showEnergy)
+                UpdateToggles();
+            RequestSerialization();
         }
     }
 
-    bool ShowSquaredAmplitudes
+    bool ShowSquareAmplitudes
     {
         get { return showSquaredAmplitudes; }
         set
@@ -272,8 +307,9 @@ public class WaveMonitor : UdonSharpBehaviour
                 UpdateViewControl();
                 if (!animationPlay)
                     UpdateWaves(0);
-                RequestSerialization();
+                UpdateToggles();
             }
+            RequestSerialization();
         }
     }
 
@@ -288,34 +324,55 @@ public class WaveMonitor : UdonSharpBehaviour
 
     //* UI Toggle Handlers
 
+    public void PlayWaves()
+    {
+        AnimationPlay = true;
+    }
+
     public void PlayChanged()
     {
         if (TogglePlay != null)
         {
             if (TogglePlay.isOn)
             {
-                AnimationPlay = true;
+                if (iamOwner)
+                    AnimationPlay = true;
+                else
+                    SendCustomNetworkEvent(toTheOwner,nameof(PlayWaves));
             }
         }
     }
 
+    public void PauseWaves()
+    {
+        AnimationPlay = false;
+    }
     public void PauseChanged()
     {
         if (TogglePause != null)
         {
             if (TogglePause.isOn)
-                AnimationPlay = false;
+            {
+                if (iamOwner)
+                    AnimationPlay = false;
+                else
+                    SendCustomNetworkEvent(toTheOwner,nameof(PauseWaves));
+            }
         }
     }
 
+    public void ResetWaves()
+    {
+        ResetTriggerState = resetTriggerState + 1;
+    }
     public void ResetChanged()
     {
         if (ToggleReset != null)
         {
             if (ToggleReset.isOn)
             {
-                ResetTriggerState = resetTriggerState+1;
                 ToggleReset.isOn = false;
+                SendCustomNetworkEvent(toAll, nameof(ResetWaves));
             }
         }
     }
@@ -328,27 +385,36 @@ public class WaveMonitor : UdonSharpBehaviour
         }
     }
 
-    public void ViewTensionChanged()
+    public void ViewForceChanged()
     {
-        if (TogViewTension != null)
+        if (TogViewForce != null)
         {
-            ShowTension = TogViewTension.isOn;
+            ShowForce = TogViewForce.isOn;
+        }
+    }
+
+    public void ViewVelocityChanged()
+    {
+        if (TogViewVelocity != null)
+        {
+            ShowVelocity = TogViewVelocity.isOn;
         }
     }
 
     public void ViewSquareChanged()
     {
-        if (TogViewAmplitudeSquare != null)
+        if (TogViewSquare != null)
         {
-            ShowSquaredAmplitudes = TogViewAmplitudeSquare.isOn;
+            ShowSquareAmplitudes = TogViewSquare.isOn;
         }
+        ShowSquareAmplitudes = TogViewSquare.isOn;
     }
 
     public void ViewEnergyChanged()
     {
         if (TogViewEnergy != null)
         {
-                ShowEnergy = TogViewEnergy.isOn;
+            ShowEnergy = TogViewEnergy.isOn;
         }
     }
 
@@ -356,50 +422,56 @@ public class WaveMonitor : UdonSharpBehaviour
     void CalcParameters()
     {
         CFLSq = CFL * CFL;
-        AbsorbFactor = (CFL - 1) / (1 + CFL);
+        absorbFactor = (CFL - 1) / (1 + CFL);
         effectPeriod = 1/frequency;
         dt = CFL / waveSpeedPixels;
-        effectRampDuration = effectPeriod * 9;
+        effectRampDuration = effectPeriod * 5;
+        lambdaEffect = waveSpeedPixels * effectPeriod;
+        angularWaveNumber = Mathf.PI * 2/lambdaEffect;
         // Calculate dt using c in Pixels per second
         // CFL = cdt/dx (dt*(c/dx + c/dy));
         // c is pixels per sec and dx=dy=1 (1 pixel)
         // dt = CFL/(c/1+c/1);
         // dt = CFL/(c);
-        lambdaEffect = waveSpeedPixels * effectPeriod;
-        requestedFrequency= frequency;
+        requestedFrequency = frequency;
         if (simulationMaterial != null)
         {
             simulationMaterial.SetFloat("_CdTdX^2", CFLSq);
             simulationMaterial.SetFloat("_CdTdX", CFL);
-            simulationMaterial.SetFloat("_T2Radians", frequency*(Mathf.PI*2));
+            simulationMaterial.SetFloat("_KSquared", angularWaveNumber * angularWaveNumber);
+            simulationMaterial.SetFloat("_K", angularWaveNumber);
             simulationMaterial.SetFloat("_DeltaT", dt);
-            simulationMaterial.SetFloat("_Lambda2PI", lambdaEffect/(2*Mathf.PI));
+            simulationMaterial.SetFloat("_T2Radians", frequency * (Mathf.PI * 2));
             simulationMaterial.SetVector("_DriveSettings", driveSettings);
             simulationMaterial.SetFloat("_DriveAmplitude", driverAmplitude);
-            simulationMaterial.SetFloat("_CFAbsorb", AbsorbFactor);
+            simulationMaterial.SetFloat("_CFAbsorb", absorbFactor);
         }
     }
 
     private void UpdateOwnerShip()
     {
-        bool isLocal = Networking.IsOwner(this.gameObject);
+        iamOwner = Networking.IsOwner(this.gameObject);
+        if (iamOwner)
+            return;
+        /*
         if (frequencyControl != null)
-            frequencyControl.IsInteractible = isLocal;
+            frequencyControl.IsInteractible = !iamOwner;
 
         if (TogViewDisplacement != null)
-            TogViewDisplacement.interactable = isLocal;
-        if ( TogViewTension != null)
-            TogViewTension.interactable = isLocal;
-        if (TogViewAmplitudeSquare != null)
-            TogViewAmplitudeSquare.interactable = isLocal;
+            TogViewDisplacement.interactable = !iamOwner;
+        if ( TogViewVelocity != null)
+            TogViewVelocity.interactable = !iamOwner;
+        if (TogViewSquare != null)
+            TogViewSquare.interactable = !iamOwner;
         if (TogViewEnergy != null)
-            TogViewEnergy.interactable = isLocal;
+            TogViewEnergy.interactable = !iamOwner;
         if (TogglePlay != null)
-            TogglePlay.interactable = isLocal;
+            TogglePlay.interactable = !iamOwner;
         if (TogglePause != null)
-            TogglePause.interactable = isLocal;
+            TogglePause.interactable = !iamOwner;
         if (ToggleReset != null)
-            ToggleReset.interactable = isLocal;
+            ToggleReset.interactable = !iamOwner;
+        */
     }
 
     public override void OnOwnershipTransferred(VRCPlayerApi player)
@@ -418,7 +490,7 @@ public class WaveMonitor : UdonSharpBehaviour
         CalcParameters();
         showDisplacement= false; // Force update of displacement visible
         ShowDisplacement = true;
-        UpdateUI();
+        UpdateToggles();
         UpdateOwnerShip();
 
         if (texture != null)

@@ -4,12 +4,12 @@
     Properties
     {
         // _ViewSelection("Show A=0, A^2=1, E=2",Range(0.0,2.0)) = 0.0
-        _Attenuation("Attenuation",Range(0,1)) = 0
         _CdTdXsq("CdTdX^2", Float) = 0.2
         _CdTdX("CdTdX", Float) = 0.25
+        _K("K",Float) = 0.25
+        _KSquared("K Squared",Float) = 0.0625
         _DeltaT("DeltaT",Float) = 1
         _T2Radians("T2Radians",Float) = 6.283
-        _Lambda2PI("Lambda2PI",Float) = 10
         _DriveSettings("DriveSettings",Vector) = (0,0,0,0)
         _DriveAmplitude("DriveAmplitude",Float) = 0
         _CFAbsorb("CFAbsorb", Range(0.0,1.0)) = 0.2
@@ -24,12 +24,12 @@
     #define O(U)  tex2D(_ObstacleTex2D, float2(U))
 
         //float _ViewSelection;
-    float _Attenuation;
     float _CdTdXsq;
     float _CdTdX; // c/2pi
+    float _K;
+    float _KSquared;
     float _DeltaT;
     float _T2Radians;
-    float _Lambda2PI;
     float4 _DriveSettings;
     float _DriveAmplitude;
     float _CFAbsorb;
@@ -41,32 +41,16 @@ float laplacian(float2 pos, float3 duv)
     return (A(pos + duv.xz).x + A(pos - duv.xz).x + A(pos + duv.zy).x + A(pos - duv.zy).x - 4.0 * A(pos).x);
 }
 
-float2 newField(float2 pos, float3 duv)
+float3 newField(float2 pos, float3 duv)
 {
-    float2 field = A(pos).xy;
-    //float currentTime = A(pos).a;
-    //float cycletime = currentTime * _T2Radians; // _Time = (t/20, t, t*2, t*3
+    float3 field = A(pos).xyz;
     int2 pixelPos = int2(floor(pos.x * _CustomRenderTextureWidth), floor(pos.y * _CustomRenderTextureHeight));
-    // DriveSettings x= distance down tank, y & z region across tank;
-    //int  inDriveRow = (int)((int)floor(_DriveSettings.x) == pixelPos.x);
-    //int  inDriveColumns = (int)((floor(_DriveSettings.y) <= pixelPos.y) && (floor(_DriveSettings.z) >= pixelPos.y));
-    //float force =  lerp(0, _DriveAmplitude * sin(cycletime),(int)(inDriveRow==1 && inDriveColumns==1));
-    //field.y += _CdTdX * (laplacian(pos,duv) + force); //velocity += force * time step
-    field.y += _CdTdX * laplacian(pos,duv); //velocity += force * time step
+    float df = laplacian(pos,duv); // force from curvature
+    field.y += _CdTdX * df; //velocity += force * time step
     field.x += _CdTdX * field.y; //position += velocity*time step
+    field.z = field.y / _K; 
     return field;
 }
-
-/*
-vec2 newAbsorbed(vec2 pos, vec2 n)
-{
-    float uS = 1.0 * dt / 1.0;
-    vec2 field = A(pos).xy;
-    field.x = A(pos + n).x + (newField(pos + n).x - A(pos).x) * (uS - 1.0) / (uS + 1.0);
-    return field;
-}
-
-*/
 
 float2 newAbsorbed(float2 pos, float2 n,float3 duv)
 {
@@ -83,7 +67,7 @@ float4 fragNew(v2f_customrendertexture i) : SV_Target
     float du = 1.0 / _CustomRenderTextureWidth;
     float dv = 1.0 / _CustomRenderTextureHeight;
     float3 duv = float3(du, dv, 0);
-    float2 updated = float2(0, 0);
+    float3 updated = float3(0, 0, 0);
     
     // Pixel Positions
     int xPixel = (int)(floor(pos.x * _CustomRenderTextureWidth));
@@ -103,7 +87,6 @@ float4 fragNew(v2f_customrendertexture i) : SV_Target
     {
         float tRadians = A(pos).a * _T2Radians;
         updated.x = _DriveAmplitude * sin(tRadians);
-        updated.y = 0; // _DriveAmplitude * cos(tRadians);
     }
     else if (!isOnObstacle)
     {
@@ -119,7 +102,7 @@ float4 fragNew(v2f_customrendertexture i) : SV_Target
             updated = newField(pos, duv);
     }
   
-    return float4(updated.x,updated.y, _Lambda2PI * updated.y,A(pos).a+_DeltaT);
+    return float4(updated.x, updated.y, updated.z,A(pos).a+_DeltaT);
 }
 
 ENDCG
