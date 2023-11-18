@@ -291,8 +291,6 @@ public class WaveSlitControls : UdonSharpBehaviour
     private void UpdateOwnerShip()
     {
         iamOwner = Networking.IsOwner(this.gameObject);
-        if (iamOwner)
-            return;
     }
 
     public override void OnOwnershipTransferred(VRCPlayerApi player)

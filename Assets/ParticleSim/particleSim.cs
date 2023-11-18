@@ -28,7 +28,8 @@ public class particleSim : UdonSharpBehaviour
     private Transform apertureXfrm;
 
     private Color sourceColour = Color.gray;
-    [Header("Frequency")]
+    [Header("Frequency Parameters")]
+    [SerializeField]
     private float frequency = 1.5f;
     [SerializeField]
     private float frequencyMax = 2f;
@@ -275,9 +276,14 @@ public class particleSim : UdonSharpBehaviour
                     Vector3 vUpdated;
                     Vector3 unit = Vector3.right;
                     unit.z = (quantumDistribution.RandomImpulseFrac(freqencyFrac)); // * planckValue);
-                    unit.x = -Mathf.Sqrt(1 - (unit.z * unit.z));
-                    vUpdated = unit * particleSpeed;
-                    particle.velocity = vUpdated;   
+                    if (Mathf.Abs(unit.z) > 1)
+                        particle.remainingLifetime = 0;
+                    else
+                    {
+                        unit.x = -Mathf.Sqrt(1 - (unit.z * unit.z));
+                        vUpdated = unit * particleSpeed;
+                        particle.velocity = vUpdated;
+                    }
                 }
                 // Set Velocity
                 particleChanged = true;
