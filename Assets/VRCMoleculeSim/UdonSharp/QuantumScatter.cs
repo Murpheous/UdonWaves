@@ -119,15 +119,27 @@ public class QuantumScatter : UdonSharpBehaviour
         return -(inverseDistribution[-nRand]);
     }
 
+    
+    /*public float RandomImpulse()
+    {
+        if (!settingsUpdated)
+            return 0f;
+        float randSample = SubsetSample(pointsWide);
+        return randSample;
+    }*/
+
     public float RandomImpulseFrac(float incidentSpeedFrac)
     {
         if (!settingsLoaded)
             return 0f;
         distributionSegment = pointsWide - 1;
+        //if ()
+        //distributionSegment = (int)(incidentSpeedFrac*(pointsWide-1));
         distributionRange = randomWidths[distributionSegment];
         float resultIndex = SubsetSample(distributionRange);
+        //float resultF = resultIndex - Mathf.Sign(resultIndex);
         float resultFrac = (distributionScale * resultIndex )/ (pointsWide * incidentSpeedFrac);
-        return resultFrac;
+        return Mathf.Clamp(resultFrac,-1f,1f);
     }
 
 

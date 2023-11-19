@@ -13,7 +13,7 @@ public class GratingControl : UdonSharpBehaviour
     Transform gratingXfrm;
     public GameObject barPrefab;
     public GameObject frameSupport;
-    [Range(0.0001f,0.01f)] float increment = 0.0001f;
+    [SerializeField,Range(0.0001f,0.01f)] float increment = 0.001f;
     public float panelThickness;
     [SerializeField,UdonSynced,FieldChangeCallback(nameof(BarsCollide))]
     bool barsCollide = false;
@@ -100,6 +100,7 @@ public class GratingControl : UdonSharpBehaviour
     
     [SerializeField, UdonSynced, FieldChangeCallback(nameof(RowPitchNative))]
     private float rowPitchNative = 0.06f;
+    //[SerializeField]
     private float graphicsRowPitch;
     public float RowPitchMetres { get { return rowPitchNative * metricScaleFactor; } }
 
@@ -505,6 +506,8 @@ public class GratingControl : UdonSharpBehaviour
     private float maxRowFrac;
     public bool checkLatticeCollision(Vector3 particlePosition)
     {
+        if (!gratingVersionIsCurrent)
+            return false;
         // First calculate
         float verticalDelta = Mathf.Abs(particlePosition.y);
         if (verticalDelta > gratingGraphicHalfSize.y)
@@ -518,6 +521,7 @@ public class GratingControl : UdonSharpBehaviour
         // now look to see if it hits a horizontal bar
         if (rowCount > 0)
         {
+            //Debug.Log("checkLatticeCollision:"+verticalDelta);
             verticalDelta /= graphicsRowPitch;
             verticalDelta -= (int)verticalDelta;
             if (!rowsOdd)
@@ -734,8 +738,8 @@ public class GratingControl : UdonSharpBehaviour
         if (togBarsCollide != null)
             togBarsCollide.isOn = barsCollide;
         GratingScaleStep = gratingScaleStep;
-        pitchSteps = new Vector2(increment,increment);
-        sizeSteps = pitchSteps/5.0f;
+        sizeSteps = new Vector2(increment, increment);
+        pitchSteps = sizeSteps * 5;
 
         ColumnCount = Mathf.Clamp(columnCount, 1, MAX_SLITS);
         RowCount = Mathf.Clamp(rowCount, 0, MAX_ROWS);

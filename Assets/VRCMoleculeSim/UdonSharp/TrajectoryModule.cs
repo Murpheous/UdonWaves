@@ -167,6 +167,7 @@ public class TrajectoryModule : UdonSharpBehaviour
         GravitySim = gravitySimArg;
         SpeedMinMax = new Vector2(speedMin, speedMax);
         GratingDistance = gratingDistanceArg;
+        settingsValid &= (!settingsLoaded);
         settingsLoaded = true;
         if (!settingsValid)
             calculateTrajectories();
@@ -175,8 +176,10 @@ public class TrajectoryModule : UdonSharpBehaviour
     public void calculateTrajectories()
     {
         settingsValid = true;
-        double deltaT;
-        double vY;
+        float deltaT;
+        float vY;
+        float vX;
+        float frac;
         if ((launchVelocities == null) || (launchVelocities.Length < lookupPoints))
         {
             launchVelocities = new Vector3[lookupPoints];
@@ -184,11 +187,11 @@ public class TrajectoryModule : UdonSharpBehaviour
         }
         for (int i = 0; i < lookupPoints; i++)
         {
-            float frac = (float)i / (lookupPoints-1);
-            launchVelocities[i] = new Vector3(Mathf.Lerp(speedMinMax.x, speedMinMax.y, frac), 0, 0);
-            deltaT = gratingDistance/ launchVelocities[i].x ;
-            vY = useGravity ? -0.5 * deltaT*gravitySim : 0.0;
-            launchVelocities[i].y = (float)vY;
+            frac = (float)i / (lookupPoints-1);
+            vX = Mathf.Lerp(speedMinMax.x, speedMinMax.y, frac);
+            deltaT = gratingDistance/ vX ;
+            vY = useGravity ? -0.5f * deltaT*gravitySim : 0f;
+            launchVelocities[i] = new Vector3(vX,vY,0f);
             Color l = lerpColour(frac);
             launchColours[i] = l;
         }
