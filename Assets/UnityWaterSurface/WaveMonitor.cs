@@ -475,8 +475,6 @@ public class WaveMonitor : UdonSharpBehaviour
         iamOwner = Networking.IsOwner(this.gameObject);
         if (iamOwner && pointerDown)
             FreqPointerIsDown = true;
-        //if (frequencyControl != null)
-        //    frequencyControl.IsInteractible = iamOwner;
     }
 
     public override void OnOwnershipTransferred(VRCPlayerApi player)
