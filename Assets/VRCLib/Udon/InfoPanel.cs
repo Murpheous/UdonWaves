@@ -10,14 +10,12 @@ using VRC.Udon;
 [UdonBehaviourSyncMode(BehaviourSyncMode.Manual)]
 public class InfoPanel : UdonSharpBehaviour
 {
-    public Toggle panelToggle;
     public ToggleGroup subjectGroup;
     [SerializeField] Transform panelXfrm;
     [SerializeField] TextMeshProUGUI infoText;
     [SerializeField] SyncedToggle[] toggles = null;
     int toggleCount = 0;
 
-    bool hasToggle = false;
     bool hasGroup = false;
     bool hasTextField = false;
     bool hasTransform = false;
@@ -26,36 +24,30 @@ public class InfoPanel : UdonSharpBehaviour
     private VRC.Udon.Common.Interfaces.NetworkEventTarget toTheOwner = VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner;
     private VRC.Udon.Common.Interfaces.NetworkEventTarget toAll = VRC.Udon.Common.Interfaces.NetworkEventTarget.All;
 
-    [SerializeField] private bool showPanel = true;
+    [SerializeField,UdonSynced,FieldChangeCallback(nameof(ShowPanel))] 
+    private int showPanel = 0;
 
     [SerializeField,TextArea] string defaultText = string.Empty;
-    public void onToggleChanged()
-    {
-        bool newState = !showPanel;
-        if (hasToggle)
-            newState = panelToggle.isOn;
-        ShowPanel = newState;
-    }
-    public bool ShowPanel
+    public int ShowPanel
     {
         get => showPanel; 
         set
         {
             if (showPanel != value)
             {
-                if (value && hasTextField)
+                if (value > 0 && hasTextField)
                 {
                     infoText.text = defaultText;
                 }
                 showPanel = value;
             }
             if (hasTextField)
-                infoText.enabled = showPanel;
+                infoText.enabled = showPanel > 0;
             if (hasTransform) 
             { 
-                panelXfrm.gameObject.SetActive(showPanel);
+                panelXfrm.gameObject.SetActive(showPanel > 0);
             }
-            if (hasGroup && !showPanel)
+            if (hasGroup && showPanel <= 0)
             {
                 subjectGroup.SetAllTogglesOff();
             }
@@ -90,7 +82,7 @@ public class InfoPanel : UdonSharpBehaviour
     
     public void onPanelClose()
     {
-        ShowPanel = false;
+        ShowPanel = 0;
     }
 
     private void UpdateOwnerShip()
@@ -120,7 +112,6 @@ public class InfoPanel : UdonSharpBehaviour
         if (subjectGroup == null)
             subjectGroup = gameObject.GetComponent<ToggleGroup>();
 
-        hasToggle = panelToggle != null;
         hasTextField = infoText != null;
         if (hasTextField && panelXfrm == null)
         {

@@ -276,7 +276,7 @@ public class particleSim : UdonSharpBehaviour
                     Vector3 vUpdated;
                     Vector3 unit = Vector3.right;
                     unit.z = (quantumDistribution.RandomImpulseFrac(freqencyFrac)); // * planckValue);
-                    if (Mathf.Abs(unit.z) > 1)
+                    if (Mathf.Abs(unit.z) >= 1)
                         particle.remainingLifetime = 0;
                     else
                     {
