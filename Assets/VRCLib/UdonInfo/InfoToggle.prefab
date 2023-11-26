@@ -208,10 +208,10 @@ MonoBehaviour:
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
   m_Colors:
-    m_NormalColor: {r: 0, g: 0.7871618, b: 0.8962264, a: 1}
-    m_HighlightedColor: {r: 1, g: 0.8348624, b: 0, a: 0.83137256}
+    m_NormalColor: {r: 0, g: 0.8777292, b: 1, a: 1}
+    m_HighlightedColor: {r: 0.16907978, g: 1, b: 0, a: 0.83137256}
     m_PressedColor: {r: 0.9433962, g: 0.16464934, b: 0.90585643, a: 1}
-    m_SelectedColor: {r: 0, g: 1, b: 0.8660717, a: 0.8862745}
+    m_SelectedColor: {r: 1, g: 0.7337059, b: 0, a: 1}
     m_DisabledColor: {r: 0.6886792, g: 0.24363652, b: 0.48558554, a: 1}
     m_ColorMultiplier: 1.27
     m_FadeDuration: 0.1
@@ -270,8 +270,11 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 1416744751647390857}
   toggle: {fileID: 8878407416592638583}
   toggleClient: {fileID: 0}
-  clientVariableName: 
-  toggleName: 
+  toggleIndex: -1
+  currentState: 0
+  reportedState: 0
+  hasToggle: 0
+  hasClient: 0
 --- !u!114 &1416744751647390857
 MonoBehaviour:
   m_ObjectHideFlags: 0

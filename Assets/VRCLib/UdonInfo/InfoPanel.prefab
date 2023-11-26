@@ -316,7 +316,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   serializationData:
-    SerializedFormat: 2
+    SerializedFormat: 0
     SerializedBytes: 
     ReferencedUnityObjects: []
     SerializedBytesString: 
@@ -325,14 +325,13 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4926412167092619927}
-  panelToggle: {fileID: 0}
-  subjectGroup: {fileID: 4193235092411364038}
+  toggleGroup: {fileID: 4193235092411364038}
   panelXfrm: {fileID: 3438419577815233409}
   infoText: {fileID: 469481845871911722}
   toggles: []
-  showPanel: 1
+  showPanel: 0
   defaultText: Are you there Moriarty?
-  toggleIndex: 0
+  toggleIndex: -1
 --- !u!223 &6439079890486107066
 Canvas:
   m_ObjectHideFlags: 0
