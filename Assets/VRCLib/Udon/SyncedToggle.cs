@@ -11,7 +11,7 @@ public class SyncedToggle : UdonSharpBehaviour
     [SerializeField]
     private Toggle toggle;
     [SerializeField]
-    private InfoPanel toggleClient;
+    private UdonBehaviour toggleClient;
     public int toggleIndex = -1;
     [SerializeField]
     private bool currentState = false;
@@ -33,10 +33,10 @@ public class SyncedToggle : UdonSharpBehaviour
             currentState = value;
             if (reportedState != currentState) 
             {
-                if (hasClient)
+                if (hasClient && currentState)
                 {
                     if (toggleIndex >= 0)
-                        toggleClient.toggleState( toggleIndex, currentState);
+                        toggleClient.SendCustomEvent("toggleIndex");
                 }
             }
             reportedState = value;
