@@ -139,7 +139,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Use Gravity
+  m_text: 'Show/Hide
+
+    Grid'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -219,7 +221,7 @@ GameObject:
   - component: {fileID: 6569445345492569933}
   - component: {fileID: 6569445345492569932}
   m_Layer: 17
-  m_Name: ToggleGravity
+  m_Name: ToggleGrid
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -303,7 +305,7 @@ MonoBehaviour:
           m_StringArgument: OnGravityToggle
           m_BoolArgument: 0
         m_CallState: 2
-  m_IsOn: 0
+  m_IsOn: 1
 --- !u!1 &6569445346279350651
 GameObject:
   m_ObjectHideFlags: 0

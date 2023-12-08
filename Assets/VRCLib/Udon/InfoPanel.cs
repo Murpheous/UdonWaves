@@ -48,8 +48,11 @@ public class InfoPanel : UdonSharpBehaviour
         int newToggle = -1;
         for (int i = 0; newToggle < 0 && i < toggles.Length; i++)
         {
-            if (toggles[i].isOn)
-                newToggle = i;
+            if (toggles[i] != null)
+            {
+                if (toggles[i].isOn)
+                    newToggle = i;
+            }
         }
         SelectedToggle = newToggle;
     }

@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public static class Units 
@@ -50,7 +48,6 @@ public static class Units
             return $"{sig}{x.ToString(format)}";
         }
     }
-
 
     public static string ToEngineeringNotation(float d)
 	{

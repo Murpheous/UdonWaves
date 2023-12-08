@@ -56,6 +56,10 @@ public class GratingControl : UdonSharpBehaviour
             RequestSerialization();
         }
     }
+
+    private bool iamOwner;
+    private VRC.Udon.Common.Interfaces.NetworkEventTarget toTheOwner = VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner;
+
     [Header("Dimensions @ native 1:1 scale")]
     [Tooltip("Graphics Metres at Native Scaling 1/x"), SerializeField, UdonSynced, FieldChangeCallback(nameof(NativeGraphicsRatio))]
     private int nativeGraphicsRatio = 10;
@@ -234,6 +238,15 @@ public class GratingControl : UdonSharpBehaviour
     private int MAX_ROWS = 20;
     //private QuantumScatter particleScatter;
     bool gratingVersionIsCurrent;
+    private void UpdateOwnerShip()
+    {
+        iamOwner = Networking.IsOwner(this.gameObject);
+    }
+
+    public override void OnOwnershipTransferred(VRCPlayerApi player)
+    {
+        UpdateOwnerShip();
+    }
 
     void setText(TextMeshProUGUI tmproLabel, string text)
     {
@@ -348,6 +361,12 @@ public class GratingControl : UdonSharpBehaviour
 
     public void OnBarsCollide()
     {
+        if (!iamOwner)
+        {
+            SendCustomNetworkEvent(toTheOwner, nameof(OnBarsCollide));
+            return;
+        }
+
         if (togBarsCollide != null)
         {
             BarsCollide = togBarsCollide.isOn;
@@ -359,24 +378,50 @@ public class GratingControl : UdonSharpBehaviour
     }
     public void OnGratingScaleDown()
     {
+        if (!iamOwner)
+        {
+            SendCustomNetworkEvent(toTheOwner, nameof(OnGratingScaleDown));
+            return;
+        }
         GratingScaleStep = gratingScaleStep - 1;
     }
     public void OnGratingScaleUp()
     {
+        if (!iamOwner)
+        {
+            SendCustomNetworkEvent(toTheOwner, nameof(OnGratingScaleUp));
+            return;
+        }
         GratingScaleStep = gratingScaleStep + 1;
     }
     public void OnAperturesPlus()
     {
+        if (!iamOwner)
+        {
+            SendCustomNetworkEvent(toTheOwner, nameof(OnAperturesPlus));
+            return;
+        }
         if ((ColumnCount < MAX_SLITS) && checkGratingWidth(HoleWidthNative, ColumnPitchNative, ColumnCount + 1))
             ColumnCount = columnCount + 1;
     }
 
     public void OnAperturesMinus()
     {
+        if (!iamOwner)
+        {
+            SendCustomNetworkEvent(toTheOwner, nameof(OnAperturesMinus));
+            return;
+        }
         ColumnCount = columnCount - 1;
     }
     public void OnWidthPlus()
     {
+
+        if (!iamOwner)
+        {
+            SendCustomNetworkEvent(toTheOwner, nameof(OnWidthPlus));
+            return;
+        }
         float testVal = HoleWidthNative + sizeSteps.x;
         if (testVal >= ColumnPitchNative)
             return;
@@ -385,6 +430,12 @@ public class GratingControl : UdonSharpBehaviour
     }
     public void OnWidthMinus()
     {
+        if (!iamOwner)
+        {
+            SendCustomNetworkEvent(toTheOwner, nameof(OnWidthMinus));
+            return;
+        }
+
         float testVal = HoleWidthNative - sizeSteps.x;
         if (testVal <= sizeSteps.x)
             return;
@@ -393,12 +444,22 @@ public class GratingControl : UdonSharpBehaviour
     }
     public void OnPitchPlus()
     {
+        if (!iamOwner)
+        {
+            SendCustomNetworkEvent(toTheOwner, nameof(OnPitchPlus));
+            return;
+        }
         float testVal = ColumnPitchNative + pitchSteps.x;
         if (checkGratingWidth(HoleWidthNative, testVal, ColumnCount))
             ColumnPitchNative = testVal;
     }
     public void OnPitchMinus()
     {
+        if (!iamOwner)
+        {
+            SendCustomNetworkEvent(toTheOwner, nameof(OnPitchMinus));
+            return;
+        }
         float testVal = ColumnPitchNative - pitchSteps.x;
         if (testVal <= HoleWidthNative) 
             return;
@@ -408,16 +469,31 @@ public class GratingControl : UdonSharpBehaviour
 
     public void OnRowsPlus()
     {
+        if (!iamOwner)
+        {
+            SendCustomNetworkEvent(toTheOwner, nameof(OnRowsPlus));
+            return;
+        }
         if ((RowCount < MAX_ROWS) && checkGratingHeight(HoleHeightNative, RowPitchNative, RowCount + 1))
             RowCount = rowCount + 1;
     }
 
     public void OnRowsMinus()
     {
+        if (!iamOwner)
+        {
+            SendCustomNetworkEvent(toTheOwner, nameof(OnRowsMinus));
+            return;
+        }
         RowCount = rowCount - 1;
     }
     public void OnHeightPlus()
     {
+        if (!iamOwner)
+        {
+            SendCustomNetworkEvent(toTheOwner, nameof(OnHeightPlus));
+            return;
+        }
         float testVal = HoleHeightNative + sizeSteps.y;
         if (testVal >= RowPitchNative) 
             return;
@@ -426,6 +502,11 @@ public class GratingControl : UdonSharpBehaviour
     }
     public void OnHeightMinus()
     {
+        if (!iamOwner)
+        {
+            SendCustomNetworkEvent(toTheOwner, nameof(OnHeightMinus));
+            return;
+        }
         float testVal = HoleHeightNative - sizeSteps.y;
         if (testVal <= sizeSteps.y)
             return;
@@ -434,12 +515,23 @@ public class GratingControl : UdonSharpBehaviour
     }
     public void OnRowPitchPlus()
     {
+        if (!iamOwner)
+        {
+            SendCustomNetworkEvent(toTheOwner, nameof(OnRowPitchPlus));
+            return;
+        }
+
         float testVal = RowPitchNative + pitchSteps.y;
         if (checkGratingHeight(HoleHeightNative, testVal, RowCount))
             RowPitchNative = testVal;
     }
     public void OnRowPitchMinus()
     {
+        if (!iamOwner)
+        {
+            SendCustomNetworkEvent(toTheOwner, nameof(OnRowPitchMinus));
+            return;
+        }
         float testVal = RowPitchNative - pitchSteps.y;
         if (testVal <= HoleHeightNative)
             return;
@@ -750,7 +842,9 @@ public class GratingControl : UdonSharpBehaviour
         //holeWidthNative = Mathf.Clamp(holeWidthNative, 0, maxWidth/2.0f);
         if (panelThickness <= 0) panelThickness = 0.001f;
         populateBars();
+        UpdateOwnerShip();
         started = true;
+
     }
     float pollTick = 0.5f;
     void Update()

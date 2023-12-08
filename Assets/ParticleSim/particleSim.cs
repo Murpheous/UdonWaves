@@ -19,8 +19,6 @@ public class particleSim : UdonSharpBehaviour
     private Toggle togglePlay;
     [SerializeField]
     private Toggle toggleStop;
-    [SerializeField]
-    private Toggle toggleReset;
     [SerializeField,UdonSynced,FieldChangeCallback(nameof(ParticlesPlaying))]
     private bool particlesPlaying;
 
@@ -217,16 +215,9 @@ public class particleSim : UdonSharpBehaviour
         }
     }
 
-    public void ResetChanged()
+    public void onReset()
     {
-        if (toggleReset != null)
-        {
-            if (toggleReset.isOn)
-            {
-                SendCustomNetworkEvent(toAll, nameof(ResetParticles));
-                toggleReset.isOn = false;
-            }
-        }
+        SendCustomNetworkEvent(toAll, nameof(ResetParticles));
     }
 
     public void ResetParticles()

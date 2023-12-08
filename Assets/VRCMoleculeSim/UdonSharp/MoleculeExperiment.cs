@@ -15,7 +15,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
     private int randomRangePercent = 50;
     [SerializeField, UdonSynced,  FieldChangeCallback(nameof(RandomizeSpeed))] bool randomizeSpeed = true;
     
-    [UdonSynced, FieldChangeCallback(nameof(UserSpeedPercent))] private int userSpeedPercent = 0;
+    [UdonSynced, FieldChangeCallback(nameof(SpeedPercent))] private int speedPercent = 0;
 
     [SerializeField] private SyncedSlider speedSlider;
     [SerializeField] private TextMeshProUGUI speedTitle;
@@ -44,6 +44,119 @@ public class MoleculeExperiment : UdonSharpBehaviour
     [SerializeField, Range(0.1f, 5f), UdonSynced, FieldChangeCallback(nameof(MarkerPointSize))] float markerPointSize = 2;
     [SerializeField] private SyncedSlider pointSizeSlider;
 
+    private float pendingBeamSize = 0;
+    private bool beamSizeIsPending = false;
+    private int pendingSpeed = 0;
+    private bool speedIsPending = false;
+    private float pendingPointSize = 0f;
+    private bool pointSizeIsPending = false;
+    private VRCPlayerApi player;
+
+
+    [SerializeField, FieldChangeCallback(nameof(BeamSizeState))]
+    public bool beamSizeState = false;
+    private bool BeamSizeState
+    {
+        get => beamSizeState;
+        set
+        {
+            Debug.Log("Beam Size Pointer" + value.ToString());
+            beamSizeState = value;
+            if (!iamOwner && value)
+                Networking.SetOwner(player, gameObject);
+        }
+    }
+
+    [SerializeField, FieldChangeCallback(nameof(BeamSizeValue))]
+    public float beamSizeValue;
+    private float BeamSizeValue
+    {
+        get => beamSizeValue;
+        set
+        {
+            if (!iamOwner)
+            {
+                if (beamSizeState)
+                {
+                    beamSizeIsPending = true;
+                    pendingBeamSize = value;
+                    return;
+                }
+            }
+            if (value != particleDisplaySize)
+                ParticleDisplaySize = value;
+        }
+    }
+
+
+    [SerializeField, FieldChangeCallback(nameof(SpeedPtrState))]
+    public bool speedPtrState = false;
+    private bool SpeedPtrState
+    {
+        get => speedPtrState;
+        set
+        {
+            speedPtrState = value;
+            if (!iamOwner && value)
+                Networking.SetOwner(player, gameObject);
+        }
+    }
+
+    [SerializeField, FieldChangeCallback(nameof(SpeedValue))]
+    public int speedValue;
+    private int SpeedValue
+    {
+        get => speedValue;
+        set
+        {
+            if (!iamOwner)
+            {
+                if (speedPtrState)
+                {
+                    speedIsPending = true;
+                    pendingSpeed = value;
+                }
+                return;
+            }
+            if (value != speedPercent)
+                SpeedPercent = value;
+        }
+    }
+
+    [SerializeField, FieldChangeCallback(nameof(MarkerSlideState))]
+    public bool markerSlideState = false;
+    private bool MarkerSlideState
+    {
+        get => markerSlideState;
+        set
+        {
+            Debug.Log("Marker Slide Pointer" + value.ToString());
+            markerSlideState = value;
+            if (!iamOwner && value)
+                Networking.SetOwner(player, gameObject);
+        }
+    }
+
+    [SerializeField, FieldChangeCallback(nameof(MarkerSlideValue))]
+    public float markerSlideValue;
+    private float MarkerSlideValue
+    {
+        get => markerSlideValue;
+        set
+        {
+            if (!iamOwner)
+            {
+                if (markerSlideState)
+                {
+                    pointSizeIsPending = true;
+                    pendingPointSize = value;
+                }
+                return;
+            }
+            if (value != markerPointSize)
+                MarkerPointSize = value;
+        }
+    }
     public float MarkerPointSize
     {
         get => markerPointSize;
@@ -254,19 +367,18 @@ public class MoleculeExperiment : UdonSharpBehaviour
     [SerializeField]
     private float randomRange = 0.7f;
 
-    [SerializeField]    
-    private int UserSpeedPercent
+    private int SpeedPercent
     {
-        get => userSpeedPercent;
+        get => speedPercent;
         set
         {
             int lim = RandomRangePercent;
-            userSpeedPercent = value;
-            userSpeedFraction = userSpeedPercent/100f;
+            speedPercent = value;
+            userSpeedFraction = speedPercent/100f;
             userSpeedTrim = (Mathf.Clamp(userSpeedFraction / randomRange,-1f,1f)+1f)/2f;
             if (isRunning && speedSlider != null)
             {
-                speedSlider.SetValues(userSpeedPercent, -lim, lim);
+                speedSlider.SetValues(speedPercent, -lim, lim);
                 speedSlider.gameObject.SetActive(!randomizeSpeed);
             }
             if (hasSpeedLabel)
@@ -400,6 +512,8 @@ public class MoleculeExperiment : UdonSharpBehaviour
     [SerializeField] Toggle togQuantum;
     [SerializeField] Toggle togRandomSpeed;
     [SerializeField] Toggle togMonochrome;
+    bool iamOwner = false;
+    private VRC.Udon.Common.Interfaces.NetworkEventTarget toTheOwner = VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner;
 
     [Header("Debug Stuff")]
     [SerializeField] TextMeshProUGUI debugTextField;
@@ -460,15 +574,38 @@ public class MoleculeExperiment : UdonSharpBehaviour
             tmproLabel.text = text;
     }
 
+    private void ReviewOwnerShip()
+    {
+        iamOwner = Networking.IsOwner(this.gameObject);
+
+        /*if (pointSizeSlider != null)
+            pointSizeSlider.IsInteractible = iamOwner;
+        if (speedSlider != null)
+            speedSlider.IsInteractible = iamOwner; 
+        if (particleSizeSlider != null)
+            particleSizeSlider.IsInteractible = iamOwner; */
+        if (iamOwner)
+        {
+            if (pointSizeIsPending)
+            {
+                MarkerPointSize = pendingPointSize;
+                pointSizeIsPending = false;
+            }
+            if (speedIsPending)
+            {
+                SpeedPercent = pendingSpeed;
+                speedIsPending = false;
+            }
+            if (beamSizeIsPending)
+            {
+                ParticleDisplaySize = pendingBeamSize;
+                beamSizeIsPending = false;
+            }
+        }
+    }
     public override void OnOwnershipTransferred(VRCPlayerApi player)
     {
-        bool isLocal = Networking.IsOwner(this.gameObject);
-        if (pointSizeSlider != null)
-            pointSizeSlider.IsInteractible = isLocal;
-        if (speedSlider != null)
-            speedSlider.IsInteractible = isLocal;
-        if (particleSizeSlider != null)
-            particleSizeSlider.IsInteractible = isLocal;
+        ReviewOwnerShip();
     }
     private void UpdateLabels()
     {
@@ -496,35 +633,130 @@ public class MoleculeExperiment : UdonSharpBehaviour
 
     public void OnPlanckScaleDown()
     {
+        if (!iamOwner)
+        {
+            SendCustomNetworkEvent(toTheOwner, nameof(OnPlanckScaleDown));
+            return;
+        }
         PlanckIndex = planckIndex-1;
     }
 
     public void OnPlanckScaleUp()
     {
+        if (!iamOwner)
+        {
+            SendCustomNetworkEvent(toTheOwner, nameof(OnPlanckScaleUp));
+            return;
+        }
         PlanckIndex =  planckIndex + 1;
+    }
+
+    public void SetGravityOn()
+    {
+        if (!iamOwner)
+        {
+            SendCustomNetworkEvent(toTheOwner, nameof(SetGravityOn));
+            return;
+        }
+        UseGravity = true;
+    }
+
+    public void SetGravityOff()
+    {
+        if (!iamOwner)
+        {
+            SendCustomNetworkEvent(toTheOwner, nameof(SetGravityOff));
+            return;
+        }
+        UseGravity = false;
     }
     public void OnGravityToggle()
     {
         bool newGravity = !useGravity;
         if (togGravity != null)
             newGravity  = togGravity.isOn;
-        UseGravity = newGravity;
+        if (newGravity) 
+            SetGravityOn();
+        else
+            SetGravityOff();
     }
 
+    public void SetQuantumOff()
+    {
+        if (!iamOwner)
+        {
+            SendCustomNetworkEvent(toTheOwner, nameof(SetQuantumOff));
+            return;
+        }
+        UseQuantumScatter = false;
+    }
+    public void SetQuantumOn()
+    {
+        if (!iamOwner)
+        {
+            SendCustomNetworkEvent(toTheOwner, nameof(SetQuantumOn));
+            return;
+        }
+        UseQuantumScatter = true;
+    }
     public void OnQuantumToggle()
     {
         bool newQuantum = !useQuantumScatter;
         if (togQuantum != null)
             newQuantum = togQuantum.isOn;
-        UseQuantumScatter = newQuantum;
+        if (newQuantum) 
+            SetQuantumOn();
+        else
+            SetQuantumOff();
+    }
+    public void RandomSpeedOn()
+    {
+        if (!iamOwner)
+        {
+            SendCustomNetworkEvent(toTheOwner, nameof(RandomSpeedOn));
+            return;
+        }
+        RandomizeSpeed = true;
     }
 
+    public void RandomSpeedOff()
+    {
+        if (!iamOwner)
+        {
+            SendCustomNetworkEvent(toTheOwner, nameof(RandomSpeedOff));
+            return;
+        }
+        RandomizeSpeed = false;
+    }
     public void OnTogSpeed()
     {
         bool newRandom = !randomizeSpeed;
         if (togRandomSpeed != null)
             newRandom = togRandomSpeed.isOn;
-        RandomizeSpeed = newRandom;
+        if (newRandom)
+            RandomSpeedOn();
+        else
+            RandomSpeedOff();
+    }
+
+    public void SetColourOn()
+    {
+        if (!iamOwner)
+        {
+            SendCustomNetworkEvent(toTheOwner,nameof(SetColourOn));
+            return;
+        }
+        UseMonochrome = true;
+    }
+
+    public void SetColourOff()
+    {
+        if (!iamOwner)
+        {
+            SendCustomNetworkEvent(toTheOwner, nameof(SetColourOff));
+            return;
+        }
+        UseMonochrome = false;
     }
 
     public void OnTogMonochrome()
@@ -532,7 +764,10 @@ public class MoleculeExperiment : UdonSharpBehaviour
         bool newMono = !useMonochrome;
         if (togMonochrome != null)
             newMono = togMonochrome.isOn;
-        useMonochrome = newMono;
+        if (newMono)
+            SetColourOn();
+        else 
+            SetColourOff();
     }
 
     private void LateUpdate()
@@ -946,6 +1181,9 @@ public class MoleculeExperiment : UdonSharpBehaviour
     bool hasSpeedLabel = false;
     void Start()
     {
+        player = Networking.LocalPlayer;
+        ReviewOwnerShip();
+
         hasDebug = (debugTextField != null) && debugTextField.gameObject.activeSelf;
         hasSpeedLabel = speedTitle != null;
         isRunning = true;
@@ -962,7 +1200,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
             gratingPosition = gratingXfrm.position;
             //gratingPosition.x -= 0.001f;
         }
-        UserSpeedPercent = userSpeedPercent;
+        SpeedPercent = speedPercent;
         RandomRangePercent = randomRangePercent;
         float tmp = experimentScale;
         experimentScale = 0;

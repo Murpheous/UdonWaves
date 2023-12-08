@@ -135,7 +135,6 @@ public class WaveMonitor : UdonSharpBehaviour
     public Toggle TogViewEnergy;
     public Toggle TogglePlay;
     public Toggle TogglePause;
-    public Toggle ToggleReset;
     [SerializeField, UdonSynced,FieldChangeCallback(nameof(ShowDisplacement))]
     private bool showDisplacement = true;
     [SerializeField, UdonSynced, FieldChangeCallback(nameof(ShowVelocity))]
@@ -387,16 +386,9 @@ public class WaveMonitor : UdonSharpBehaviour
     {
         ResetTriggerState = resetTriggerState + 1;
     }
-    public void ResetChanged()
+    public void onReset()
     {
-        if (ToggleReset != null)
-        {
-            if (ToggleReset.isOn)
-            {
-                ToggleReset.isOn = false;
-                SendCustomNetworkEvent(toAll, nameof(ResetWaves));
-            }
-        }
+        SendCustomNetworkEvent(toAll, nameof(ResetWaves));
     }
 
     public void ViewHeightChanged()
