@@ -2,20 +2,24 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!21 &2100000
 Material:
-  serializedVersion: 6
+  serializedVersion: 8
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: MAT_WaterSim
   m_Shader: {fileID: 4800000, guid: 93be1bcbfb48508468ba4709d2ad75ea, type: 3}
-  m_ShaderKeywords: 
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses: []
+  m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -27,6 +31,7 @@ Material:
         m_Texture: {fileID: 8400000, guid: 75384e9f3fbb12d4b819f3eaa345f5e7, type: 2}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    m_Ints: []
     m_Floats:
     - _Atten: 1
     - _Attenuation: 0.15
@@ -44,7 +49,7 @@ Material:
     - _DeltaT: 0.008
     - _DeltaT2: 0.00009536743
     - _DeltaUV: 1
-    - _DriveAmplitude: 0.9969881
+    - _DriveAmplitude: 2.9926224
     - _EffectPhase: 0.99762505
     - _K: 0.20106193
     - _KSquared: 0.0404259
@@ -61,3 +66,4 @@ Material:
     - _DriveSettings: {r: 1, g: 536, b: 744, a: 0}
     - _Effect: {r: 3, g: 551, b: 729, a: 0}
     - _EffectPhase: {r: 0, g: 0, b: 0.99709594, a: 0}
+  m_BuildTextureStacks: []
