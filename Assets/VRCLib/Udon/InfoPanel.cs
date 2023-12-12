@@ -10,7 +10,9 @@ using VRC.Udon;
 public class InfoPanel : UdonSharpBehaviour
 {
     public ToggleGroup toggleGroup;
-    [SerializeField] Transform panelXfrm;
+    [SerializeField] Vector2 panelSize = Vector2.one;
+    [SerializeField] Vector2 shrinkSize = Vector2.one;
+    [SerializeField] RectTransform panelXfrm;
     [SerializeField] TextMeshProUGUI infoText;
     [SerializeField] Toggle[] toggles = null;
     int toggleCount = 0;
@@ -37,8 +39,17 @@ public class InfoPanel : UdonSharpBehaviour
                 infoText.text = defaultText;
             }
             if (panelXfrm != null) 
-            { 
-                panelXfrm.gameObject.SetActive(showPanel >= 0);
+            {
+                if (showPanel >= 0)
+                {
+                    panelXfrm.sizeDelta = panelSize;
+                    panelXfrm.localPosition = new Vector3(0,0,0);
+                }
+                else
+                {
+                    panelXfrm.sizeDelta = shrinkSize;
+                    panelXfrm.localPosition = new Vector3(0, -(panelSize.y - shrinkSize.y) / 2f, 0);
+                }
             }
         }
     }
@@ -128,7 +139,11 @@ public class InfoPanel : UdonSharpBehaviour
         hasTextField = infoText != null;
         if (hasTextField && panelXfrm == null)
         {
-            panelXfrm = infoText.transform;
+            panelXfrm = infoText.GetComponent<RectTransform>();
+        }
+        if ( panelXfrm != null)
+        {
+            panelSize = panelXfrm.sizeDelta;
         }
         toggleGroup.EnsureValidState();
         onToggleChanged();
