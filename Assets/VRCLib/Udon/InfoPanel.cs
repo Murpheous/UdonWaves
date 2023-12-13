@@ -12,6 +12,7 @@ public class InfoPanel : UdonSharpBehaviour
     public ToggleGroup toggleGroup;
     [SerializeField] Vector2 panelSize = Vector2.one;
     [SerializeField] Vector2 shrinkSize = Vector2.one;
+    [SerializeField] float textBorder = 20;
     [SerializeField] RectTransform panelXfrm;
     [SerializeField] TextMeshProUGUI infoText;
     [SerializeField] Toggle[] toggles = null;
@@ -20,6 +21,7 @@ public class InfoPanel : UdonSharpBehaviour
     bool hasTextField = false;
     private bool iamOwner;
     private VRCPlayerApi player;
+    private RectTransform textRect;
 //    private VRC.Udon.Common.Interfaces.NetworkEventTarget toTheOwner = VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner;
     private VRC.Udon.Common.Interfaces.NetworkEventTarget toAll = VRC.Udon.Common.Interfaces.NetworkEventTarget.All;
 
@@ -38,18 +40,18 @@ public class InfoPanel : UdonSharpBehaviour
             {
                 infoText.text = defaultText;
             }
+            Vector2 newSize = showPanel >= 0 ? panelSize : shrinkSize;
+            Vector3 newPosition = showPanel >= 0 ? Vector3.zero : new Vector3 (0, -(panelSize.y - shrinkSize.y)/2.0f,0);
             if (panelXfrm != null) 
             {
-                if (showPanel >= 0)
-                {
-                    panelXfrm.sizeDelta = panelSize;
-                    panelXfrm.localPosition = new Vector3(0,0,0);
-                }
-                else
-                {
-                    panelXfrm.sizeDelta = shrinkSize;
-                    panelXfrm.localPosition = new Vector3(0, -(panelSize.y - shrinkSize.y) / 2f, 0);
-                }
+                panelXfrm.sizeDelta = newSize;
+                panelXfrm.localPosition = newPosition;
+            }
+            if (textRect != null)
+            {
+                Vector2 newTextDim = new Vector2(newSize.x - textBorder, newSize.y - textBorder);
+                textRect.sizeDelta = newTextDim;
+                //textRect.localPosition = newPosition;
             }
         }
     }
@@ -137,9 +139,9 @@ public class InfoPanel : UdonSharpBehaviour
         toggleGroup.allowSwitchOff = true;
         toggleGroup.SetAllTogglesOff(false);
         hasTextField = infoText != null;
-        if (hasTextField && panelXfrm == null)
+        if (hasTextField)
         {
-            panelXfrm = infoText.GetComponent<RectTransform>();
+            textRect = infoText.GetComponent<RectTransform>();
         }
         if ( panelXfrm != null)
         {
