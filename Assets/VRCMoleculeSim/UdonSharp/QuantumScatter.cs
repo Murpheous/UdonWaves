@@ -145,7 +145,7 @@ public class QuantumScatter : UdonSharpBehaviour
 
     private void Recalc()
     {
-        Debug.Log("Recalc");
+        //Debug.Log("Recalc");
         if (!gotSettings)
             return;
         if (apertureWidth <= 0)
@@ -203,7 +203,7 @@ public class QuantumScatter : UdonSharpBehaviour
         float normScale = pointsWide / integralSum;
         for (int nPoint = 0; nPoint <= pointsWide; nPoint++)
             currentIntegral[nPoint] = currentIntegral[nPoint] * normScale;
-        Debug.Log(string.Format("integralSum={0} normScale={1}", integralSum, normScale));
+        //Debug.Log(string.Format("integralSum={0} normScale={1}", integralSum, normScale));
 
         // Now invert the table.
         int indexAbove = 0;
@@ -235,7 +235,7 @@ public class QuantumScatter : UdonSharpBehaviour
             }
         }
         settingsLoaded = true;
-        Debug.Log("Recalc Done");
+        //Debug.Log("Recalc Done");
     }
     float nextTick = 2;
 

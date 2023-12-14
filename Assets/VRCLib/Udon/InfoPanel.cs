@@ -16,6 +16,7 @@ public class InfoPanel : UdonSharpBehaviour
     [SerializeField] RectTransform panelXfrm;
     [SerializeField] TextMeshProUGUI infoText;
     [SerializeField] Toggle[] toggles = null;
+    [SerializeField] InfoPage[] pages = null;
     int toggleCount = 0;
 
     bool hasTextField = false;
@@ -36,9 +37,20 @@ public class InfoPanel : UdonSharpBehaviour
         {
             showPanel = value;
             Debug.Log("ShowPanel=" + value);
-            if (value >= 0 && hasTextField)
+            if (hasTextField)
             {
-                infoText.text = defaultText;
+                if (value >= 0)
+                {
+                    infoText.text = "";
+                    string title = "";
+                    if (pages[value] != null)
+                    {
+                        title = pages[value].PageTitle;
+                        infoText.text = string.Format("<align=center><line-height=250%><b>{0}</b></line-height></align>\n<indent=5%>{1}</indent>", title, pages[value].PageBody);
+                    }
+                }
+                else
+                    infoText.text = defaultText;
             }
             Vector2 newSize = showPanel >= 0 ? panelSize : shrinkSize;
             Vector3 newPosition = showPanel >= 0 ? Vector3.zero : new Vector3 (0, -(panelSize.y - shrinkSize.y)/2.0f,0);
@@ -131,7 +143,12 @@ public class InfoPanel : UdonSharpBehaviour
         toggleCount = 0;
         if (toggles != null)
             toggleCount = toggles.Length;
-        
+        //pages = new InfoPage[toggleCount];
+        //for (int i = 0; i < toggleCount; i++)
+        //{
+        //    if (toggles[i] != null)
+        //        pages[i] = toggles[i].GetComponent<InfoPage>();
+        //}
         player = Networking.LocalPlayer;
         UpdateOwnerShip();
         if (toggleGroup == null)

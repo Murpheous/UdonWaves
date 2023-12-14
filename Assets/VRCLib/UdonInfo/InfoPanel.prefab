@@ -92,14 +92,14 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 42
-  m_fontSizeBase: 42
+  m_fontSize: 36
+  m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_HorizontalAlignment: 2
+  m_HorizontalAlignment: 1
   m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
@@ -330,10 +330,12 @@ MonoBehaviour:
   toggleGroup: {fileID: 4193235092411364038}
   panelSize: {x: 1, y: 1}
   shrinkSize: {x: 1200, y: 75}
+  textBorder: 20
   panelXfrm: {fileID: 3438419577815233409}
   infoText: {fileID: 469481845871911722}
   toggles:
   - {fileID: 685609079758924777}
+  pages: []
   showPanel: 0
   defaultText: Are you there Moriarty?
   selectedToggle: -1
@@ -408,6 +410,12 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 3438419577815233409}
     m_Modifications:
+    - target: {fileID: 7618224890888347476, guid: 55364beb7ba2a8947a1432fca720b16d,
+        type: 3}
+      propertyPath: serializationData.Prefab
+      value: 
+      objectReference: {fileID: 7618224890888347476, guid: 55364beb7ba2a8947a1432fca720b16d,
+        type: 3}
     - target: {fileID: 8878407416592638581, guid: 55364beb7ba2a8947a1432fca720b16d,
         type: 3}
       propertyPath: m_Name
