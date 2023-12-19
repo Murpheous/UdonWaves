@@ -46,7 +46,7 @@ public class InfoPanel : UdonSharpBehaviour
                     if (pages[value] != null)
                     {
                         title = pages[value].PageTitle;
-                        infoText.text = string.Format("<align=center><line-height=250%><b>{0}</b></line-height></align>\n<indent=5%>{1}</indent>", title, pages[value].PageBody);
+                        infoText.text = string.Format("<align=center><line-height=250%><b>{0}</b></line-height></align>\n<margin=2%>{1}</margin>", title, pages[value].PageBody);
                     }
                 }
                 else

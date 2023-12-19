@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 469481845871911721}
   - component: {fileID: 469481845871911722}
   m_Layer: 17
-  m_Name: infoText
+  m_Name: Content
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -32,10 +32,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 3438419577815233409}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 20}
-  m_SizeDelta: {x: 1100, y: 350}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0.000091552734}
+  m_SizeDelta: {x: 743, y: 250}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &469481845871911721
 CanvasRenderer:
@@ -212,7 +212,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 2
+  m_PixelsPerUnitMultiplier: 1
 --- !u!114 &6596230060009089139
 MonoBehaviour:
   m_ObjectHideFlags: 0
