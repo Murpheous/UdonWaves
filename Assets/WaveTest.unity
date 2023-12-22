@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 0.64
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 1260129841}
-  m_IndirectSpecularColor: {r: 0.03725582, g: 0.019523118, b: 0.005260385, a: 0.64}
+  m_IndirectSpecularColor: {r: 0.037267145, g: 0.019530512, b: 0.0052609495, a: 0.64}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -3611,13 +3611,33 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 469481845871911723, guid: 62089fe512597f74f805f3743b8333a5,
         type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 469481845871911723, guid: 62089fe512597f74f805f3743b8333a5,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 469481845871911723, guid: 62089fe512597f74f805f3743b8333a5,
+        type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 469481845871911723, guid: 62089fe512597f74f805f3743b8333a5,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 469481845871911723, guid: 62089fe512597f74f805f3743b8333a5,
+        type: 3}
       propertyPath: m_SizeDelta.x
-      value: 740
+      value: 730
       objectReference: {fileID: 0}
     - target: {fileID: 469481845871911723, guid: 62089fe512597f74f805f3743b8333a5,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 280
+      value: 300
       objectReference: {fileID: 0}
     - target: {fileID: 469481845871911723, guid: 62089fe512597f74f805f3743b8333a5,
         type: 3}
@@ -3914,11 +3934,11 @@ PrefabInstance:
     - target: {fileID: 1949190569399080650, guid: 62089fe512597f74f805f3743b8333a5,
         type: 3}
       propertyPath: pageBodies.Array.data[0]
-      value: "This demonstration has a simplified simulation of particles undergoing
-        quantum scattering placed above a simulation of classical waves. \n\nThe
-        particle simulation is based on a model of quantum interaction first proposed
-        in 1923 by Willaim Duane, applied to gratings by Gregory Breit, then integrated
-        with quantum theory by Carolyne Van Vliet in 1967 and 2010."
+      value: "A simplified simulation of particles undergoing quantum scattering
+        in contrast to a simulation of classical waves. \n\nThe particle simulation
+        is based on a model of quantum interaction first proposed in 1923 by Willaim
+        Duane, applied to gratings by Gregory Breit, then integrated with quantum
+        theory by Carolyne Van Vliet in 1967 and 2010."
       objectReference: {fileID: 0}
     - target: {fileID: 1949190569399080650, guid: 62089fe512597f74f805f3743b8333a5,
         type: 3}
@@ -3990,6 +4010,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4749023543327778950, guid: 62089fe512597f74f805f3743b8333a5,
+        type: 3}
+      propertyPath: m_PixelsPerUnitMultiplier
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 4926412167092619927, guid: 62089fe512597f74f805f3743b8333a5,
         type: 3}
