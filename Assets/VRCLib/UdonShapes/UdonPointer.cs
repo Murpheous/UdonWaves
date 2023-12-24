@@ -7,7 +7,7 @@ using VRC.Udon;
 public class UdonPointer : UdonSharpBehaviour
 {
     [SerializeField]
-    private float lineLength = 0.5f;
+    public float lineLength = 0.5f;
     public float LineLength { get => lineLength; 
         set 
         {
