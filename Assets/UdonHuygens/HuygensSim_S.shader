@@ -62,7 +62,7 @@
         int xPixel = (int)(floor(pos.x * _CustomRenderTextureWidth));
         int yPixel = (int)(floor(pos.y * _CustomRenderTextureHeight));
         bool isInMargin = xPixel >= _LeftPx && xPixel <= _RightPx;
-        bool isInHeadFoot = yPixel >= _TopPx && yPixel <= _BottomPx;
+        bool isInHeadFoot = (yPixel >= _TopPx) && (yPixel <= _BottomPx);
         float2 phasor = float2(0,0);
         float sourceY = (_CustomRenderTextureHeight + ((_NumApertures-1)*_AperturePitch))/2.0;
         float2 delta = float2(abs(xPixel-_LeftPx),0.0);
@@ -103,7 +103,7 @@
         else
         {
             updated = _ColorNeg;
-            updated.a = 0.2;
+            updated.a = 0.33;
         }
         return updated;
     }
