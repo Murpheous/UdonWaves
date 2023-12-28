@@ -4,11 +4,11 @@
     Properties
     {
         // _ViewSelection("Show A=0, A^2=1, E=2",Range(0.0,2.0)) = 0.0
-        _LambdaPx("LambdaPixels", float) = 49.77777778
-        _LeftPx("LeftEdge",float) = 50
-        _RightPx("RightEdge",float) = 1964
-        _TopPx("TopEdge",float) = 60
-        _BottomPx("LowerEdge",float) = 1964
+        _LambdaPx("Lambda Pixels", float) = 49.77777778
+        _LeftPx("Left Edge",float) = 50
+        _RightPx("Right Edge",float) = 1964
+        _UpperEdge("Upper Edge",float) = 972
+        _LowerEdge("Lower Edge",float) = 76
         _NumApertures("ApertureCount",int) = 2
         _AperturePitch("AperturePitch",float) = 448
         _Color("Colour Wave", color) = (1, 1, 0, 0)
@@ -28,8 +28,8 @@
     float _LambdaPx;
     float _LeftPx;
     float _RightPx;
-    float _TopPx;
-    float _BottomPx;
+    float _UpperEdge;
+    float _LowerEdge;
     int _NumApertures;
     float _AperturePitch;
     float4 _Color;
@@ -61,8 +61,8 @@
         // Pixel Positions
         int xPixel = (int)(floor(pos.x * _CustomRenderTextureWidth));
         int yPixel = (int)(floor(pos.y * _CustomRenderTextureHeight));
-        bool isInMargin = xPixel >= _LeftPx && xPixel <= _RightPx;
-        bool isInHeadFoot = (yPixel >= _TopPx) && (yPixel <= _BottomPx);
+        bool isInMargin = (xPixel >= _LeftPx) && (xPixel <= _RightPx);
+        bool isInHeadFoot = (yPixel >= _LowerEdge) && (yPixel <= _UpperEdge);
         float2 phasor = float2(0,0);
         float sourceY = (_CustomRenderTextureHeight + ((_NumApertures-1)*_AperturePitch))/2.0;
         float2 delta = float2(abs(xPixel-_LeftPx),0.0);
