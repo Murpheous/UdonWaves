@@ -14,7 +14,6 @@ Properties
     _Metallic("Metallic", Range(0,1)) = 0.0
     _MinDist("Min Distance", Range(0.1, 50)) = 10
     _MaxDist("Max Distance", Range(0.1, 50)) = 25
-    _TessFactor("Tessellation", Range(1, 50)) = 10
     _Displacement("Displacement", Range(0, 1.0)) = 0.3
 }
 
@@ -25,13 +24,11 @@ SubShader
 
     CGPROGRAM
 
-    #pragma surface surf Standard alpha addshadow fullforwardshadows vertex:disp tessellate:tessDistance
+    #pragma surface surf Standard alpha addshadow fullforwardshadows vertex:disp
     #pragma target 5.0
-    #include "Tessellation.cginc"
 
 float _ViewSelection;
 float _K;
-float _TessFactor;
 float _Displacement;
 float _MinDist;
 float _MaxDist;
@@ -58,12 +55,12 @@ struct Input
 {
     float2 uv_DispTex;
 };
-
+/*
 float4 tessDistance(appdata v0, appdata v1, appdata v2) 
 {
     return UnityDistanceBasedTess(v0.vertex, v1.vertex, v2.vertex, _MinDist, _MaxDist, _TessFactor);
 }
-
+*/
 void disp(inout appdata v)
 {
     float d = tex2Dlod(_DispTex, float4(v.texcoord.xy, 0, 0)).z * _Displacement;

@@ -9,7 +9,7 @@ using System.Net.Sockets;
 
 public class WaveMonitor : UdonSharpBehaviour
 {
-    public CustomRenderTexture texture;
+    public CustomRenderTexture customRenderTex;
     public Vector2 tankDimensions = new Vector2(2,2);
     public int tankResolutionX = 1536;
     public int tankResolutionY = 1536;
@@ -119,7 +119,8 @@ public class WaveMonitor : UdonSharpBehaviour
             return (waveSpeedPixels * tankDimensions.x) / tankResolutionX;
         }
     }
-    [Header("Wave Sim Materials")]
+
+    [Header("Wave Simulation Materials")]
     [Tooltip("Custom Render Texture")] public Material simulationMaterial = null;
     [Tooltip("Wave Surface Texture")] public Material surfaceMaterial = null;
 
@@ -162,9 +163,9 @@ public class WaveMonitor : UdonSharpBehaviour
                 if (resetDoneState != resetTriggerState)
                 {
                     resetDoneState = value;
-                    if (texture != null)
+                    if (customRenderTex != null)
                     {
-                        texture.Initialize();
+                        customRenderTex.Initialize();
                     }
                     ResetEffect();
                 }
@@ -489,13 +490,13 @@ public class WaveMonitor : UdonSharpBehaviour
         UpdateToggles();
         UpdateOwnerShip();
 
-        if (texture != null)
+        if (customRenderTex != null)
         {
             if (simulationMaterial!= null)
             {
-                texture.material = simulationMaterial;
+                customRenderTex.material = simulationMaterial;
             }
-            texture.Initialize();
+            customRenderTex.Initialize();
         }
         ResetEffect();
         if (obstaclesTex != null)
@@ -517,7 +518,7 @@ public class WaveMonitor : UdonSharpBehaviour
 
     void UpdateWaves(float dt)
     {
-        texture.Update(1);
+        customRenderTex.Update(1);
     }
 
     float waveTime = 0;

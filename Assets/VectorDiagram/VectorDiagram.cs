@@ -11,7 +11,7 @@ public class VectorDiagram : UdonSharpBehaviour
     public Slider stepControl;
     public float slitSpacing = 0.05f;
     public float lambda = 0.1f;
-    public int arrowLambda = 18;
+    public float arrowLambda = 17;
 
     [SerializeField]
     UdonPointer[] kVectors;
