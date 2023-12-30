@@ -26,8 +26,8 @@ public class WaveMonitor : UdonSharpBehaviour
     float frequency = 1f;
     //public Slider frequencySlider;
     public SyncedSlider frequencyControl;
-    [UdonSynced, FieldChangeCallback(nameof(FreqPointerIsDown))]
-    bool freqPointerIsDown = false;
+    [SerializeField, FieldChangeCallback(nameof(FreqPointerIsDown))]
+    private bool freqPointerIsDown = false;
 
     private float minFrequency = 1;
     private float maxFrequency = 3;
@@ -86,7 +86,6 @@ public class WaveMonitor : UdonSharpBehaviour
                     if (frequencyQuenchTime <= 0)
                         ResetEffect();
                 }
-                RequestSerialization();
             }
         }
     }

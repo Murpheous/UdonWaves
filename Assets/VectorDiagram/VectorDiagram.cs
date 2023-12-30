@@ -8,10 +8,10 @@ using VRC.Udon;
 [UdonBehaviourSyncMode(BehaviourSyncMode.Manual)]
 public class VectorDiagram : UdonSharpBehaviour
 {
-    public Slider stepControl;
-    public float slitSpacing = 0.05f;
-    public float lambda = 0.1f;
-    public float arrowLambda = 17;
+    [Tooltip("Slit Pitch (mm)"), SerializeField,FieldChangeCallback(nameof(SlitPitch))] public float slitPitch = 437.5f;
+    [Tooltip("Lambda (mm)"), SerializeField, FieldChangeCallback(nameof(Lambda))] public float lambda = 48.61111f;
+
+    [SerializeField] private float arrowLambda = 18;
 
     [SerializeField]
     UdonPointer[] kVectors;
@@ -25,49 +25,88 @@ public class VectorDiagram : UdonSharpBehaviour
     private void recalc()
     {
         kEndPoints = new Vector2[kVectors.Length];
-        arrowLength = arrowLambda * lambda;
+        arrowLength = (arrowLambda) / lambda;
         if (kVectors != null)
         {
             for (int i = 0; i< kVectors.Length;i++)
             {
-                float sinTheta = i * lambda/slitSpacing;
-                float thetaRadians = Mathf.Asin(sinTheta);
-                if (kVectors[i] != null)
+                float sinTheta = i * lambda/slitPitch;
+                if (Mathf.Abs(sinTheta) <= 1)
                 {
-                    kVectors[i].LineLength = arrowLength;
-                    kVectors[i].ThetaDegrees = thetaRadians*Mathf.Rad2Deg;
+                    float thetaRadians = Mathf.Asin(sinTheta);
+                    if (kVectors[i] != null)
+                    {
+                        kVectors[i].LineLength = arrowLength;
+                        kVectors[i].ThetaDegrees = thetaRadians * Mathf.Rad2Deg;
+                        kVectors[i].Alpha = 1;
+                    }
+                    kEndPoints[i].y = sinTheta * arrowLength;
+                    kEndPoints[i].x = Mathf.Cos(thetaRadians) * arrowLength;
                 }
-                kEndPoints[i].y = sinTheta * arrowLength;
-                kEndPoints[i].x = Mathf.Cos(thetaRadians) * arrowLength;
+                else
+                {
+                    if (kVectors[i] != null)
+                    {
+                        kVectors[i].LineLength = arrowLength;
+                        kVectors[i].ThetaDegrees = 90;
+                        kVectors[i].Alpha = 0;
+                    }
+                    kEndPoints[i].x = -1;
+                    kEndPoints[i].y = arrowLength;
+                }
             }
         }
         if (kComponents != null)
         {
-            //Debug.Log("Do Components");
+            Debug.Log("Do Components");
             int limit = kEndPoints.Length-1;
             if (kComponents.Length < limit)
                 limit = kComponents.Length;
             for (int j = 0; j < limit; j++)
             {
-                //Debug.Log("Do Component["+ j.ToString() + "]");
+                Debug.Log("Do Component["+ j.ToString() + "]");
                 if (kComponents[j] != null)
                 {
                     kComponents[j].LineLength = kEndPoints[j + 1].y;
                     Vector3 lpos = kComponents[j].transform.localPosition;
                     lpos.x = kEndPoints[j+1].x;
-                    kComponents[j].transform.localPosition = lpos;
+                    if (lpos.x >= 0)
+                    {
+                        kComponents[j].transform.localPosition = lpos;
+                        kComponents[j].Alpha = 1;
+                    }
+                    else
+                    {
+                        lpos.x = 0;
+                        kComponents[j].transform.localPosition = lpos;
+                        kComponents[j].Alpha = 0;
+                    }    
                 }
             }
         }
         needsUpdate = false;
     }
-    private void showAngles()
+
+    public float SlitPitch
     {
+        get => slitPitch; 
+        set
+        {
+            slitPitch = value;
+            needsUpdate = true;
+            //Debug.Log("Vect Gap: " +  slitPitch);
+        } 
     }
-
-    private void showImpulses()
+    public float Lambda
     {
+        get => lambda;
+        set
+        {
+            lambda = value;
+            needsUpdate = true;
 
+           // Debug.Log("Vect Lamby: " + value);
+        }
     }
 
     private void Update()
