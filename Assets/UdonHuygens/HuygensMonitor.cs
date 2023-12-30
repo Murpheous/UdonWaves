@@ -36,6 +36,8 @@ public class HuygensMonitor : UdonSharpBehaviour
         set
         {
             displayMode = value;
+            matCRT.SetFloat("_DisplayMode", value);
+            updateNeeded = true;
             RequestSerialization();
         }
     }
@@ -52,6 +54,9 @@ public class HuygensMonitor : UdonSharpBehaviour
             slitPitch = value;
             if (vectorDrawing != null)
                 vectorDrawing.SetProgramVariable<float>("slitPitch", slitPitch);
+            if (matCRT != null)
+                matCRT.SetFloat("_SlitPitchPx", slitPitch * pixelsPerMM);
+            updateNeeded = true;
             RequestSerialization();
         }
     }
@@ -71,6 +76,7 @@ public class HuygensMonitor : UdonSharpBehaviour
                 vectorDrawing.SetProgramVariable<float>("lambda", lambda);
             if (matCRT != null)
                 matCRT.SetFloat("_LambdaPx", lambda * pixelsPerMM);
+            updateNeeded = true;
             RequestSerialization();
         } 
     }
@@ -114,9 +120,8 @@ public class HuygensMonitor : UdonSharpBehaviour
         iAmOwner = Networking.IsOwner(this.gameObject);
     }
 
-    void UpdateWaves(int Mode)
+    void UpdateWaves()
     {
-        matCRT.SetFloat("_DisplayMode", Mode);
         simCRT.Update(1);
     }
 
@@ -128,7 +133,8 @@ public class HuygensMonitor : UdonSharpBehaviour
     float waveTime = 0;
     float updateTime = 10;
     float delta;
-    bool animationPlay = true;
+    bool animationPlay = false;
+    bool updateNeeded = false;
     float pixelsPerMM = 1;
     private void Update()
     {
@@ -140,8 +146,14 @@ public class HuygensMonitor : UdonSharpBehaviour
             while (updateTime < waveTime)
             {
                 updateTime += dt;
-                UpdateWaves(displayMode);
+                UpdateWaves();
+                updateNeeded = false;
             }
+        }
+        if (updateNeeded)
+        {
+            UpdateWaves();
+            updateNeeded=false;
         }
     }
     void Start()
