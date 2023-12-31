@@ -11,8 +11,8 @@ public class HuygensMonitor : UdonSharpBehaviour
     CustomRenderTexture simCRT;
     [Tooltip("Material for Custom Render Texture")] public Material matCRT = null;
     [Tooltip("DisplayPanel")] public MeshRenderer thePanel;
-    [SerializeField,UdonSynced,FieldChangeCallback(nameof(DisplayMode))]
-    int displayMode = 1;
+    [SerializeField,FieldChangeCallback(nameof(DisplayMode))]
+    public int displayMode = 1;
     [SerializeField] Vector2Int simResolution = new Vector2Int(2048,1024);
     [Tooltip("Panel Width (mm)"),SerializeField] float panelWidth = 2000;
     [SerializeField] float sourceOffset;
@@ -35,9 +35,11 @@ public class HuygensMonitor : UdonSharpBehaviour
         set
         {
             displayMode = value;
-            matCRT.SetFloat("_DisplayMode", value);
+            if (displayMode >= 0)
+                matCRT.SetFloat("_DisplayMode", value);
+            else
+                simCRT.Initialize();
             updateNeeded = true;
-            RequestSerialization();
         }
     }
     public float SlitPitch
@@ -119,14 +121,17 @@ public class HuygensMonitor : UdonSharpBehaviour
         iAmOwner = Networking.IsOwner(this.gameObject);
     }
 
-    void UpdateWaves()
-    {
-        simCRT.Update(1);
-    }
-
     public override void OnOwnershipTransferred(VRCPlayerApi player)
     {
         UpdateOwnerShip();
+    }
+
+    void UpdateWaves()
+    {
+        if (displayMode < 0)
+            simCRT.Initialize();
+        else
+            simCRT.Update(1);
     }
 
     float waveTime = 0;

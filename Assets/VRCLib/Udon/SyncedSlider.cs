@@ -137,7 +137,7 @@ public class SyncedSlider : UdonSharpBehaviour
             if (reportedValue != currentValue)
             {
                 reportedValue = currentValue;
-                if ((SliderClient != null) && (!string.IsNullOrEmpty(clientVariableName)))
+                if (iHaveClientVar)
                 {
                     if (unitsInteger)
                         SliderClient.SetProgramVariable<int>(clientVariableName, Mathf.RoundToInt(currentValue));
@@ -185,16 +185,20 @@ public class SyncedSlider : UdonSharpBehaviour
 
     public void OnPointerDown()
     {
-        if ((SliderClient != null) && (!string.IsNullOrEmpty(clientPointerStateVar)))
+        if (iHaveClientPtr)
             SliderClient.SetProgramVariable<bool>(clientPointerStateVar, true);
     }
     public void OnPointerUp()
     {
-        if ((SliderClient != null) && (!string.IsNullOrEmpty(clientPointerStateVar)))
+        if (iHaveClientPtr)
             SliderClient.SetProgramVariable<bool>(clientPointerStateVar, false);
     }
+    private bool iHaveClientVar = false;
+    private bool iHaveClientPtr = false;
     public void Start()
     {
+        iHaveClientVar = (SliderClient != null) && (!string.IsNullOrEmpty(clientVariableName));
+        iHaveClientPtr = (SliderClient != null) && (!string.IsNullOrEmpty(clientPointerStateVar));
         if (sliderLabel == null)
             hideLabel = true;
         if (slider != null)
