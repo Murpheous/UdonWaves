@@ -4,12 +4,12 @@
     Properties
     {
         // _ViewSelection("Show A=0, A^2=1, E=2",Range(0.0,2.0)) = 0.0
-        _LambdaPx("Lambda Pixels", float) = 49.77777778
+        _LambdaPx("Lambda Pixels", float) = 49.64285714
         _LeftPx("Left Edge",float) = 50
         _RightPx("Right Edge",float) = 1964
         _UpperEdge("Upper Edge",float) = 972
         _LowerEdge("Lower Edge",float) = 76
-        _NumSlits("Num Slits",int) = 2
+        _NumSources("Num Sources",float) = 2
         _SlitPitchPx("Slit Pitch",float) = 448
         _SlitWidePx("Slit Width", Range(1.0,40.0)) = 12.0
         _Color("Colour Wave", color) = (1, 1, 0, 0)
@@ -31,7 +31,7 @@ float _LeftPx;
 float _RightPx;
 float _UpperEdge;
 float _LowerEdge;
-int _NumSlits;
+int _NumSources;
 float _SlitPitchPx;
 float _SlitWidePx;
 float4 _Color;
@@ -68,9 +68,10 @@ float4 frag(v2f_customrendertexture i) : SV_Target
     bool isInHeadFoot = (yPixel >= _LowerEdge) && (yPixel <= _UpperEdge);
     float2 phasor = float2(0,0);
     int slitWidthCount = (int) (max(1.0, _SlitWidePx));
-    float sourceY = (_CustomRenderTextureHeight + ((_NumSlits - 1) * _SlitPitchPx)) / 2.0 + (float) (_SlitWidePx) / 2.0;
+    int sourceCount = round(_NumSources);
+    float sourceY = (_CustomRenderTextureHeight + ((_NumSources - 1) * _SlitPitchPx)) / 2.0 + (float) (_SlitWidePx) / 2.0;
     float2 delta = float2(abs(xPixel-_LeftPx),0.0);
-    for (int nAperture = 0; nAperture< _NumSlits; nAperture++)
+    for (int nAperture = 0; nAperture < sourceCount; nAperture++)
     {
         float slitY = sourceY;
         float2 phaseAmp = float2(0, 0);

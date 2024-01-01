@@ -8,7 +8,7 @@ using VRC.Udon;
 [UdonBehaviourSyncMode(BehaviourSyncMode.Manual)]
 public class VectorDiagram : UdonSharpBehaviour
 {
-    [Tooltip("Slit Pitch (mm)"), SerializeField,FieldChangeCallback(nameof(SlitPitch))] public float slitPitch = 437.5f;
+    [Tooltip("Source Pitch (mm)"), SerializeField,FieldChangeCallback(nameof(SourcePitch))] public float sourcePitch = 436.5234f;
     [Tooltip("Lambda (mm)"), SerializeField, FieldChangeCallback(nameof(Lambda))] public float lambda = 48.61111f;
 
     [SerializeField] private float arrowLambda = 18;
@@ -30,7 +30,7 @@ public class VectorDiagram : UdonSharpBehaviour
         {
             for (int i = 0; i< kVectors.Length;i++)
             {
-                float sinTheta = i * lambda/slitPitch;
+                float sinTheta = i * lambda/sourcePitch;
                 if (Mathf.Abs(sinTheta) <= 1)
                 {
                     float thetaRadians = Mathf.Asin(sinTheta);
@@ -87,14 +87,14 @@ public class VectorDiagram : UdonSharpBehaviour
         needsUpdate = false;
     }
 
-    public float SlitPitch
+    public float SourcePitch
     {
-        get => slitPitch; 
+        get => sourcePitch; 
         set
         {
-            slitPitch = value;
+            sourcePitch = value;
             needsUpdate = true;
-            //Debug.Log("Vect Gap: " +  slitPitch);
+            //Debug.Log("Vect Gap: " +  sourcePitch);
         } 
     }
     public float Lambda

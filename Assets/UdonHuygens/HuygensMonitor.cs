@@ -16,9 +16,9 @@ public class HuygensMonitor : UdonSharpBehaviour
     [SerializeField] Vector2Int simResolution = new Vector2Int(2048,1024);
     [Tooltip("Panel Width (mm)"),SerializeField] float panelWidth = 2000;
     [SerializeField] float sourceOffset;
-    [SerializeField] int numSourced = 2;
-    [SerializeField, Range(50,500),UdonSynced, FieldChangeCallback(nameof(SlitPitch))] 
-    float slitPitch = 437.5f;
+    [SerializeField,UdonSynced,FieldChangeCallback(nameof(NumSources))] int numSources = 2;
+    [SerializeField, Range(50,500),UdonSynced, FieldChangeCallback(nameof(SourcePitch))] 
+    float sourcePitch = 436.5234f;
     // Timing
     [SerializeField, Range(0.1f, 5f)] float dt = 1f;
     [Header("Controls")]
@@ -29,39 +29,73 @@ public class HuygensMonitor : UdonSharpBehaviour
     [SerializeField,Range(30,80), UdonSynced, FieldChangeCallback(nameof(Lambda))]
     float lambda = 1f;
     [SerializeField] private UdonBehaviour vectorDrawing;
+
+    private float defaultLambda;
+    private float defaultPitch;
     private int DisplayMode
     {
         get => displayMode; 
         set
         {
-            displayMode = value;
-            if (displayMode >= 0)
+            if (value >= 0)
+            {
                 matCRT.SetFloat("_DisplayMode", value);
+                if (displayMode < 0) 
+                {
+                    if (pitchSlider != null)
+                        pitchSlider.IsInteractible = true;
+                    if (lambdaSlider != null)
+                        lambdaSlider.IsInteractible = true;
+                }
+            }
             else
+            {
+                if (pitchSlider != null)
+                    pitchSlider.IsInteractible = false;
+                if (lambdaSlider != null)
+                    lambdaSlider.IsInteractible = false;
                 simCRT.Initialize();
+                SourcePitch = defaultPitch;
+                Lambda = defaultLambda;
+            }
+            displayMode = value;
             updateNeeded = true;
         }
     }
-    public float SlitPitch
+    public float SourcePitch
     {
-        get => slitPitch;
+        get => sourcePitch;
         set
         {
-            if (slitPitch != value)
+            if (sourcePitch != value)
             {
                 if (pitchSlider != null)
                     pitchSlider.CurrentValue = value;
             }
-            slitPitch = value;
+            sourcePitch = value;
             if (vectorDrawing != null)
-                vectorDrawing.SetProgramVariable<float>("slitPitch", slitPitch);
+                vectorDrawing.SetProgramVariable<float>("sourcePitch", sourcePitch);
             if (matCRT != null)
-                matCRT.SetFloat("_SlitPitchPx", slitPitch * pixelsPerMM);
+                matCRT.SetFloat("_SlitPitchPx", sourcePitch * mmToPixels);
+            if (pitchSlider != null && !pitchPtr && pitchSlider.CurrentValue != value)
+                pitchSlider.CurrentValue = value;
             updateNeeded = true;
             RequestSerialization();
         }
     }
 
+    public int NumSources
+    {
+        get => numSources;
+        set
+        {
+            updateNeeded = true;
+            numSources = value;
+            if (matCRT != null)
+                matCRT.SetFloat("_NumSources", numSources);
+            RequestSerialization() ;
+        }
+    }
     public float Lambda
     {
         get => lambda;
@@ -76,7 +110,9 @@ public class HuygensMonitor : UdonSharpBehaviour
             if (vectorDrawing != null)
                 vectorDrawing.SetProgramVariable<float>("lambda", lambda);
             if (matCRT != null)
-                matCRT.SetFloat("_LambdaPx", lambda * pixelsPerMM);
+                matCRT.SetFloat("_LambdaPx", lambda * mmToPixels);
+            if (lambdaSlider != null && !lambdaPtr && lambdaSlider.CurrentValue != value)
+                lambdaSlider.CurrentValue = lambda;
             updateNeeded = true;
             RequestSerialization();
         } 
@@ -114,7 +150,6 @@ public class HuygensMonitor : UdonSharpBehaviour
     // UdonSync stuff
     private VRCPlayerApi player;
     private bool iAmOwner = false;
-    private bool ihaveSim = false;
 
     private void UpdateOwnerShip()
     {
@@ -128,9 +163,7 @@ public class HuygensMonitor : UdonSharpBehaviour
 
     void UpdateWaves()
     {
-        if (displayMode < 0)
-            simCRT.Initialize();
-        else
+        if (displayMode >= 0)
             simCRT.Update(1);
     }
 
@@ -139,7 +172,7 @@ public class HuygensMonitor : UdonSharpBehaviour
     float delta;
     bool animationPlay = false;
     bool updateNeeded = false;
-    float pixelsPerMM = 1;
+    float mmToPixels = 1;
     private void Update()
     {
         if (animationPlay)
@@ -162,19 +195,22 @@ public class HuygensMonitor : UdonSharpBehaviour
     }
     void Start()
     {
-        pixelsPerMM = panelWidth/simResolution.x;
+        defaultLambda = lambda;
+        defaultPitch = sourcePitch;
+        mmToPixels = simResolution.x/panelWidth;
         player = Networking.LocalPlayer;
         iAmOwner = Networking.IsOwner(this.gameObject);
         if (simCRT != null)
         {
             matCRT = simCRT.material;
             simCRT.Initialize();
-            ihaveSim = true;
         }
         if (lambdaSlider != null)
             lambdaSlider.SetValues(lambda, 30, 80);
         if (pitchSlider != null)
-            pitchSlider.SetValues(slitPitch, 50, 500);
-        animationPlay = ihaveSim;
+            pitchSlider.SetValues(sourcePitch, 50, 500);
+        Lambda = lambda;
+        SourcePitch = sourcePitch;
+        DisplayMode = displayMode;        
     }
 }

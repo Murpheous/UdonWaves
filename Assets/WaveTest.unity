@@ -2198,13 +2198,13 @@ MonoBehaviour:
   useAssignedLayers: 0
   DynamicPrefabs: []
   DynamicMaterials:
+  - {fileID: 2100000, guid: ea0664f5fe016184c890683a8ddd2d59, type: 2}
   - {fileID: 2100000, guid: 37c189884fcfb194ab6d4c96f89e547f, type: 2}
   - {fileID: 2100000, guid: 7835a3aa7fcfcde4cb81d63b59d2c6c0, type: 2}
-  - {fileID: 2100000, guid: a8369b958175ff74eafc4ab4ddd09a6b, type: 2}
-  - {fileID: 2100000, guid: 0174816599450f24d9e87af9d8bb7450, type: 2}
   - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   - {fileID: 2100000, guid: 73f15352496d2c3488a48c90aedf2234, type: 2}
-  - {fileID: 2100000, guid: ea0664f5fe016184c890683a8ddd2d59, type: 2}
+  - {fileID: 2100000, guid: a8369b958175ff74eafc4ab4ddd09a6b, type: 2}
+  - {fileID: 2100000, guid: 0174816599450f24d9e87af9d8bb7450, type: 2}
   - {fileID: 2100000, guid: 4fa0e7fe273f6ff4a8e1eb320ed0d357, type: 2}
   - {fileID: 2100000, guid: d9a3fdbbf8e90784ab94b3efffbfad17, type: 2}
   - {fileID: 2100000, guid: 1473d0459d5a0794ca19437832899189, type: 2}
@@ -2323,6 +2323,10 @@ MonoBehaviour:
     ID: 39
   - gameObject: {fileID: 3994723554949606284}
     ID: 40
+  - gameObject: {fileID: 1206835071}
+    ID: 41
+  - gameObject: {fileID: 619593578}
+    ID: 42
   portraitCameraPositionOffset: {x: 0, y: 0, z: 0}
   portraitCameraRotationOffset: {x: 0, y: 1, z: 0, w: -0.00000004371139}
 --- !u!4 &367000747
@@ -4798,7 +4802,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 2100000, guid: de1f1f8a1ee037f42ab2090008d5da78, type: 2}
+  m_Material: {fileID: 2100000, guid: 474722f98acc0184e80a13a21d2c2806, type: 2}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
@@ -14074,12 +14078,12 @@ MonoBehaviour:
   simResolution: {x: 2048, y: 1024}
   panelWidth: 2000
   sourceOffset: 0
-  numSourced: 2
-  slitPitch: 437.5
+  numSources: 2
+  sourcePitch: 436.5234
   dt: 0.34
   lambdaSlider: {fileID: 1829315921}
   pitchSlider: {fileID: 3994723554949606282}
-  lambda: 48.47935
+  lambda: 48.5
   vectorDrawing: {fileID: 1932217044}
   pitchPtr: 0
   lambdaPtr: 0
@@ -15633,9 +15637,9 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1932217044}
-  slitPitch: 437.5
-  lambda: 48.611115
-  arrowLambda: 50
+  sourcePitch: 436.5234
+  lambda: 48.37839
+  arrowLambda: 55
   kVectors:
   - {fileID: 1017186008710576230}
   - {fileID: 446586680}
@@ -17135,7 +17139,7 @@ PrefabInstance:
     - target: {fileID: 3105796665125844900, guid: 31e7e93e607c6f84cb8d0146dee84675,
         type: 3}
       propertyPath: clientVariableName
-      value: slitPitch
+      value: sourcePitch
       objectReference: {fileID: 0}
     - target: {fileID: 3105796665125844900, guid: 31e7e93e607c6f84cb8d0146dee84675,
         type: 3}
