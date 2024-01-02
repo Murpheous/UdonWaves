@@ -530,7 +530,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Energy/Momentum
+  m_text: Energy Flux/Momentum
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ddbcc27b0346e4644a45316aaf00c441, type: 2}
   m_sharedMaterial: {fileID: 4410821715232426517, guid: ddbcc27b0346e4644a45316aaf00c441,
@@ -3112,8 +3112,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: -40}
-  m_SizeDelta: {x: 300, y: 50}
+  m_AnchoredPosition: {x: 0, y: -35}
+  m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &443930016
 MonoBehaviour:
@@ -5728,6 +5728,11 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 8313402702459560607, guid: c6b1efd4919480e4089525b35337888b,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -8214,7 +8219,7 @@ PrefabInstance:
     - target: {fileID: 469481845871911722, guid: 62089fe512597f74f805f3743b8333a5,
         type: 3}
       propertyPath: m_fontSize
-      value: 24
+      value: 22
       objectReference: {fileID: 0}
     - target: {fileID: 469481845871911722, guid: 62089fe512597f74f805f3743b8333a5,
         type: 3}
@@ -8240,7 +8245,7 @@ PrefabInstance:
     - target: {fileID: 469481845871911722, guid: 62089fe512597f74f805f3743b8333a5,
         type: 3}
       propertyPath: m_fontSizeBase
-      value: 24
+      value: 22
       objectReference: {fileID: 0}
     - target: {fileID: 469481845871911722, guid: 62089fe512597f74f805f3743b8333a5,
         type: 3}
@@ -8281,7 +8286,7 @@ PrefabInstance:
     - target: {fileID: 469481845871911723, guid: 62089fe512597f74f805f3743b8333a5,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 730
+      value: 720
       objectReference: {fileID: 0}
     - target: {fileID: 469481845871911723, guid: 62089fe512597f74f805f3743b8333a5,
         type: 3}
@@ -8306,17 +8311,17 @@ PrefabInstance:
     - target: {fileID: 685609079758924776, guid: 62089fe512597f74f805f3743b8333a5,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -1
+      value: 2.1
       objectReference: {fileID: 0}
     - target: {fileID: 685609079758924776, guid: 62089fe512597f74f805f3743b8333a5,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -38
+      value: -24
       objectReference: {fileID: 0}
     - target: {fileID: 685609079758924776, guid: 62089fe512597f74f805f3743b8333a5,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 38
+      value: 27.6
       objectReference: {fileID: 0}
     - target: {fileID: 685609079758924777, guid: 62089fe512597f74f805f3743b8333a5,
         type: 3}
@@ -8583,16 +8588,17 @@ PrefabInstance:
     - target: {fileID: 1949190569399080650, guid: 62089fe512597f74f805f3743b8333a5,
         type: 3}
       propertyPath: pageBodies.Array.data[0]
-      value: "A simplified simulation of particles undergoing quantum scattering
-        in contrast to a simulation of classical waves. \n\nThe particle simulation
-        is based on a model of quantum interaction first proposed in 1923 by Willaim
-        Duane, applied to gratings by Gregory Breit, then integrated with quantum
-        theory by Carolyne Van Vliet in 1967 and 2010."
+      value: "To bring ideas from Carolyne Van Vliet\u2019s 2010 paper <i>Linear
+        Momentum Quantization in Periodic Structures II</i> to life. \r\n\r\nVan
+        Vliet showed how William Duane\u2019s neglected 1923 model of quantum interaction
+        integrates with contemporary quantum theory by flipping the model of a quantum
+        interaction to have the scattering object interact in a distributed manner
+        while scattered particles remain localized. \r"
       objectReference: {fileID: 0}
     - target: {fileID: 1949190569399080650, guid: 62089fe512597f74f805f3743b8333a5,
         type: 3}
       propertyPath: pageTitles.Array.data[0]
-      value: Wave/Particle Tank
+      value: This demo in a nutshell
       objectReference: {fileID: 0}
     - target: {fileID: 1949190569399080650, guid: 62089fe512597f74f805f3743b8333a5,
         type: 3}
@@ -9549,8 +9555,8 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 686387336}
   - {fileID: 443930015}
+  - {fileID: 686387336}
   - {fileID: 1779155360}
   - {fileID: 2140737338}
   - {fileID: 7618532143010140922}
@@ -10272,8 +10278,6 @@ MonoBehaviour:
       m_Calls: []
   m_text: 'Square
 
-    Amplitudes
-
 '
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ddbcc27b0346e4644a45316aaf00c441, type: 2}
@@ -10369,6 +10373,16 @@ PrefabInstance:
         type: 3}
       propertyPath: pageTitle
       value: Wave Barrier Controls
+      objectReference: {fileID: 0}
+    - target: {fileID: 7618224890888347476, guid: 55364beb7ba2a8947a1432fca720b16d,
+        type: 3}
+      propertyPath: pageBodies.Array.data[0]
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 7618224890888347476, guid: 55364beb7ba2a8947a1432fca720b16d,
+        type: 3}
+      propertyPath: pageTitles.Array.data[0]
+      value: Wave Barrier Configuration
       objectReference: {fileID: 0}
     - target: {fileID: 7618224890888347476, guid: 55364beb7ba2a8947a1432fca720b16d,
         type: 3}
@@ -10535,7 +10549,7 @@ PrefabInstance:
     - target: {fileID: 8878407416592638582, guid: 55364beb7ba2a8947a1432fca720b16d,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -2
       objectReference: {fileID: 0}
     - target: {fileID: 8878407416592638582, guid: 55364beb7ba2a8947a1432fca720b16d,
         type: 3}
@@ -10560,12 +10574,12 @@ PrefabInstance:
     - target: {fileID: 8878407416592638582, guid: 55364beb7ba2a8947a1432fca720b16d,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 142
+      value: 153
       objectReference: {fileID: 0}
     - target: {fileID: 8878407416592638582, guid: 55364beb7ba2a8947a1432fca720b16d,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 180
+      value: 198
       objectReference: {fileID: 0}
     - target: {fileID: 8878407416592638582, guid: 55364beb7ba2a8947a1432fca720b16d,
         type: 3}
@@ -10755,9 +10769,9 @@ PrefabInstance:
     - target: {fileID: 8469608217228432567, guid: 6ed673dcc1cd3be499bb716b9e3845f4,
         type: 3}
       propertyPath: m_text
-      value: 'Velocity
+      value: 'Vertical
 
-        Amplitude'
+        Velocity'
       objectReference: {fileID: 0}
     - target: {fileID: 8469608217228432567, guid: 6ed673dcc1cd3be499bb716b9e3845f4,
         type: 3}
@@ -12020,6 +12034,21 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7618224890888347476, guid: 55364beb7ba2a8947a1432fca720b16d,
         type: 3}
+      propertyPath: pageBodies.Array.data[0]
+      value: "A wave's energy flux is due to the transport of two energy components,
+        kinetic and potential. \r\n\r\nThe wave surface controls switch the view
+        between amplitudes, potential/kinetic energy, and the total energy flux.\r\n<indent=5%><b>Wave
+        height:</b> square to see potential energy transport.\r\n<b>Vertical Velocity</b>
+        square to see the kinetic energy transport.\r\n<b>Energy Flux:</b> the sum
+        of kinetic and potential energy.</indent>\r\n"
+      objectReference: {fileID: 0}
+    - target: {fileID: 7618224890888347476, guid: 55364beb7ba2a8947a1432fca720b16d,
+        type: 3}
+      propertyPath: pageTitles.Array.data[0]
+      value: Making Wave Momentum Visible
+      objectReference: {fileID: 0}
+    - target: {fileID: 7618224890888347476, guid: 55364beb7ba2a8947a1432fca720b16d,
+        type: 3}
       propertyPath: serializationData.Prefab
       value: 
       objectReference: {fileID: 7618224890888347476, guid: 55364beb7ba2a8947a1432fca720b16d,
@@ -12153,7 +12182,7 @@ PrefabInstance:
     - target: {fileID: 8878407416592638582, guid: 55364beb7ba2a8947a1432fca720b16d,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -2
       objectReference: {fileID: 0}
     - target: {fileID: 8878407416592638582, guid: 55364beb7ba2a8947a1432fca720b16d,
         type: 3}
@@ -12178,12 +12207,12 @@ PrefabInstance:
     - target: {fileID: 8878407416592638582, guid: 55364beb7ba2a8947a1432fca720b16d,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 142
+      value: 153
       objectReference: {fileID: 0}
     - target: {fileID: 8878407416592638582, guid: 55364beb7ba2a8947a1432fca720b16d,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 180
+      value: 198
       objectReference: {fileID: 0}
     - target: {fileID: 8878407416592638582, guid: 55364beb7ba2a8947a1432fca720b16d,
         type: 3}
@@ -13513,8 +13542,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: -40}
-  m_SizeDelta: {x: 300, y: 50}
+  m_AnchoredPosition: {x: 0, y: -35}
+  m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1582903726
 MonoBehaviour:
@@ -14252,6 +14281,19 @@ PrefabInstance:
         type: 3}
       propertyPath: pageTitle
       value: Wave Control
+      objectReference: {fileID: 0}
+    - target: {fileID: 7618224890888347476, guid: 55364beb7ba2a8947a1432fca720b16d,
+        type: 3}
+      propertyPath: pageBodies.Array.data[0]
+      value: "Utilizes a numerical model that iterates over a 2048x1024 grid. \nEach
+        point stores the surface\u2019s vertical displacement and velocity.\r\nEach
+        iteration involves calculating the force from the local curvature of the
+        surface and then applying the force to modify the velocity.\r\n"
+      objectReference: {fileID: 0}
+    - target: {fileID: 7618224890888347476, guid: 55364beb7ba2a8947a1432fca720b16d,
+        type: 3}
+      propertyPath: pageTitles.Array.data[0]
+      value: Wave Simulation
       objectReference: {fileID: 0}
     - target: {fileID: 7618224890888347476, guid: 55364beb7ba2a8947a1432fca720b16d,
         type: 3}
@@ -15273,8 +15315,8 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1177908840}
   - {fileID: 1582903725}
+  - {fileID: 1177908840}
   - {fileID: 1675543139}
   - {fileID: 6112098012075647235}
   - {fileID: 6112098011985700517}
@@ -18131,6 +18173,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1193535340886861508, guid: c6b1efd4919480e4089525b35337888b,
         type: 3}
+      propertyPath: lineColour.a
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1193535340886861508, guid: c6b1efd4919480e4089525b35337888b,
+        type: 3}
       propertyPath: startLocal.x
       value: 0
       objectReference: {fileID: 0}
@@ -18701,6 +18748,24 @@ PrefabInstance:
     - target: {fileID: 2583168010408005029, guid: 6e8869507d2d24a499b5ba2161c7cb48,
         type: 3}
       propertyPath: pageTitle
+      value: Particle Simulation
+      objectReference: {fileID: 0}
+    - target: {fileID: 2583168010408005029, guid: 6e8869507d2d24a499b5ba2161c7cb48,
+        type: 3}
+      propertyPath: pageBodies.Array.data[0]
+      value: 'The particles simulation runs in three stages:
+
+        <indent=5%>
+
+        1)
+        Particles are emitted with a velocity and colour toward the barrier.
+
+        2)
+        If they pass the barrier'
+      objectReference: {fileID: 0}
+    - target: {fileID: 2583168010408005029, guid: 6e8869507d2d24a499b5ba2161c7cb48,
+        type: 3}
+      propertyPath: pageTitles.Array.data[0]
       value: Particle Simulation
       objectReference: {fileID: 0}
     - target: {fileID: 2583168010408005029, guid: 6e8869507d2d24a499b5ba2161c7cb48,
@@ -20820,9 +20885,9 @@ PrefabInstance:
     - target: {fileID: 8469608217228432567, guid: 6ed673dcc1cd3be499bb716b9e3845f4,
         type: 3}
       propertyPath: m_text
-      value: 'Surface
+      value: 'Wave
 
-        Amplitude
+        Height
 
 '
       objectReference: {fileID: 0}
