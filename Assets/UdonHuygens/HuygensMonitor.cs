@@ -1,4 +1,5 @@
 ﻿
+using TMPro;
 using UdonSharp;
 using UnityEngine;
 using VRC.SDKBase;
@@ -17,6 +18,7 @@ public class HuygensMonitor : UdonSharpBehaviour
     [Tooltip("Panel Width (mm)"),SerializeField] float panelWidth = 2000;
     [SerializeField] float sourceOffset;
     [SerializeField,UdonSynced,FieldChangeCallback(nameof(NumSources))] int numSources = 2;
+    [SerializeField] TextMeshProUGUI lblSourceCount;
     [SerializeField, Range(50,500),UdonSynced, FieldChangeCallback(nameof(SourcePitch))] 
     float sourcePitch = 436.5234f;
     // Timing
@@ -57,6 +59,7 @@ public class HuygensMonitor : UdonSharpBehaviour
                 simCRT.Initialize();
                 SourcePitch = defaultPitch;
                 Lambda = defaultLambda;
+                NumSources = 2;
             }
             displayMode = value;
             updateNeeded = true;
@@ -89,12 +92,27 @@ public class HuygensMonitor : UdonSharpBehaviour
         get => numSources;
         set
         {
+            if (value < 1)
+                value = 1;
+            if (value > 7) 
+                value = 7;
             updateNeeded = true;
             numSources = value;
             if (matCRT != null)
                 matCRT.SetFloat("_NumSources", numSources);
-            RequestSerialization() ;
+            if (lblSourceCount != null)
+                lblSourceCount.text = numSources.ToString();
+            RequestSerialization();
         }
+    }
+
+    public void decSrc()
+    {
+        NumSources -= 1;
+    }
+    public void incSrc()
+    {
+        NumSources += 1;
     }
     public float Lambda
     {
@@ -211,6 +229,6 @@ public class HuygensMonitor : UdonSharpBehaviour
             pitchSlider.SetValues(sourcePitch, 50, 500);
         Lambda = lambda;
         SourcePitch = sourcePitch;
-        DisplayMode = displayMode;        
+        DisplayMode = displayMode;
     }
 }

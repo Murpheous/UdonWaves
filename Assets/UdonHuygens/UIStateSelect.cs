@@ -12,8 +12,11 @@ public class UIStateSelect : UdonSharpBehaviour
     [SerializeField] Toggle tog1 = null;
     [SerializeField] Toggle tog2 = null;
     [SerializeField] Toggle tog3 = null;
-    [SerializeField] Toggle togMode = null;
+    [SerializeField] Toggle togSquare = null;
 
+    [SerializeField] Button btnIncSources = null;
+    [SerializeField] Button btnDecSources = null;
+    
     [SerializeField] string clientVariableName;
 
     [SerializeField, UdonSynced, FieldChangeCallback(nameof(OptionSelect))]
@@ -32,8 +35,8 @@ public class UIStateSelect : UdonSharpBehaviour
             tog2.isOn = true;
         if (tog3 != null && optionSelect == 3 && !tog3.isOn)
             tog3.isOn = true;
-        if (togMode != null && togMode.isOn != modeSelect)
-            togMode.isOn = modeSelect;
+        if (togSquare != null && togSquare.isOn != modeSelect)
+            togSquare.isOn = modeSelect;
         int newOption = -1;
         switch (optionSelect)
         {
@@ -56,6 +59,10 @@ public class UIStateSelect : UdonSharpBehaviour
             if (iHaveClientVar)
                 clientModule.SetProgramVariable<int>(clientVariableName, clientMode);
         }
+        if (btnDecSources != null)
+            btnDecSources.interactable = clientMode >= 0;
+        if (btnIncSources != null)
+            btnIncSources.interactable = clientMode >= 0;
     }
     private int OptionSelect 
     {  
@@ -68,6 +75,25 @@ public class UIStateSelect : UdonSharpBehaviour
         }
     }
 
+    public void incSources()
+    {
+        if (!iAmOwner)
+        {
+            SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner, nameof(incSources));
+            return;
+        }
+        clientModule.SendCustomEvent("incSrc");
+    }
+
+    public void decSources()
+    {
+        if (!iAmOwner)
+        {
+            SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner, nameof(decSources));
+            return;
+        }
+        clientModule.SendCustomEvent("decSrc");
+    }
     private bool ModeSelect
     {
         get => modeSelect;
@@ -125,9 +151,9 @@ public class UIStateSelect : UdonSharpBehaviour
 
     public void selMode()
     {
-        if (togMode == null)
+        if (togSquare == null)
             return;
-        if (togMode.isOn != modeSelect)
+        if (togSquare.isOn != modeSelect)
         {
             if (modeSelect)
                 modeOff();
