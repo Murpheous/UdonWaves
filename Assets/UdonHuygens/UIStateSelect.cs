@@ -8,11 +8,11 @@ using VRC.Udon;
 public class UIStateSelect : UdonSharpBehaviour
 {
     [SerializeField] UdonBehaviour clientModule;
-    [SerializeField] Toggle tog0 = null;
-    [SerializeField] Toggle tog1 = null;
-    [SerializeField] Toggle tog2 = null;
-    [SerializeField] Toggle tog3 = null;
+    [SerializeField] Toggle togHeight = null;
+    [SerializeField] Toggle togVel = null;
+    [SerializeField] Toggle togEnergy = null;
     [SerializeField] Toggle togSquare = null;
+    [SerializeField] ToggleGroup selGroup = null;
 
     [SerializeField] Button btnIncSources = null;
     [SerializeField] Button btnDecSources = null;
@@ -27,14 +27,18 @@ public class UIStateSelect : UdonSharpBehaviour
     int clientMode;
     private void updateClientState()
     {
-        if (tog0 != null && optionSelect == 0 && !tog0.isOn) 
-            tog0.isOn = true;
-        if (tog1 != null && optionSelect == 1 && !tog1.isOn)
-            tog1.isOn = true;
-        if (tog2 != null && optionSelect == 2 && !tog2.isOn)
-            tog2.isOn = true;
-        if (tog3 != null && optionSelect == 3 && !tog3.isOn)
-            tog3.isOn = true;
+        if (optionSelect <= 0 && selGroup != null)
+        {
+            selGroup.SetAllTogglesOff();
+            if (togSquare != null)
+                togSquare.isOn = false;
+        }
+        if (togHeight != null && optionSelect == 1 && !togHeight.isOn) 
+            togHeight.isOn = true;
+        if (togVel != null && optionSelect == 2 && !togVel.isOn)
+            togVel.isOn = true;
+        if (togEnergy != null && optionSelect == 3 && !togEnergy.isOn)
+            togEnergy.isOn = true;
         if (togSquare != null && togSquare.isOn != modeSelect)
             togSquare.isOn = modeSelect;
         int newOption = -1;
@@ -126,12 +130,21 @@ public class UIStateSelect : UdonSharpBehaviour
         else
             SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner, nameof(selState2));
     }
+
     public void selState3()
     {
         if (iAmOwner)
             OptionSelect = 3;
         else
             SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner, nameof(selState3));
+    }
+
+    public void selClose()
+    {
+        if (iAmOwner)
+            OptionSelect = 0;
+        else
+            SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner, nameof(selClose));
     }
 
     public void modeOn()
@@ -162,34 +175,28 @@ public class UIStateSelect : UdonSharpBehaviour
         }
     }
 
-    public void togSel0()
-    {
-        if (tog0 == null)
-            return;
-        if (tog0.isOn && optionSelect != 0)
-            selState0();
-    }
     public void togSel1()
     {
-        if (tog1 == null)
+        if (togHeight == null)
             return;
-        if (tog1.isOn && optionSelect != 1)
+        if (togHeight.isOn && optionSelect != 1)
             selState1();
     }
     public void togSel2()
     {
-        if (tog2 == null)
+        if (togVel == null)
             return;
-        if (tog2.isOn && optionSelect != 2)
+        if (togVel.isOn && optionSelect != 2)
             selState2();
     }
     public void togSel3()
     {
-        if (tog3 == null)
+        if (togEnergy == null)
             return;
-        if (tog3.isOn && optionSelect != 3)
+        if (togEnergy.isOn && optionSelect != 3)
             selState3();
     }
+
     // UdonSync stuff
     private VRCPlayerApi player;
     private bool iAmOwner = false;

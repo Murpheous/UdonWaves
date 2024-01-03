@@ -211,8 +211,8 @@ MonoBehaviour:
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
   m_Colors:
-    m_NormalColor: {r: 0, g: 0.7871618, b: 1, a: 0.87058824}
-    m_HighlightedColor: {r: 0.16907978, g: 1, b: 0, a: 0.83137256}
+    m_NormalColor: {r: 0, g: 0.8777292, b: 1, a: 1}
+    m_HighlightedColor: {r: 1, g: 0.73333335, b: 0, a: 1}
     m_PressedColor: {r: 0.9433962, g: 0.16464934, b: 0.90585643, a: 1}
     m_SelectedColor: {r: 1, g: 0.7337059, b: 0, a: 1}
     m_DisabledColor: {r: 0.6886792, g: 0.24363652, b: 0.48558554, a: 1}
@@ -238,7 +238,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: 
+        m_TargetAssemblyTypeName: VRC.Udon.UdonBehaviour, VRC.Udon
         m_MethodName: SendCustomEvent
         m_Mode: 5
         m_Arguments:
