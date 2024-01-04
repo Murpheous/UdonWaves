@@ -8,16 +8,19 @@ using VRC.Udon;
 public class UIStateSelect : UdonSharpBehaviour
 {
     [SerializeField] UdonBehaviour clientModule;
+    [SerializeField] Toggle togReset = null;
     [SerializeField] Toggle togHeight = null;
     [SerializeField] Toggle togVel = null;
     [SerializeField] Toggle togEnergy = null;
     [SerializeField] Toggle togSquare = null;
     [SerializeField] ToggleGroup selGroup = null;
 
+
     [SerializeField] Button btnIncSources = null;
     [SerializeField] Button btnDecSources = null;
     
     [SerializeField] string clientVariableName;
+    [SerializeField] GameObject waveControls;
 
     [SerializeField, UdonSynced, FieldChangeCallback(nameof(OptionSelect))]
     public int optionSelect;
@@ -29,10 +32,13 @@ public class UIStateSelect : UdonSharpBehaviour
     {
         if (optionSelect <= 0 && selGroup != null)
         {
-            selGroup.SetAllTogglesOff();
             if (togSquare != null)
                 togSquare.isOn = false;
+            if (togReset != null && !togReset.isOn)
+                togReset.isOn = true;
         }
+        if (waveControls != null)
+            waveControls.SetActive(optionSelect > 0);
         if (togHeight != null && optionSelect == 1 && !togHeight.isOn) 
             togHeight.isOn = true;
         if (togVel != null && optionSelect == 2 && !togVel.isOn)
@@ -175,6 +181,14 @@ public class UIStateSelect : UdonSharpBehaviour
         }
     }
 
+    public void togSel0()
+    {
+        if (togReset == null)
+            return;
+        if (togReset.isOn && optionSelect > 0)
+            selState0();
+    }
+
     public void togSel1()
     {
         if (togHeight == null)
@@ -212,7 +226,6 @@ public class UIStateSelect : UdonSharpBehaviour
     }
 
     private bool iHaveClientVar = false;
-    private bool iHaveToggles = false;
     void Start()
     {
 

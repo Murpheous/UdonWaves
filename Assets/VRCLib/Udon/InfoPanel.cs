@@ -24,7 +24,7 @@ public class InfoPanel : UdonSharpBehaviour
     private VRCPlayerApi player;
     private RectTransform textRect;
 //    private VRC.Udon.Common.Interfaces.NetworkEventTarget toTheOwner = VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner;
-    private VRC.Udon.Common.Interfaces.NetworkEventTarget toAll = VRC.Udon.Common.Interfaces.NetworkEventTarget.All;
+//    private VRC.Udon.Common.Interfaces.NetworkEventTarget toAll = VRC.Udon.Common.Interfaces.NetworkEventTarget.All;
 
     [SerializeField,UdonSynced,FieldChangeCallback(nameof(ShowPanel))] 
     private int showPanel = -1;

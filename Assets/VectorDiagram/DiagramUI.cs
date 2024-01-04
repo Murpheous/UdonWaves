@@ -4,9 +4,10 @@ using UnityEngine;
 using UnityEngine.UI;
 using VRC.SDKBase;
 using VRC.Udon;
+
 [UdonBehaviourSyncMode(BehaviourSyncMode.Manual)]
 
-public class VectorDiagramUI : UdonSharpBehaviour
+public class DiagramUI : UdonSharpBehaviour
 {
     [SerializeField] UdonBehaviour clientModule;
     [SerializeField] Toggle togOff = null;
@@ -18,10 +19,9 @@ public class VectorDiagramUI : UdonSharpBehaviour
 
     [SerializeField, UdonSynced, FieldChangeCallback(nameof(OptionSelect))]
     public int optionSelect;
-    [SerializeField, UdonSynced, FieldChangeCallback(nameof(ModeSelect))]
-    public bool modeSelect;
+
     [SerializeField]
-    int clientMode;
+    int clientOption;
     private void updateClientState()
     {
         if (togOff != null && optionSelect <= 0 && !togOff.isOn)
@@ -32,11 +32,11 @@ public class VectorDiagramUI : UdonSharpBehaviour
             togHuygens.isOn = true;
         if (togK_Vectors != null && optionSelect == 3 && !togK_Vectors.isOn)
             togK_Vectors.isOn = true;
-        if (optionSelect != clientMode)
+        if (optionSelect != clientOption)
         {
-            clientMode = optionSelect;
+            clientOption = optionSelect;
             if (iHaveClientVar)
-                clientModule.SetProgramVariable<int>(clientVariableName, clientMode);
+                clientModule.SetProgramVariable<int>(clientVariableName, clientOption);
         }
     }
     private int OptionSelect
@@ -44,6 +44,7 @@ public class VectorDiagramUI : UdonSharpBehaviour
         get => optionSelect;
         set
         {
+            Debug.Log("Vec OptionSelect: " + value.ToString());
             optionSelect = value;
             updateClientState();
             RequestSerialization();
@@ -69,16 +70,7 @@ public class VectorDiagramUI : UdonSharpBehaviour
         }
         clientModule.SendCustomEvent("decSrc");
     }
-    private bool ModeSelect
-    {
-        get => modeSelect;
-        set
-        {
-            modeSelect = value;
-            updateClientState();
-            RequestSerialization();
-        }
-    }
+
     public void vecMode0()
     {
         if (iAmOwner)
@@ -111,29 +103,31 @@ public class VectorDiagramUI : UdonSharpBehaviour
     }
 
 
-    public void togSel0()
+    public void onSel0()
     {
+        Debug.Log("onSel0");
         if (togOff == null)
             return;
         if (togOff.isOn && optionSelect != 0)
             vecMode0();
     }
 
-    public void togSel1()
+    public void onSel1()
     {
+        Debug.Log("onSel1");
         if (togBragg == null)
             return;
         if (togBragg.isOn && optionSelect != 1)
             vecMode1();
     }
-    public void togSel2()
+    public void onSel2()
     {
         if (togHuygens == null)
             return;
         if (togHuygens.isOn && optionSelect != 2)
             vecMode2();
     }
-    public void togSel3()
+    public void onSel3()
     {
         if (togK_Vectors == null)
             return;
