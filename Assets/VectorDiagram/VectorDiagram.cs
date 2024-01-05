@@ -19,9 +19,9 @@ public class VectorDiagram : UdonSharpBehaviour
     [SerializeField] UdonPointer[] kComponents;
     [SerializeField] TextMeshProUGUI[] vecLabels;
     [SerializeField] UdonLine[] kLines;
+    [SerializeField] float kLineLength = 2.0f;
 
-
-    Vector2[] kEndPoints;
+        Vector2[] kEndPoints;
     private bool needsUpdate = false;
     private float arrowLength = 0.1f;
     
