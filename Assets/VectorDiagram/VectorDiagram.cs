@@ -8,23 +8,21 @@ using VRC.Udon;
 [UdonBehaviourSyncMode(BehaviourSyncMode.Manual)]
 public class VectorDiagram : UdonSharpBehaviour
 {
+    [SerializeField] GameObject linePrefab;
     [Tooltip("Source Count"),SerializeField, Range(1,16),FieldChangeCallback(nameof(NumSources))] public int numSources = 2;
     [Tooltip("Source Width (mm)"),SerializeField, FieldChangeCallback(nameof(SourceWidth))] float sourceWidth;
     [Tooltip("Source Pitch (mm)"), SerializeField,FieldChangeCallback(nameof(SourcePitch))] public float sourcePitch = 436.5234f;
     [Tooltip("Lambda (mm)"), SerializeField, FieldChangeCallback(nameof(Lambda))] public float lambda = 48.61111f;
     [SerializeField] private float arrowLambda = 18;
     [SerializeField, FieldChangeCallback(nameof(DemoMode))] public int demoMode;
-    [SerializeField]
-    UdonPointer[] kVectors;
-    [SerializeField]
-    UdonPointer[] kComponents;
-    [SerializeField]
-    TextMeshProUGUI[] vecLabels;
-    Transform[] labelXfrms;
+    [SerializeField] UdonPointer[] kVectors;
+    [SerializeField] UdonPointer[] kComponents;
+    [SerializeField] TextMeshProUGUI[] vecLabels;
+    [SerializeField] UdonLine[] kLines;
+
 
     Vector2[] kEndPoints;
     private bool needsUpdate = false;
-    [SerializeField]
     private float arrowLength = 0.1f;
     
     private int DemoMode
@@ -161,18 +159,9 @@ public class VectorDiagram : UdonSharpBehaviour
             recalc();
         }
     }
-    [SerializeField] TextMeshProUGUI txtAngle;
+
     void Start()
     {
         needsUpdate = true;
-        if (vecLabels != null)
-        {
-            labelXfrms = new Transform[vecLabels.Length];
-            for (int i = 0; i < vecLabels.Length; i++)
-            {
-                if (vecLabels[i] != null)
-                    labelXfrms[i] = vecLabels[i].transform;
-            }
-        }
     }
 }
