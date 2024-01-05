@@ -18,6 +18,7 @@
         _ColorFlow("Colour Flow", color) = (1, 0.3, 0, 0)
         _DisplayMode("Display Mode", float) = 0
         _SourcePhase("Source Phase", float) = 0
+        _Scale("Simulation Scale",Range(1.0,10.0)) = 1
     }
 
 CGINCLUDE
@@ -40,6 +41,7 @@ float4 _ColorVel;
 float4 _ColorFlow;
 float _DisplayMode;
 float _SourcePhase;
+float _Scale;
 static const float Tau = 6.28318531f;
 static const float PI = 3.14159265f;
    
@@ -48,7 +50,7 @@ float2 sourcePhasor(float2 delta)
     float rPixels = length(delta);
     float rLambda = rPixels/_LambdaPx;
     float rPhi =  rLambda*Tau + _SourcePhase;
-    float amp = _LambdaPx/max(_LambdaPx,rPixels);
+    float amp = _Scale*_LambdaPx/max(_LambdaPx,rPixels);
     float2 result = float2(cos(rPhi),sin(rPhi));
     return result * amp;
 }
@@ -69,22 +71,23 @@ float4 frag(v2f_customrendertexture i) : SV_Target
     float2 phasor = float2(0,0);
     int slitWidthCount = (int) (max(1.0, _SlitWidePx));
     int sourceCount = round(_NumSources);
-    float sourceY = (_CustomRenderTextureHeight + ((_NumSources - 1) * _SlitPitchPx)) / 2.0 + (float) (_SlitWidePx) / 2.0;
-    float2 delta = float2(abs(xPixel-_LeftPx),0.0);
+    float pixScale = 1 / _Scale;
+    float sourceY = ((_NumSources - 1) * +_SlitPitchPx) * 0.5 + (_SlitWidePx * 0.25);
+    float2 delta = float2(abs(xPixel-_LeftPx)*_Scale,0.0);
+    float yScaled = (yPixel - _CustomRenderTextureHeight / 2.0)*_Scale;
     for (int nAperture = 0; nAperture < sourceCount; nAperture++)
     {
         float slitY = sourceY;
         float2 phaseAmp = float2(0, 0);
         for (int pxCount = 0; pxCount < slitWidthCount; pxCount++)
         {
-             delta.y = abs(slitY - yPixel);
+             delta.y = abs(yScaled-slitY);
              phaseAmp += sourcePhasor(delta);
              slitY -= 1;
         }
         phasor += phaseAmp;
         sourceY -= _SlitPitchPx;
     }
-    //phasor = phasorNumSlits;
     float alpha = 0;
     if (isInMargin && isInHeadFoot)
     {

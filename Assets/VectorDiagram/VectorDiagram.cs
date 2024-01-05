@@ -8,9 +8,10 @@ using VRC.Udon;
 [UdonBehaviourSyncMode(BehaviourSyncMode.Manual)]
 public class VectorDiagram : UdonSharpBehaviour
 {
+    [Tooltip("Source Count"),SerializeField, Range(1,16),FieldChangeCallback(nameof(NumSources))] public int numSources = 2;
+    [Tooltip("Source Width (mm)"),SerializeField, FieldChangeCallback(nameof(SourceWidth))] float sourceWidth;
     [Tooltip("Source Pitch (mm)"), SerializeField,FieldChangeCallback(nameof(SourcePitch))] public float sourcePitch = 436.5234f;
     [Tooltip("Lambda (mm)"), SerializeField, FieldChangeCallback(nameof(Lambda))] public float lambda = 48.61111f;
-
     [SerializeField] private float arrowLambda = 18;
     [SerializeField, FieldChangeCallback(nameof(DemoMode))] public int demoMode;
     [SerializeField]
@@ -40,11 +41,20 @@ public class VectorDiagram : UdonSharpBehaviour
     {
         kEndPoints = new Vector2[kVectors.Length];
         arrowLength = (arrowLambda) / lambda;
+        float sinTheta;
+        float WidthX2 = sourceWidth * 2;
         if (kVectors != null)
         {
             for (int i = 0; i< kVectors.Length;i++)
             {
-                float sinTheta = i * lambda/sourcePitch;
+                if (numSources > 1)
+                {
+                    sinTheta = i * lambda / sourcePitch;
+                }
+                else
+                {
+                    sinTheta = i == 0 ? 0 : (2 * i + 1) / WidthX2;
+                }
                 if (Mathf.Abs(sinTheta) <= 1)
                 {
                     float thetaRadians = Mathf.Asin(sinTheta);
@@ -101,6 +111,26 @@ public class VectorDiagram : UdonSharpBehaviour
         needsUpdate = false;
     }
 
+    public int NumSources
+    {
+        get => numSources;
+        set
+        {
+            value = Mathf.Max(1,value);
+            numSources = value;
+            needsUpdate = true;
+        }
+    }
+
+    public float SourceWidth
+    {
+        get => sourceWidth;
+        set
+        {
+            sourceWidth = Mathf.Max(1.0f,value);
+            needsUpdate = true;
+        }
+    }
     public float SourcePitch
     {
         get => sourcePitch; 
