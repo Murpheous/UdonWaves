@@ -37,6 +37,7 @@ public class HuygensMonitor : UdonSharpBehaviour
 
     private float defaultLambda;
     private float defaultPitch;
+    private float defaultScale;
     private int DisplayMode
     {
         get => displayMode; 
@@ -67,6 +68,7 @@ public class HuygensMonitor : UdonSharpBehaviour
                 SourcePitch = defaultPitch;
                 Lambda = defaultLambda;
                 NumSources = 2;
+                SimScale = defaultScale;
             }
             displayMode = value;
             updateNeeded = true;
@@ -253,6 +255,7 @@ public class HuygensMonitor : UdonSharpBehaviour
     {
         defaultLambda = lambda;
         defaultPitch = sourcePitch;
+        defaultScale = simScale;
         mmToPixels = simResolution.x/panelWidth;
         player = Networking.LocalPlayer;
         iAmOwner = Networking.IsOwner(this.gameObject);
