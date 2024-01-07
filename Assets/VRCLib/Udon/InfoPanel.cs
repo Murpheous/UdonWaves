@@ -12,6 +12,7 @@ public class InfoPanel : UdonSharpBehaviour
     public ToggleGroup toggleGroup;
     [SerializeField] Vector2 panelSize = Vector2.one;
     [SerializeField] Vector2 shrinkSize = Vector2.one;
+    [SerializeField] bool showHidePanel = true;
     [SerializeField] float textBorder = 20;
     [SerializeField] RectTransform panelXfrm;
     [SerializeField] TextMeshProUGUI infoText;
@@ -52,18 +53,21 @@ public class InfoPanel : UdonSharpBehaviour
                 else
                     infoText.text = defaultText;
             }
-            Vector2 newSize = showPanel >= 0 ? panelSize : shrinkSize;
-            Vector3 newPosition = showPanel >= 0 ? Vector3.zero : new Vector3 (0, -(panelSize.y - shrinkSize.y)/2.0f,0);
-            if (panelXfrm != null) 
+            if (showHidePanel)
             {
-                panelXfrm.sizeDelta = newSize;
-                panelXfrm.localPosition = newPosition;
-            }
-            if (textRect != null)
-            {
-                Vector2 newTextDim = new Vector2(newSize.x - textBorder, newSize.y - textBorder);
-                textRect.sizeDelta = newTextDim;
-                //textRect.localPosition = newPosition;
+                Vector2 newSize = showPanel >= 0 ? panelSize : shrinkSize;
+                Vector3 newPosition = showPanel >= 0 ? Vector3.zero : new Vector3(0, -(panelSize.y - shrinkSize.y) / 2.0f, 0);
+                if (panelXfrm != null)
+                {
+                    panelXfrm.sizeDelta = newSize;
+                    panelXfrm.localPosition = newPosition;
+                }
+                if (textRect != null)
+                {
+                    Vector2 newTextDim = new Vector2(newSize.x - textBorder, newSize.y - textBorder);
+                    textRect.sizeDelta = newTextDim;
+                    //textRect.localPosition = newPosition;
+                }
             }
         }
     }

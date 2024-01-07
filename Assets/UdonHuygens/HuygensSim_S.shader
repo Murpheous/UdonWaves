@@ -17,7 +17,7 @@
         _ColorVel("Colour Velocity", color) = (0, 0.3, 1, 0)
         _ColorFlow("Colour Flow", color) = (1, 0.3, 0, 0)
         _DisplayMode("Display Mode", float) = 0
-        _SourcePhase("Source Phase", float) = 0
+        _Phase("Source Phase", float) = 0
         _Scale("Simulation Scale",Range(1.0,10.0)) = 1
     }
 
@@ -40,7 +40,7 @@ float4 _ColorNeg;
 float4 _ColorVel;
 float4 _ColorFlow;
 float _DisplayMode;
-float _SourcePhase;
+float _Phase;
 float _Scale;
 static const float Tau = 6.28318531f;
 static const float PI = 3.14159265f;
@@ -49,7 +49,7 @@ float2 sourcePhasor(float2 delta)
 {
     float rPixels = length(delta);
     float rLambda = rPixels/_LambdaPx;
-    float rPhi =  rLambda*Tau + _SourcePhase;
+    float rPhi = (rLambda + _Phase)*Tau;
     float amp = _Scale*_LambdaPx/max(_LambdaPx,rPixels);
     float2 result = float2(cos(rPhi),sin(rPhi));
     return result * amp;

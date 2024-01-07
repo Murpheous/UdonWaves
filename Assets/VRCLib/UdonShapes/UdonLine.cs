@@ -14,6 +14,8 @@ public class UdonLine : UdonSharpBehaviour
         get => lineLength;
         set
         {
+            if ( lineLength == value)
+                return;
             lineLength = value;
             UpdateLine();
         }
@@ -106,7 +108,8 @@ public class UdonLine : UdonSharpBehaviour
 
     void Start()
     {
-        theLine = GetComponent<LineRenderer>();
+        if (theLine == null)
+            theLine = GetComponent<LineRenderer>();
         UpdateLine();
         RefreshColours();
         ThetaDegrees = thetaDegrees;

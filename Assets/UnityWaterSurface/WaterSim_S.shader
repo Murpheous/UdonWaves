@@ -54,7 +54,6 @@ float3 newField(float2 pos, float3 duv)
 
 float2 newAbsorbed(float2 pos, float2 n,float3 duv)
 {
-    //float uS = 1.0 * _DeltaT / 1.0;
     float2 field = A(pos).xy;
     float2 offset = pos + n;
     field.x = A(offset).x + (newField(offset,duv).x - A(pos).x) * (_CFAbsorb);

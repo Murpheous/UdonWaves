@@ -14,15 +14,17 @@ public class HuygensMonitor : UdonSharpBehaviour
     [Tooltip("DisplayPanel")] public MeshRenderer thePanel;
     [SerializeField,FieldChangeCallback(nameof(DisplayMode))]
     public int displayMode = 1;
-    [SerializeField] Vector2Int simResolution = new Vector2Int(2048,1024);
-    [Tooltip("Panel Width (mm)"),SerializeField] float panelWidth = 2000;
+    [SerializeField] Vector2Int simResolution = new Vector2Int(2048,1280);
+    [Tooltip("Panel Width (mm)"),SerializeField] float panelWidth = 2.048f;
+    [SerializeField] float panelHeight = 1.28f;
+    [SerializeField] float defaultPanelHeight = 0.92f;
     [SerializeField] float sourceOffset;
     [SerializeField,UdonSynced,FieldChangeCallback(nameof(NumSources))] int numSources = 2;
     [SerializeField] TextMeshProUGUI lblSourceCount;
     [SerializeField, Range(50,500),UdonSynced, FieldChangeCallback(nameof(SourcePitch))] 
     float sourcePitch = 436.5234f;
     // Timing
-    [SerializeField, Range(0.1f, 5f)] float dt = 1f;
+    [SerializeField, Range(0.01f, 0.2f)] float dt = 0.1f;
     [Header("Controls")]
     [SerializeField]
     private SyncedSlider lambdaSlider;
@@ -55,6 +57,8 @@ public class HuygensMonitor : UdonSharpBehaviour
                     if (scaleSlider!= null)
                         scaleSlider.IsInteractible = true;
                 }
+                if (vectorDrawing != null)
+                    vectorDrawing.SetProgramVariable<float>("displayHeight", panelHeight);
             }
             else
             {
@@ -69,6 +73,8 @@ public class HuygensMonitor : UdonSharpBehaviour
                 Lambda = defaultLambda;
                 NumSources = 2;
                 SimScale = defaultScale;
+                if (vectorDrawing != null)
+                    vectorDrawing.SetProgramVariable<float>("displayHeight", defaultPanelHeight);
             }
             displayMode = value;
             updateNeeded = true;
@@ -87,7 +93,7 @@ public class HuygensMonitor : UdonSharpBehaviour
             sourcePitch = value;
             if (vectorDrawing != null)
                 vectorDrawing.SetProgramVariable<float>("sourcePitch", sourcePitch);
-            if (matCRT != null)
+            if (iHaveSimMaterial)
                 matCRT.SetFloat("_SlitPitchPx", sourcePitch * mmToPixels);
             if (pitchSlider != null && !pitchPtr && pitchSlider.CurrentValue != value)
                 pitchSlider.CurrentValue = value;
@@ -107,7 +113,7 @@ public class HuygensMonitor : UdonSharpBehaviour
                 value = 7;
             updateNeeded = true;
             numSources = value;
-            if (matCRT != null)
+            if (iHaveSimMaterial)
                 matCRT.SetFloat("_NumSources", numSources);
             if (lblSourceCount != null)
                 lblSourceCount.text = numSources.ToString();
@@ -137,7 +143,7 @@ public class HuygensMonitor : UdonSharpBehaviour
                     scaleSlider.CurrentValue = simScale;
             }
             simScale = value;
-            if (matCRT != null)
+            if (iHaveSimMaterial)
                 matCRT.SetFloat("_Scale", simScale);
             if (scaleSlider != null && !scalePtr && scaleSlider.CurrentValue != value)
                 scaleSlider.CurrentValue = simScale;
@@ -151,9 +157,10 @@ public class HuygensMonitor : UdonSharpBehaviour
         set
         {
             lambda = value;
+            phaseRate = 30f/value;
             if (vectorDrawing != null)
                 vectorDrawing.SetProgramVariable<float>("lambda", lambda);
-            if (matCRT != null)
+            if (iHaveSimMaterial)
                 matCRT.SetFloat("_LambdaPx", lambda * mmToPixels);
             if (lambdaSlider != null && !lambdaPtr && lambdaSlider.CurrentValue != value)
                 lambdaSlider.CurrentValue = lambda;
@@ -219,28 +226,36 @@ public class HuygensMonitor : UdonSharpBehaviour
         UpdateOwnerShip();
     }
 
+
+    float waveTime = 0;
+    float delta;
+    [SerializeField]
+    bool animationPlay = false;
+    bool updateNeeded = false;
+    float mmToPixels = 1;
+    bool iHaveSimMaterial = false;
+    float phaseTime = 0;
+    float phaseRate = 0.6f;
     void UpdateWaves()
-    {
+    {   
         if (displayMode >= 0)
             simCRT.Update(1);
     }
 
-    float waveTime = 0;
-    float updateTime = 10;
-    float delta;
-    bool animationPlay = false;
-    bool updateNeeded = false;
-    float mmToPixels = 1;
     private void Update()
     {
         if (animationPlay)
         {
             delta = Time.deltaTime;
-            waveTime += delta;
-
-            while (updateTime < waveTime)
+            waveTime -= delta;
+            phaseTime -= delta*phaseRate;
+            if (phaseTime < 0)
+                phaseTime += 1;
+            if ( waveTime < 0)
             {
-                updateTime += dt;
+                if (iHaveSimMaterial)
+                    matCRT.SetFloat("_Phase", phaseTime);
+                waveTime += dt;
                 UpdateWaves();
                 updateNeeded = false;
             }
@@ -264,6 +279,7 @@ public class HuygensMonitor : UdonSharpBehaviour
             matCRT = simCRT.material;
             simCRT.Initialize();
         }
+        iHaveSimMaterial = matCRT != null;
         if (lambdaSlider != null)
             lambdaSlider.SetValues(lambda, 30, 80);
         if (pitchSlider != null)

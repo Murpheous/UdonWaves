@@ -155,34 +155,31 @@ public class UdonPointer : UdonSharpBehaviour
         shaftLine.enabled = isVisible;
         if (tipIsPresent)
         {
-            tipLines[0].enabled = isVisible;
-            tipLines[1].enabled = isVisible;
+            tipLines[0].enabled = isVisible && showTip;
+            tipLines[1].enabled = isVisible && showTip;
         }
-        if (showMirrorTip && mirrorTipIsPresent)
+        if (mirrorTipIsPresent)
         {
-            mirrorTipLines[0].enabled = isVisible;
-            mirrorTipLines[1].enabled = isVisible;
+            mirrorTipLines[0].enabled = isVisible && showMirrorTip;
+            mirrorTipLines[1].enabled = isVisible && showMirrorTip;
         }
         if (!isVisible)
             return;
         shaftLine.startColor = currentColour;
         shaftLine.endColor = currentColour;
-        if (tipIsPresent)
+        if (tipIsPresent && showTip)
         {
             tipLines[0].startColor = currentColour;
             tipLines[0].endColor = currentColour;
-            tipLines[1].startColor =currentColour;
+            tipLines[1].startColor = currentColour;
             tipLines[1].endColor = currentColour;
         }
-        if (mirrorTipIsPresent)
+        if (mirrorTipIsPresent && showMirrorTip)
         {
-            if (showMirrorTip)
-            {
-                mirrorTipLines[0].startColor = currentColour;
-                mirrorTipLines[0].endColor = currentColour;
-                mirrorTipLines[1].startColor = currentColour;
-                mirrorTipLines[1].endColor = currentColour;
-            }
+            mirrorTipLines[0].startColor = currentColour;
+            mirrorTipLines[0].endColor = currentColour;
+            mirrorTipLines[1].startColor = currentColour;
+            mirrorTipLines[1].endColor = currentColour;
         }
     }
     private void RefreshTips()

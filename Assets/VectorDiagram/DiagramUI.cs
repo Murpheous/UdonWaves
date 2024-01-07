@@ -11,9 +11,9 @@ public class DiagramUI : UdonSharpBehaviour
 {
     [SerializeField] UdonBehaviour clientModule;
     [SerializeField] Toggle togOff = null;
-    [SerializeField] Toggle togBragg = null;
-    [SerializeField] Toggle togHuygens = null;
-    [SerializeField] Toggle togK_Vectors = null;
+    [SerializeField] Toggle tgInterfere = null;
+    [SerializeField] Toggle togKVec = null;
+    [SerializeField] Toggle togVanVliet = null;
 
     [SerializeField] string clientVariableName;
 
@@ -26,12 +26,12 @@ public class DiagramUI : UdonSharpBehaviour
     {
         if (togOff != null && optionSelect <= 0 && !togOff.isOn)
             togOff.isOn = true;
-        if (togBragg != null && optionSelect == 1 && !togBragg.isOn)
-            togBragg.isOn = true;
-        if (togHuygens != null && optionSelect == 2 && !togHuygens.isOn)
-            togHuygens.isOn = true;
-        if (togK_Vectors != null && optionSelect == 3 && !togK_Vectors.isOn)
-            togK_Vectors.isOn = true;
+        if (tgInterfere != null && optionSelect == 1 && !tgInterfere.isOn)
+            tgInterfere.isOn = true;
+        if (togKVec != null && optionSelect == 2 && !togKVec.isOn)
+            togKVec.isOn = true;
+        if (togVanVliet != null && optionSelect == 3 && !togVanVliet.isOn)
+            togVanVliet.isOn = true;
         if (optionSelect != clientOption)
         {
             clientOption = optionSelect;
@@ -115,23 +115,23 @@ public class DiagramUI : UdonSharpBehaviour
     public void onSel1()
     {
         Debug.Log("onSel1");
-        if (togBragg == null)
+        if (tgInterfere == null)
             return;
-        if (togBragg.isOn && optionSelect != 1)
+        if (tgInterfere.isOn && optionSelect != 1)
             vecMode1();
     }
     public void onSel2()
     {
-        if (togHuygens == null)
+        if (togKVec == null)
             return;
-        if (togHuygens.isOn && optionSelect != 2)
+        if (togKVec.isOn && optionSelect != 2)
             vecMode2();
     }
     public void onSel3()
     {
-        if (togK_Vectors == null)
+        if (togVanVliet == null)
             return;
-        if (togK_Vectors.isOn && optionSelect != 3)
+        if (togVanVliet.isOn && optionSelect != 3)
             vecMode3();
     }
 
