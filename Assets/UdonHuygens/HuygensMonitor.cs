@@ -85,18 +85,16 @@ public class HuygensMonitor : UdonSharpBehaviour
         get => sourcePitch;
         set
         {
-            if (sourcePitch != value)
-            {
-                if (pitchSlider != null)
-                    pitchSlider.CurrentValue = value;
-            }
             sourcePitch = value;
             if (vectorDrawing != null)
                 vectorDrawing.SetProgramVariable<float>("sourcePitch", sourcePitch);
             if (iHaveSimMaterial)
                 matCRT.SetFloat("_SlitPitchPx", sourcePitch * mmToPixels);
-            if (pitchSlider != null && !pitchPtr && pitchSlider.CurrentValue != value)
-                pitchSlider.CurrentValue = value;
+            if (pitchSlider != null)
+            {
+                if ((!isStarted || pitchSlider.CurrentValue != value) && !pitchPtr)
+                    pitchSlider.CurrentValue = value;
+            }
             updateNeeded = true;
             RequestSerialization();
         }
@@ -137,16 +135,14 @@ public class HuygensMonitor : UdonSharpBehaviour
         get => simScale;
         set
         {
-            if (simScale != value)
-            {
-                if (scaleSlider != null)
-                    scaleSlider.CurrentValue = simScale;
-            }
             simScale = value;
             if (iHaveSimMaterial)
                 matCRT.SetFloat("_Scale", simScale);
-            if (scaleSlider != null && !scalePtr && scaleSlider.CurrentValue != value)
-                scaleSlider.CurrentValue = simScale;
+            if (scaleSlider != null)
+            {
+                if ((!isStarted || scaleSlider.CurrentValue != value) && !scalePtr)
+                    scaleSlider.CurrentValue = value;
+            }
             updateNeeded = true;
             RequestSerialization();
         }
@@ -162,8 +158,11 @@ public class HuygensMonitor : UdonSharpBehaviour
                 vectorDrawing.SetProgramVariable<float>("lambda", lambda);
             if (iHaveSimMaterial)
                 matCRT.SetFloat("_LambdaPx", lambda * mmToPixels);
-            if (lambdaSlider != null && !lambdaPtr && lambdaSlider.CurrentValue != value)
-                lambdaSlider.CurrentValue = lambda;
+            if (lambdaSlider != null)
+            {
+                if ((!isStarted || lambdaSlider.CurrentValue != value) && !lambdaPtr)
+                    lambdaSlider.CurrentValue = value;
+            }
             updateNeeded = true;
             RequestSerialization();
         } 
@@ -230,7 +229,7 @@ public class HuygensMonitor : UdonSharpBehaviour
     float waveTime = 0;
     float delta;
     [SerializeField]
-    bool animationPlay = false;
+    public bool playSim = true;
     bool updateNeeded = false;
     float mmToPixels = 1;
     bool iHaveSimMaterial = false;
@@ -244,7 +243,7 @@ public class HuygensMonitor : UdonSharpBehaviour
 
     private void Update()
     {
-        if (animationPlay)
+        if (playSim)
         {
             delta = Time.deltaTime;
             waveTime -= delta;
@@ -266,6 +265,7 @@ public class HuygensMonitor : UdonSharpBehaviour
             updateNeeded=false;
         }
     }
+    bool isStarted = false;
     void Start()
     {
         defaultLambda = lambda;
@@ -287,5 +287,7 @@ public class HuygensMonitor : UdonSharpBehaviour
         Lambda = lambda;
         SourcePitch = sourcePitch;
         DisplayMode = displayMode;
+        SimScale = simScale;
+        isStarted = true;
     }
 }

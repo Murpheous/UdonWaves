@@ -15,6 +15,9 @@ public class UIStateSelect : UdonSharpBehaviour
     [SerializeField] Toggle togSquare = null;
     [SerializeField] ToggleGroup selGroup = null;
 
+    [SerializeField, UdonSynced,FieldChangeCallback(nameof (PlaySim))] bool playSim = true;
+    [SerializeField] Toggle togPlay = null;
+    [SerializeField] Toggle togPause = null;
 
     [SerializeField] Button btnIncSources = null;
     [SerializeField] Button btnDecSources = null;
@@ -28,6 +31,8 @@ public class UIStateSelect : UdonSharpBehaviour
     public bool modeSelect;
     [SerializeField]
     int clientMode;
+
+
     private void updateClientState()
     {
         if (optionSelect <= 0 && selGroup != null)
@@ -114,6 +119,18 @@ public class UIStateSelect : UdonSharpBehaviour
             RequestSerialization();
         }
     }
+
+    private bool PlaySim
+    {
+        get => playSim;
+        set
+        {
+            playSim = value;
+            if (iHaveClientVar)
+                clientModule.SetProgramVariable<bool>("playSim",value);
+            RequestSerialization();
+        }
+    }
     public void selState0()
     {
         if (iAmOwner)
@@ -168,6 +185,22 @@ public class UIStateSelect : UdonSharpBehaviour
             SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner, nameof(modeOff));
     }
 
+    public void simPlay()
+    {
+        if (iAmOwner)
+            PlaySim = true;
+        else
+            SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner, nameof(simPlay));
+    }
+
+    public void simStop()
+    {
+        if (iAmOwner)
+            PlaySim = false;
+        else
+            SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner, nameof(simStop));
+    }
+
     public void selMode()
     {
         if (togSquare == null)
@@ -211,6 +244,19 @@ public class UIStateSelect : UdonSharpBehaviour
             selState3();
     }
 
+
+    public void onPlayState()
+    {
+        if (togPlay ==  null)
+            return;
+        if (togPlay.isOn != playSim)
+        {
+            if (togPlay.isOn)
+                simPlay();
+            else
+                simStop();
+        }
+    }
     // UdonSync stuff
     private VRCPlayerApi player;
     private bool iAmOwner = false;
