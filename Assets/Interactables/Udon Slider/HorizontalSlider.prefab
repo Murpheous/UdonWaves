@@ -33,7 +33,7 @@ RectTransform:
   m_Father: {fileID: 1143197884230504675}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 10, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -136,11 +136,11 @@ MonoBehaviour:
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
   m_Colors:
-    m_NormalColor: {r: 0, g: 0.8777292, b: 1, a: 1}
-    m_HighlightedColor: {r: 1, g: 0.9459827, b: 0, a: 1}
-    m_PressedColor: {r: 1, g: 0.3915094, b: 0.3915094, a: 1}
-    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_NormalColor: {r: 0, g: 0.82411754, b: 0.8490566, a: 1}
+    m_HighlightedColor: {r: 1, g: 0.73333335, b: 0, a: 1}
+    m_PressedColor: {r: 1, g: 0.570091, b: 0, a: 1}
+    m_SelectedColor: {r: 0, g: 1, b: 1, a: 1}
+    m_DisabledColor: {r: 0.41509432, g: 0.40530434, b: 0.40530434, a: 0.4745098}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -160,14 +160,14 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1143197885268047403}
   m_Direction: 0
   m_MinValue: 0
-  m_MaxValue: 10
+  m_MaxValue: 40
   m_WholeNumbers: 0
-  m_Value: 2.2
+  m_Value: 0
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1143197885194155145}
-        m_TargetAssemblyTypeName: 
+        m_TargetAssemblyTypeName: VRC.Udon.UdonBehaviour, VRC.Udon
         m_MethodName: SendCustomEvent
         m_Mode: 5
         m_Arguments:
@@ -488,7 +488,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.6320754, g: 0.6320754, b: 0.6320754, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -516,7 +516,7 @@ GameObject:
   - component: {fileID: 1143197885194155151}
   - component: {fileID: 1143197885194155144}
   - component: {fileID: 1143197885194155145}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: HorizontalSlider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -567,20 +567,20 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1143197885194155145}
   slider: {fileID: 1143197883991424651}
-  sliderLabel: {fileID: 0}
-  sliderTitle: {fileID: 0}
+  sliderLabel: {fileID: 5769601778519616481}
+  sliderTitle: {fileID: 70017049763290345}
   hideLabel: 0
   unitsInteger: 0
-  displayInteger: 0
-  sliderUnit: "\xB0"
+  displayInteger: 1
+  sliderUnit: mm
   unitDisplayScale: 1
-  sliderScale: 0.5
+  sliderScale: 1
   SliderClient: {fileID: 0}
-  clientVariableName: crystalRotation
-  clientPointerStateVar: PointerStateVar
-  currentValue: 0
-  maxValue: 1
-  minValue: 0
+  clientVariableName: lambda
+  clientPointerStateVar: lambdaPtr
+  currentValue: 20
+  maxValue: 60
+  minValue: 10
 --- !u!114 &1143197885194155145
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -641,7 +641,7 @@ RectTransform:
   m_Father: {fileID: 1143197884516471593}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 30, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -717,7 +717,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: -12}
+  m_AnchoredPosition: {x: 0, y: -14}
   m_SizeDelta: {x: 200, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4365256085784913539
