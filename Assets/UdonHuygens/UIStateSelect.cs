@@ -17,7 +17,6 @@ public class UIStateSelect : UdonSharpBehaviour
 
     [SerializeField, UdonSynced,FieldChangeCallback(nameof (PlaySim))] bool playSim = true;
     [SerializeField] Toggle togPlay = null;
-    [SerializeField] Toggle togPause = null;
 
     [SerializeField] Button btnIncSources = null;
     [SerializeField] Button btnDecSources = null;

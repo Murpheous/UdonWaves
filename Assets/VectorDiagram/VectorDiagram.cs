@@ -179,7 +179,7 @@ public class VectorDiagram : UdonSharpBehaviour
 
     private void kLineDisplay(int demoMode)
     {
-        if (kLines == null)
+        if (kLines == null || kLines.Length < 1)
             return;
         if (demoMode < 2)
         {
