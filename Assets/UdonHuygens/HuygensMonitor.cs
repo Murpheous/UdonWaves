@@ -153,7 +153,7 @@ public class HuygensMonitor : UdonSharpBehaviour
         set
         {
             lambda = value;
-            phaseRate = 30f/value;
+            phaseRate = 35f/value;
             if (vectorDrawing != null)
                 vectorDrawing.SetProgramVariable<float>("lambda", lambda);
             if (iHaveSimMaterial)
@@ -243,7 +243,7 @@ public class HuygensMonitor : UdonSharpBehaviour
 
     private void Update()
     {
-        if (playSim)
+        if (playSim && displayMode >= 0)
         {
             delta = Time.deltaTime;
             waveTime -= delta;

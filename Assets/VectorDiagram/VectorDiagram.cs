@@ -26,6 +26,7 @@ public class VectorDiagram : UdonSharpBehaviour
     [SerializeField] UdonLine[] kLines;
 
     Vector2[] kEndPoints;
+    Vector2[] kStartPoints;
     Vector2[] labelPoints;
     string[] beamAngles;
     private bool needsUpdate = false;
@@ -80,6 +81,7 @@ public class VectorDiagram : UdonSharpBehaviour
         if (kVectors == null || kVectors.Length == 0)
             return;
         kEndPoints = new Vector2[kVectors.Length];
+        kStartPoints = new Vector2[kVectors.Length];
         beamAngles = new string[kVectors.Length];
         labelPoints = new Vector2[kVectors.Length];
         float sinTheta;
@@ -93,15 +95,42 @@ public class VectorDiagram : UdonSharpBehaviour
                 sinTheta = i == 0 ? 0 : (2 * i + 1) / WidthX2;
             float lineLength = arrowLength;
             Vector2 endPoint = Vector2.left;
+            Vector2 startPoint = Vector2.zero;
             Vector2 labelPoint = Vector2.left;
             bool sinIsValid = Mathf.Abs(sinTheta) < 1f;
             thetaRadians = sinIsValid ? Mathf.Asin(sinTheta) : 0;
+            float cosTheta = Mathf.Cos(thetaRadians);
             beamAngles[i] = sinIsValid ? string.Format("{0:0.#}°", thetaRadians*Mathf.Rad2Deg) : "";
             if (sinIsValid)
             {
-                if (demoMode < 2)
+                switch (demoMode)
                 {
+                case 3:
+                        startPoint.y = sinTheta * displayWidth;
+                        lineLength = arrowLength / 4f;
+                        Vector2 startDelta = new Vector2(cosTheta, sinTheta);
+                        startDelta *= lineLength;
+                        if (startPoint.y <= halfHeight)
+                            startPoint.x = displayWidth;
+                        else
+                        {
+                            startPoint.y = halfHeight;
+                            startPoint.x = halfHeight/Mathf.Tan(thetaRadians); // halfHeightx = x * tan
+                        }
+                        endPoint = startPoint + startDelta;
+                        labelPoint = startPoint;
+                        break;
+                case 2:
+                    endPoint.y = sinTheta * arrowLength;
+                    if (endPoint.y <= halfHeight)
+                    {
+                        endPoint.x = Mathf.Cos(thetaRadians) * arrowLength;
+                        labelPoint.x = displayWidth;
+                    }
+                    labelPoint.y = endPoint.y;
+                    break;
 
+                default:
                     endPoint.y = sinTheta * displayWidth;
                     if (endPoint.y <= halfHeight)
                     {
@@ -115,20 +144,12 @@ public class VectorDiagram : UdonSharpBehaviour
                         endPoint.x = lineLength * Mathf.Cos(thetaRadians);
                     }
                     labelPoint = endPoint;
-                }
-                else
-                {
-                    endPoint.y = sinTheta * arrowLength;
-                    if (endPoint.y <= halfHeight)
-                    {
-                        endPoint.x = Mathf.Cos(thetaRadians) * arrowLength;
-                        labelPoint.x = displayWidth;
-                    }
-                    labelPoint.y = endPoint.y;
+                    break;
                 }
             }
             if (kVectors[i] != null && endPoint.x > 0)
             {
+                kVectors[i].transform.localPosition = startPoint;
                 kVectors[i].ShowTip = demoMode >= 2;
                 kVectors[i].LineLength = lineLength;
                 kVectors[i].ThetaDegrees = thetaRadians * Mathf.Rad2Deg;
@@ -140,6 +161,7 @@ public class VectorDiagram : UdonSharpBehaviour
                 kVectors[i].Alpha = 0f;
             }
             kEndPoints[i] = endPoint;
+            kStartPoints[i] = startPoint;
             labelPoints[i] = labelPoint;
         }
         if (vecLabels != null && vecLabels.Length > 0)
@@ -158,6 +180,10 @@ public class VectorDiagram : UdonSharpBehaviour
                             break;
                         case 2:
                             labelText = string.Format("K<sub>{0}</sub>={0}/D",vecIdx);
+                            break;
+                        case 3:
+                            string mul = vecIdx < 2 ? "h" : string.Format("{0}h", vecIdx);
+                            labelText = string.Format("Δp<sub>{0}</sub>={1}/D", vecIdx,mul);
                             break;
                         default:
                             labelText = "";
@@ -181,7 +207,7 @@ public class VectorDiagram : UdonSharpBehaviour
     {
         if (kLines == null || kLines.Length < 1)
             return;
-        if (demoMode < 2)
+        if (demoMode != 2)
         {
             for (int i = 0; i < kLines.Length; i++)
             {
@@ -231,9 +257,8 @@ public class VectorDiagram : UdonSharpBehaviour
         {
             if (kComponents[j] != null)
             {
-                kComponents[j].LineLength = kEndPoints[j + 1].y;
-                Vector3 lpos = kComponents[j].transform.localPosition;
-                lpos.x = kEndPoints[j + 1].x;
+                kComponents[j].LineLength = kEndPoints[j + 1].y - kStartPoints[j +1].y;
+                Vector3 lpos = new Vector3(kEndPoints[j + 1].x, kStartPoints[j + 1].y);
                 if (lpos.x >= 0)
                 {
                     kComponents[j].transform.localPosition = lpos;
@@ -242,7 +267,7 @@ public class VectorDiagram : UdonSharpBehaviour
                 else
                 {
                     lpos.x = 0;
-                    kComponents[j].transform.localPosition = lpos;
+                    kComponents[j].transform.localPosition = Vector3.zero;
                     kComponents[j].Alpha = 0;
                 }
             }

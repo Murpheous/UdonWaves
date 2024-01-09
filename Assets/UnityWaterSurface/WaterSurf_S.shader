@@ -130,7 +130,7 @@ void surf(Input IN, inout SurfaceOutputStandard o)
 
     }
     o.Albedo = lerp(_ColorNeg, theColor, range);
-    o.Normal = normalize(float3(v1 - v2, v3 - v4, 0.3));
+    o.Normal = normalize(float3(v1 - v2, v3 - v4, 0.5));
 }
 
 ENDCG
