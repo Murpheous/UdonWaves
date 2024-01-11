@@ -5,17 +5,17 @@ using UnityEngine.UI;
 using VRC.SDKBase;
 using TMPro;
 using VRC.Udon;
-using static UnityEngine.Rendering.DebugUI;
 
 [UdonBehaviourSyncMode(BehaviourSyncMode.Manual)]
 [RequireComponent(typeof(ToggleGroup))]
 public class InfoPanel : UdonSharpBehaviour
 {
-    public ToggleGroup toggleGroup;
+    [SerializeField] private ToggleGroup toggleGroup;
+    [SerializeField] private Button closeButton;
     [SerializeField] Vector2 panelSize = Vector2.one;
     [SerializeField] Vector2 shrinkSize = Vector2.one;
     [SerializeField] bool showHidePanel = true;
-    [SerializeField] float textBorder = 20;
+ //   [SerializeField] float textBorder = 20;
     RectTransform panelXfrm;
     [SerializeField] TextMeshProUGUI infoText;
     [SerializeField] Toggle[] toggles = null;
@@ -23,6 +23,7 @@ public class InfoPanel : UdonSharpBehaviour
     int toggleCount = 0;
 
     bool hasTextField = false;
+    bool hasClose = false;
     private bool iamOwner;
     private VRCPlayerApi player;
 //    private RectTransform textRect;
@@ -57,6 +58,8 @@ public class InfoPanel : UdonSharpBehaviour
             }
             if (showHidePanel)
             {
+                if (hasClose)
+                    closeButton.gameObject.SetActive(showPanel >= 0);
                 Vector2 newSize = showPanel >= 0 ? panelSize : shrinkSize;
                 Vector3 newPosition = showPanel >= 0 ? Vector3.zero : new Vector3(0, -(panelSize.y - shrinkSize.y) / 2.0f, 0);
                 panelXfrm.sizeDelta = newSize;
@@ -71,6 +74,13 @@ public class InfoPanel : UdonSharpBehaviour
         }
     }
 
+    public void onBtnClose()
+    {
+        if (selectedToggle >= 0)
+        {
+            panelClose();
+        }
+    }
     public void onToggle()
     {
         int toggleIdx = -1;
@@ -119,10 +129,12 @@ public class InfoPanel : UdonSharpBehaviour
     }
     
     
-    public void onPanelClose()
+    public void panelClose()
     {
-        Debug.Log(gameObject.name+": Panel Close");
-        SelectedToggle = -1;
+ //       if (iamOwner)
+            SelectedToggle = -1;
+  //      else
+ //           SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner, nameof(panelClose));
     }
 
     private void UpdateOwnerShip()
@@ -161,6 +173,7 @@ public class InfoPanel : UdonSharpBehaviour
         toggleGroup.allowSwitchOff = true;
         toggleGroup.SetAllTogglesOff(false);
         hasTextField = infoText != null;
+        hasClose = closeButton != null;
         //if (hasTextField)
         //{
         //    textRect = infoText.GetComponent<RectTransform>();
