@@ -14,7 +14,6 @@ public class WaveSlitControls : UdonSharpBehaviour
 
     public Vector2 TankDims;
     public float TankScale;
-    public float barHeight;
     
     public float barThickness;
     [SerializeField,UdonSynced,FieldChangeCallback(nameof (ApertureCount))]
@@ -212,7 +211,7 @@ public class WaveSlitControls : UdonSharpBehaviour
     {
         if (bar == null)
             return;
-        bar.localScale = new Vector3(barThickness, barHeight, targetWidth);
+        bar.localScale = new Vector3(barThickness, 1, targetWidth);
         bar.localPosition = new Vector3(0, 0, targetposition);
         bar.gameObject.SetActive(isVisible);
     }
@@ -307,7 +306,6 @@ public class WaveSlitControls : UdonSharpBehaviour
         if (TankScale <= 0) TankScale = 1;
         if (tankWidth <= 0) tankWidth = 1.0f;
         if (tankLength <= 0) tankLength = 2.0f;
-        if (barHeight <= 0) barHeight = 0.125f;
         if (barThickness <= 0) barThickness = 0.01f;
         if (apertureCount < 0) apertureCount = 2;
         if (apertureWidth <= 0) apertureWidth = 0.04f;

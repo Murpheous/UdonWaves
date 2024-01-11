@@ -104,7 +104,7 @@ float4 frag(v2f_customrendertexture i) : SV_Target
                 updated = lerp(_ColorNeg, _Color, alpha);
                 alpha = (alpha + 1);
             }
-            updated.a = clamp(alpha, 0, 1); //      alpha;
+            updated.a = clamp(alpha, 0.2, 1); //      alpha;
         }
         else if (_DisplayMode < 3.9)
         {
@@ -119,13 +119,13 @@ float4 frag(v2f_customrendertexture i) : SV_Target
                 updated = lerp(_ColorNeg, _ColorVel, alpha);
                 alpha = (alpha + 1);
             }
-            updated.a = clamp(alpha,0,1);
+            updated.a = clamp(alpha, 0.2, 1);
         }
         else
         {
             alpha = (phasor.x * phasor.x) + (phasor.y * phasor.y);
             updated = lerp(_ColorNeg, _ColorFlow, alpha);
-            updated.a = clamp(alpha, 0, 1);
+            updated.a = clamp(alpha, 0.2, 1);
         }
     }
     else

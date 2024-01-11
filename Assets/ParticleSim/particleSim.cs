@@ -253,12 +253,12 @@ public class particleSim : UdonSharpBehaviour
             particle = particles[i];
             float startLifeTime = particle.startLifetime;
             Vector3 pos = particle.position;
-            if (Mathf.Abs(pos.z) > 0.75f) 
+            /*if (Mathf.Abs(pos.z) > 0.75f) 
             {
                 particle.remainingLifetime = 0;
                 particleChanged = true;
             }
-            else if ((startLifeTime < 10) && (pos.x < apertureX))
+            else  */if (startLifeTime < 10 && pos.x < apertureX)
             {// At Grating
                 if (quantumDistribution !=null)
                 {

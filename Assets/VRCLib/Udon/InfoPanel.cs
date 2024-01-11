@@ -5,6 +5,8 @@ using UnityEngine.UI;
 using VRC.SDKBase;
 using TMPro;
 using VRC.Udon;
+using static UnityEngine.Rendering.DebugUI;
+
 [UdonBehaviourSyncMode(BehaviourSyncMode.Manual)]
 [RequireComponent(typeof(ToggleGroup))]
 public class InfoPanel : UdonSharpBehaviour
@@ -14,7 +16,7 @@ public class InfoPanel : UdonSharpBehaviour
     [SerializeField] Vector2 shrinkSize = Vector2.one;
     [SerializeField] bool showHidePanel = true;
     [SerializeField] float textBorder = 20;
-    [SerializeField] RectTransform panelXfrm;
+    RectTransform panelXfrm;
     [SerializeField] TextMeshProUGUI infoText;
     [SerializeField] Toggle[] toggles = null;
     [SerializeField] InfoPage[] pages = null;
@@ -23,7 +25,7 @@ public class InfoPanel : UdonSharpBehaviour
     bool hasTextField = false;
     private bool iamOwner;
     private VRCPlayerApi player;
-    private RectTransform textRect;
+//    private RectTransform textRect;
 //    private VRC.Udon.Common.Interfaces.NetworkEventTarget toTheOwner = VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner;
 //    private VRC.Udon.Common.Interfaces.NetworkEventTarget toAll = VRC.Udon.Common.Interfaces.NetworkEventTarget.All;
 
@@ -47,7 +49,7 @@ public class InfoPanel : UdonSharpBehaviour
                     if (pages[value] != null)
                     {
                         title = pages[value].PageTitle;
-                        infoText.text = string.Format("<align=center><line-height=250%><b>{0}</b></line-height></align>\n<margin=2%>{1}</margin>", title, pages[value].PageBody);
+                        infoText.text = string.Format("<line-height=125%><align=center><b>{0}</b></align>\n</line-height><margin=2%>{1}</margin>", title, pages[value].PageBody);
                     }
                 }
                 else
@@ -57,33 +59,32 @@ public class InfoPanel : UdonSharpBehaviour
             {
                 Vector2 newSize = showPanel >= 0 ? panelSize : shrinkSize;
                 Vector3 newPosition = showPanel >= 0 ? Vector3.zero : new Vector3(0, -(panelSize.y - shrinkSize.y) / 2.0f, 0);
-                if (panelXfrm != null)
-                {
-                    panelXfrm.sizeDelta = newSize;
-                    panelXfrm.localPosition = newPosition;
-                }
-                if (textRect != null)
-                {
-                    Vector2 newTextDim = new Vector2(newSize.x - textBorder, newSize.y - textBorder);
-                    textRect.sizeDelta = newTextDim;
+                panelXfrm.sizeDelta = newSize;
+                panelXfrm.localPosition = newPosition;
+                //if (textRect != null)
+                //{
+                //    Vector2 newTextDim = new Vector2(newSize.x - textBorder, newSize.y - textBorder);
+                //    textRect.sizeDelta = newTextDim;
                     //textRect.localPosition = newPosition;
-                }
+                //}
             }
         }
     }
 
-    public void onToggleChanged()
+    public void onToggle()
     {
-        int newToggle = -1;
-        for (int i = 0; newToggle < 0 && i < toggles.Length; i++)
+        int toggleIdx = -1;
+
+        for (int i = 0; toggleIdx < 0 && i < toggles.Length; i++)
         {
             if (toggles[i] != null)
             {
                 if (toggles[i].isOn)
-                    newToggle = i;
+                    toggleIdx = i;
             }
         }
-        SelectedToggle = newToggle;
+        Debug.Log("Toggle Changed: " + toggleIdx.ToString());
+        SelectedToggle = toggleIdx;
     }
 
     [SerializeField,UdonSynced,FieldChangeCallback(nameof(SelectedToggle))]
@@ -160,15 +161,13 @@ public class InfoPanel : UdonSharpBehaviour
         toggleGroup.allowSwitchOff = true;
         toggleGroup.SetAllTogglesOff(false);
         hasTextField = infoText != null;
-        if (hasTextField)
-        {
-            textRect = infoText.GetComponent<RectTransform>();
-        }
-        if ( panelXfrm != null)
-        {
-            panelSize = panelXfrm.sizeDelta;
-        }
+        //if (hasTextField)
+        //{
+        //    textRect = infoText.GetComponent<RectTransform>();
+        //}
+        panelXfrm = transform.GetChild(0).GetComponent<RectTransform>();
+        panelSize = panelXfrm.sizeDelta;
         toggleGroup.EnsureValidState();
-        onToggleChanged();
+        onToggle();
     }
 }

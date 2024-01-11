@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8878407415768140865}
   - component: {fileID: 8878407415768140867}
   - component: {fileID: 8878407415768140866}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Checkmark
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -65,7 +65,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: a112c9bac6145114c92c3805e8c99620, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 4d2a4136ebef6f041b43fdca42412caa, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -86,7 +86,7 @@ GameObject:
   - component: {fileID: 8878407416234371653}
   - component: {fileID: 8878407416234371655}
   - component: {fileID: 8878407416234371654}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Background
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -163,7 +163,7 @@ GameObject:
   - component: {fileID: 8878407416592638583}
   - component: {fileID: 7618224890888347476}
   - component: {fileID: 5122222944705522520}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: InfoToggle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -237,7 +237,7 @@ MonoBehaviour:
   onValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 5122222944705522520}
         m_TargetAssemblyTypeName: VRC.Udon.UdonBehaviour, VRC.Udon
         m_MethodName: SendCustomEvent
         m_Mode: 5
@@ -246,7 +246,7 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: onToggleChanged
+          m_StringArgument: onToggle
           m_BoolArgument: 0
         m_CallState: 2
   m_IsOn: 0
