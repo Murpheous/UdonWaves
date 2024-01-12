@@ -3,17 +3,15 @@
 
 Properties
 {
+    _DispTex("Disp Texture", 2D) = "gray" {}
     _Color("Color", color) = (1, 1, 0, 0)
     _ColorNeg("ColorBase", color) = (0, 0.3, 1, 0)
     _ColorVel("ColorVelocity", color) = (0, 0.3, 1, 0)
     _ColorFlow("ColorFlow", color) = (1, 0.3, 0, 0)
     _ViewSelection("Show A=0, A^2=1, E=2",Range(0.0,2.0)) = 0.0    
     _K("WaveNumber K",Range(0.001,1)) = 0.1
-    _DispTex("Disp Texture", 2D) = "gray" {}
     _Glossiness("Smoothness", Range(0,1)) = 0.5
     _Metallic("Metallic", Range(0,1)) = 0.0
-   // _MinDist("Min Distance", Range(0.1, 50)) = 10
-   // _MaxDist("Max Distance", Range(0.1, 50)) = 25
     _Displacement("Displacement", Range(0, 1.0)) = 0.3
 }
 
@@ -27,9 +25,6 @@ SubShader
     #pragma surface surf Standard alpha addshadow fullforwardshadows vertex:disp
     #pragma target 5.0
 
-float _ViewSelection;
-float _K;
-float _Displacement;
 //float _MinDist;
 //float _MaxDist;
 sampler2D _DispTex;
@@ -38,8 +33,11 @@ fixed4 _Color;
 fixed4 _ColorNeg;
 fixed4 _ColorVel;
 fixed4 _ColorFlow;
+float _ViewSelection;
+float _K;
 half _Glossiness;
 half _Metallic;
+float _Displacement;
 
 struct appdata 
 {
@@ -47,8 +45,8 @@ struct appdata
     float4 tangent  : TANGENT;
     float3 normal   : NORMAL;
     float2 texcoord : TEXCOORD0;
-    float2 texcoord1 : TEXCOORD1;
-    float2 texcoord2 : TEXCOORD2;
+    //float2 texcoord1 : TEXCOORD1;
+    //float2 texcoord2 : TEXCOORD2;
 };
 
 struct Input 

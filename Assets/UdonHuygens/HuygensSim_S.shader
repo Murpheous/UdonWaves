@@ -58,9 +58,6 @@ float2 sourcePhasor(float2 delta)
 float4 frag(v2f_customrendertexture i) : SV_Target
 {
     float2 pos = i.globalTexcoord;
-    float du = 1.0 / _CustomRenderTextureWidth;
-    float dv = 1.0 / _CustomRenderTextureHeight;
-    float3 duv = float3(du, dv, 0);
     float4 updated = float4(1, 0, 1,1);
     
     // Pixel Positions
