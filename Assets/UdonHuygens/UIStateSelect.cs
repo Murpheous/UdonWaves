@@ -127,6 +127,8 @@ public class UIStateSelect : UdonSharpBehaviour
             playSim = value;
             if (iHaveClientVar)
                 clientModule.SetProgramVariable<bool>("playSim",value);
+            if (togPlay != null && togPlay.isOn != value)
+                togPlay.isOn = value;
             RequestSerialization();
         }
     }
