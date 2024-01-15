@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: M_Twinslit
-  m_Shader: {fileID: 4800000, guid: 84bb1de40d8a4314cb256ffa77169293, type: 3}
+  m_Shader: {fileID: 4800000, guid: 3dd4da7984fcc5243bd038fa6068bf22, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -78,22 +78,22 @@ Material:
     - _BumpScale: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
-    - _DisplayMode: 4
+    - _DisplayMode: 1
     - _DstBlend: 10
     - _GlossMapScale: 0.39
     - _Glossiness: 0.5
     - _GlossyReflections: 0
-    - _LambdaPx: 11
+    - _LambdaPx: 24
     - _LeftPx: 1
     - _Metallic: 0.656
     - _Mode: 3
     - _NumSources: 2
     - _OcclusionStrength: 1
     - _Parallax: 0.02
-    - _PhaseSpeed: 0
+    - _PhaseSpeed: 0.5
     - _Scale: 1
-    - _SlitPitchPx: 230
-    - _SlitWidePx: 30
+    - _SlitPitchPx: 200
+    - _SlitWidePx: 20
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 0
     - _SrcBlend: 1
@@ -101,7 +101,7 @@ Material:
     - _WaveStrength: 0
     - _ZWrite: 0
     m_Colors:
-    - _Color: {r: 0.5254902, g: 0.84407026, b: 1, a: 1}
+    - _Color: {r: 0.9716981, g: 0.45550257, b: 0.36209506, a: 1}
     - _ColorFlow: {r: 0.8426008, g: 1, b: 0, a: 1}
     - _ColorNeg: {r: 0.1124465, g: 0.05139729, b: 0.31132078, a: 1}
     - _ColorVel: {r: 0.5176471, g: 0.27450982, b: 0.99215686, a: 1}
