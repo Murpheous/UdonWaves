@@ -13,8 +13,6 @@ public class WavePanelControl : UdonSharpBehaviour
 {
     [Tooltip("Wave Display Mesh")] public MeshRenderer thePanel;
     [Tooltip("Mesh point scale (nominally mm)"),Range(100,4096)] private float mmToPixels = 1024;
-    private Material matSIM = null;
-    private bool iHaveSimMaterial = false;
  
     [SerializeField] Slider speedSlider;
     private bool iHaveSpeedControl = false;
@@ -25,10 +23,17 @@ public class WavePanelControl : UdonSharpBehaviour
     [SerializeField,UdonSynced, FieldChangeCallback(nameof(PlaySim))] bool playSim;
 
     [SerializeField] Toggle togReal;
+    private bool iHaveRealTog = false;
     [SerializeField] Toggle togImaginary;
+    private bool iHaveImTog = false;
     [SerializeField] Toggle togRealPwr;
+    private bool iHaveRePwrTog = false;
     [SerializeField] Toggle togImPwr;
+    private bool iHaveImPwrTog = false;
     [SerializeField] Toggle togProbability;
+    private bool iHaveProbTog = false;
+    [SerializeField, UdonSynced, FieldChangeCallback(nameof(ViewSelect))]
+    public int viewSelect;
 
     [SerializeField] Slider lambdaSlider;
     private bool iHaveLambdaControl = false;
@@ -37,7 +42,14 @@ public class WavePanelControl : UdonSharpBehaviour
     [SerializeField, Range(1, 100),UdonSynced,FieldChangeCallback(nameof(Lambda))] float lambda = 24;
 
     // Debug
-    [SerializeField] Vector2Int panelPixels = new Vector2Int(2048,1024);
+    [SerializeField] 
+    Vector2Int panelPixels = new Vector2Int(2048,1024);
+    [SerializeField] 
+    private Material matSIM = null;
+    [SerializeField] 
+    private bool iHaveSimMaterial = false;
+    [SerializeField]
+    private int displayMode = 0;
 
     private void UpdatePhaseSpeed()
     {
@@ -77,6 +89,49 @@ public class WavePanelControl : UdonSharpBehaviour
         {
           WaveSpeed = speedSlider.value;
         }
+    }
+
+    private int ViewSelect
+    {
+        get => viewSelect;
+        set
+        {
+            viewSelect = value;
+            //updateClientState();
+            RequestSerialization();
+        }
+    }
+
+
+    public void onView()
+    {
+        int udatedView = viewSelect;
+        if (iHaveRealTog && togReal.isOn)
+        {
+            ViewSelect = 0;
+            return;
+        }
+        if (iHaveImTog && togImaginary.isOn)
+        {
+            ViewSelect = 2;
+            return;
+        }
+        if (iHaveRePwrTog && togRealPwr.isOn)
+        {
+            ViewSelect = 1;
+            return;
+        }
+        if (iHaveImPwrTog && togImPwr.isOn)
+        {
+            ViewSelect = 3;
+            return;
+        }
+        if (iHaveProbTog && togProbability.isOn)
+        {
+            ViewSelect = 4;
+            return;
+        }
+        Debug.Log("Random View Select!");
     }
 
     public void onPlayState()
@@ -142,9 +197,15 @@ public class WavePanelControl : UdonSharpBehaviour
             defaultLambda = matSIM.GetFloat("_LambdaPx");
             float panelAspect = thePanel.transform.localScale.y/thePanel.transform.localScale.x;
         }
+        iHaveRealTog = togReal != null;
+        iHaveImTog = togImaginary != null;
+        iHaveRePwrTog = togRealPwr !=  null;
+        iHaveImPwrTog =  togImPwr != null;
+        iHaveProbTog =  togProbability != null;
+
         iHaveSpeedControl = speedSlider != null;
-        WaveSpeed = waveSpeed;
         iHaveLambdaControl = lambdaSlider != null;
         Lambda = defaultLambda;
+        WaveSpeed = waveSpeed;
     }
 }
