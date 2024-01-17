@@ -24,11 +24,19 @@ public class WavePanelControl : UdonSharpBehaviour
     [SerializeField] Toggle togPlay;
     [SerializeField,UdonSynced, FieldChangeCallback(nameof(PlaySim))] bool playSim;
 
+    [SerializeField, UdonSynced, FieldChangeCallback(nameof(DisplayMode))]
+    public int displayMode;
+
     [SerializeField] Toggle togReal;
+    bool iHaveTogReal = false;
     [SerializeField] Toggle togImaginary;
+    bool iHaveTogIm = false;
     [SerializeField] Toggle togRealPwr;
+    bool iHaveTogRealPwr = false;
     [SerializeField] Toggle togImPwr;
+    bool iHaveToImPwr = false;
     [SerializeField] Toggle togProbability;
+    bool iHaveTogProb = false;
 
     [SerializeField] Slider lambdaSlider;
     private bool iHaveLambdaControl = false;
@@ -67,6 +75,42 @@ public class WavePanelControl : UdonSharpBehaviour
             if (togPlay != null && togPlay.isOn != value)
                 togPlay.isOn = value;
             UpdatePhaseSpeed();
+            RequestSerialization();
+        }
+    }
+
+    private int DisplayMode
+    {
+        get => displayMode;
+        set
+        {
+            displayMode = value;
+            if (iHaveSimMaterial)
+                matSIM.SetFloat("_DisplayMode", value);
+            switch (displayMode)
+            {
+                case 0:
+                    if (iHaveTogReal && !togReal.isOn)
+                        togReal.isOn = true;
+                    break;
+                case 1:
+                    if (iHaveTogRealPwr&& !togRealPwr.isOn)
+                        togRealPwr.isOn = true;
+                    break;
+                case 2:
+                    if (iHaveTogIm && !togImaginary.isOn)
+                        togImaginary.isOn = true;
+                    break;
+                case 3:
+                    if (iHaveToImPwr && !togImPwr.isOn)
+                        togImPwr.isOn = true;
+                    break;
+                case 4:
+                default:
+                    if (iHaveTogProb && !togProbability.isOn)
+                        togProbability.isOn = true;
+                    break;
+            }
             RequestSerialization();
         }
     }
@@ -114,6 +158,35 @@ public class WavePanelControl : UdonSharpBehaviour
         }
     }
 
+    public void onMode()
+    {
+        if (iHaveTogReal && togReal.isOn && displayMode != 0)
+        {
+            DisplayMode = 0;
+            return;
+        }
+        if (iHaveTogIm && togImaginary.isOn && displayMode != 2)
+        {
+            DisplayMode = 2;
+            return;
+        }
+        if (iHaveTogRealPwr && togRealPwr.isOn && displayMode != 1)
+        {
+            DisplayMode = 1;
+            return;
+        }
+        if (iHaveToImPwr && togImPwr.isOn && displayMode != 3)
+        {
+            DisplayMode = 3;
+            return;
+        }
+        if (iHaveTogProb && togProbability.isOn && displayMode != 4)
+        {
+            DisplayMode = 4;
+            return;
+        }
+    }
+
     public void onLambda()
     {
         if (iHaveLambdaControl && lambdaPtr)
@@ -142,9 +215,16 @@ public class WavePanelControl : UdonSharpBehaviour
             defaultLambda = matSIM.GetFloat("_LambdaPx");
             float panelAspect = thePanel.transform.localScale.y/thePanel.transform.localScale.x;
         }
+        iHaveTogReal = togReal != null;
+        iHaveTogIm = togImaginary  != null;
+        iHaveTogRealPwr = togRealPwr != null;
+        iHaveToImPwr = togImPwr != null;
+        iHaveTogProb = togProbability  != null;
         iHaveSpeedControl = speedSlider != null;
-        WaveSpeed = waveSpeed;
         iHaveLambdaControl = lambdaSlider != null;
+        if (iHaveSimMaterial)
+            DisplayMode = Mathf.RoundToInt(matSIM.GetFloat("_DisplayMode"));
+        WaveSpeed = waveSpeed;
         Lambda = defaultLambda;
     }
 }
