@@ -4,7 +4,6 @@ using UdonSharp;
 using UnityEngine;
 using VRC.SDKBase;
 using VRC.Udon;
-using static UnityEngine.Rendering.DebugUI;
 
 [UdonBehaviourSyncMode(BehaviourSyncMode.Manual)]
 public class HuygensMonitor : UdonSharpBehaviour

@@ -1,5 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 using UdonSharp;
+using Unity.Mathematics;
 using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,56 +12,139 @@ using VRC.Udon;
 public class WavePanelControl : UdonSharpBehaviour
 {
     [Tooltip("Wave Display Mesh")] public MeshRenderer thePanel;
+    [Tooltip("Mesh point scale (nominally mm)"),Range(100,4096)] private float mmToPixels = 1024;
     private Material matSIM = null;
     private bool iHaveSimMaterial = false;
+ 
     [SerializeField] Slider speedSlider;
     private bool iHaveSpeedControl = false;
-    [SerializeField, Range(1, 100)] float defaultLambda = 24;
-    [SerializeField, Range(1, 100)] float lambda = 24;
+    bool speedPtr = false;
+    [SerializeField, UdonSynced, FieldChangeCallback(nameof(WaveSpeed))] float waveSpeed;
 
-    [SerializeField,FieldChangeCallback(nameof(CurrentSpeed))] float currentSpeed;
+    [SerializeField] Toggle togPlay;
+    [SerializeField,UdonSynced, FieldChangeCallback(nameof(PlaySim))] bool playSim;
+
+    [SerializeField] Toggle togReal;
+    [SerializeField] Toggle togImaginary;
+    [SerializeField] Toggle togRealPwr;
+    [SerializeField] Toggle togImPwr;
+    [SerializeField] Toggle togProbability;
+
+    [SerializeField] Slider lambdaSlider;
+    private bool iHaveLambdaControl = false;
+    bool lambdaPtr = false;
+    [SerializeField, Range(1, 100)] float defaultLambda = 24;
+    [SerializeField, Range(1, 100),UdonSynced,FieldChangeCallback(nameof(Lambda))] float lambda = 24;
+
+    // Debug
+    [SerializeField] Vector2Int panelPixels = new Vector2Int(2048,1024);
 
     private void UpdatePhaseSpeed()
     {
         if (iHaveSimMaterial)
-            matSIM.SetFloat("_PhaseSpeed", currentSpeed * defaultLambda / lambda);
+            matSIM.SetFloat("_PhaseSpeed", playSim ? waveSpeed * defaultLambda / lambda : 0f);
     }
 
-    float CurrentSpeed
+    float WaveSpeed
     {
-        get => currentSpeed;
+        get => waveSpeed;
         set
         {
-            currentSpeed = Mathf.Clamp(value,0,1);
-            if (iHaveSpeedControl && !speedPtrDown && speedSlider.value != currentSpeed)
-                speedSlider.value = currentSpeed;
+            waveSpeed = Mathf.Clamp(value,0,5);
+            if (!speedPtr && iHaveSpeedControl && speedSlider.value != waveSpeed)
+                speedSlider.value = waveSpeed;
             UpdatePhaseSpeed();
+            RequestSerialization();
         }
     }
+
+    private bool PlaySim
+    {
+        get => playSim;
+        set
+        {
+            playSim = value;
+            if (togPlay != null && togPlay.isOn != value)
+                togPlay.isOn = value;
+            UpdatePhaseSpeed();
+            RequestSerialization();
+        }
+    }
+
     public void onSpeed()
     {
-        if (iHaveSpeedControl && speedPtrDown)
+        if (iHaveSpeedControl && speedPtr)
         {
-          CurrentSpeed = speedSlider.value;
+          WaveSpeed = speedSlider.value;
         }
     }
 
-    bool speedPtrDown = false;
-    public void speedPtrDn()
+    public void onPlayState()
+    {
+        if (togPlay == null)
+        {
+            PlaySim = !playSim;
+            return;
+        }
+        if (playSim != togPlay.isOn)
+            PlaySim = !playSim;
+    }
+
+    public void sPtrDn()
+    {
+        speedPtr = true;
+    }
+    public void sPtrUp()
+    {
+        speedPtr = false;
+    }
+
+    public float Lambda
+    {
+        get => lambda;
+        set
+        {
+            lambda = value;
+            if (iHaveSimMaterial)
+                matSIM.SetFloat("_LambdaPx", lambda);
+            if (!lambdaPtr && iHaveLambdaControl && (lambdaSlider.value != value))
+                    lambdaSlider.value = value;
+            UpdatePhaseSpeed();
+            RequestSerialization();
+        }
+    }
+
+    public void onLambda()
+    {
+        if (iHaveLambdaControl && lambdaPtr)
+        {
+            Lambda = lambdaSlider.value;
+        }
+    }
+
+    public void lPtrDn()
     {
 
-        speedPtrDown = true;
+        lambdaPtr = true;
     }
-    public void speedPtrUp()
+    public void lPtrUp()
     {
-        speedPtrDown = false;
+        lambdaPtr = false;
     }
+
     void Start()
     {
         if (thePanel != null)
             matSIM = thePanel.material;
         iHaveSimMaterial = matSIM != null;
+        if (iHaveSimMaterial)
+        {
+            defaultLambda = matSIM.GetFloat("_LambdaPx");
+            float panelAspect = thePanel.transform.localScale.y/thePanel.transform.localScale.x;
+        }
         iHaveSpeedControl = speedSlider != null;
-        CurrentSpeed = currentSpeed;
+        WaveSpeed = waveSpeed;
+        iHaveLambdaControl = lambdaSlider != null;
+        Lambda = defaultLambda;
     }
 }
