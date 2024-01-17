@@ -1,7 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using UdonSharp;
-using Unity.Mathematics;
-using UnityEditor.Rendering;
+﻿using UdonSharp;
 using UnityEngine;
 using UnityEngine.UI;
 using VRC.SDKBase;
@@ -12,7 +9,7 @@ using VRC.Udon;
 public class WavePanelControl : UdonSharpBehaviour
 {
     [Tooltip("Wave Display Mesh")] public MeshRenderer thePanel;
-    [Tooltip("Mesh point scale (nominally mm)"),Range(100,4096)] private float mmToPixels = 1024;
+    [Tooltip("Mesh point simScale (nominally mm)"),Range(100,4096)] private float mmToPixels = 1024;
     private Material matSIM = null;
     private bool iHaveSimMaterial = false;
  
@@ -43,6 +40,12 @@ public class WavePanelControl : UdonSharpBehaviour
     bool lambdaPtr = false;
     [SerializeField, Range(1, 100)] float defaultLambda = 24;
     [SerializeField, Range(1, 100),UdonSynced,FieldChangeCallback(nameof(Lambda))] float lambda = 24;
+
+    [SerializeField] Slider scaleSlider;
+    private bool iHaveScaleControl = false;
+    bool scalePtr = false;
+    [SerializeField, Range(1, 10)] float defaultScale = 24;
+    [SerializeField, Range(1, 10), UdonSynced, FieldChangeCallback(nameof(SimScale))] float simScale = 24;
 
     // Debug
     [SerializeField] Vector2Int panelPixels = new Vector2Int(2048,1024);
@@ -158,6 +161,20 @@ public class WavePanelControl : UdonSharpBehaviour
         }
     }
 
+    public float SimScale
+    {
+        get => simScale;
+        set
+        {
+            simScale = value;
+            if (iHaveSimMaterial)
+                matSIM.SetFloat("_Scale", simScale);
+            if (!scalePtr && iHaveScaleControl && (scaleSlider.value != value))
+                scaleSlider.value = value;
+            RequestSerialization();
+        }
+    }
+
     public void onMode()
     {
         if (iHaveTogReal && togReal.isOn && displayMode != 0)
@@ -187,6 +204,24 @@ public class WavePanelControl : UdonSharpBehaviour
         }
     }
 
+    public void onScale()
+    {
+        if (iHaveScaleControl)
+        {
+            SimScale = scaleSlider.value;
+        }
+    }
+
+    public void scPtrDn()
+    {
+
+        scalePtr = true;
+    }
+    public void scPtrUp()
+    {
+        scalePtr = false;
+    }
+
     public void onLambda()
     {
         if (iHaveLambdaControl && lambdaPtr)
@@ -214,6 +249,7 @@ public class WavePanelControl : UdonSharpBehaviour
         {
             defaultLambda = matSIM.GetFloat("_LambdaPx");
             float panelAspect = thePanel.transform.localScale.y/thePanel.transform.localScale.x;
+            defaultScale = matSIM.GetFloat("_Scale");
         }
         iHaveTogReal = togReal != null;
         iHaveTogIm = togImaginary  != null;
@@ -222,9 +258,13 @@ public class WavePanelControl : UdonSharpBehaviour
         iHaveTogProb = togProbability  != null;
         iHaveSpeedControl = speedSlider != null;
         iHaveLambdaControl = lambdaSlider != null;
+        iHaveScaleControl = scaleSlider != null;
         if (iHaveSimMaterial)
+        {
             DisplayMode = Mathf.RoundToInt(matSIM.GetFloat("_DisplayMode"));
+        }
         WaveSpeed = waveSpeed;
         Lambda = defaultLambda;
+        SimScale = defaultScale;
     }
 }
