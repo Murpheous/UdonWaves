@@ -4,13 +4,11 @@ using UnityEngine;
 using VRC.SDKBase;
 using VRC.Udon;
 using UnityEngine.UI;
-using TMPro;
-using System.Net.Sockets;
 
 public class WaveMonitor : UdonSharpBehaviour
 {
     public CustomRenderTexture customRenderTex;
-    public Vector2 tankDimensions = new Vector2(2,2);
+    public Vector2 tankDimensions = new Vector2(2, 2);
     public int tankResolutionX = 1536;
     public int tankResolutionY = 1536;
     [SerializeField]
@@ -22,7 +20,7 @@ public class WaveMonitor : UdonSharpBehaviour
     //[SerializeField]
     private Vector4 driveSettings;
     private float driverAmplitude;
-    [Range(1f, 3f), SerializeField,UdonSynced,FieldChangeCallback(nameof(Frequency))]
+    [Range(1f, 3f), SerializeField, UdonSynced, FieldChangeCallback(nameof(Frequency))]
     float frequency = 1f;
     //public Slider frequencySlider;
     public SyncedSlider frequencyControl;
@@ -39,19 +37,19 @@ public class WaveMonitor : UdonSharpBehaviour
     private VRC.Udon.Common.Interfaces.NetworkEventTarget toTheOwner = VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner;
     private VRC.Udon.Common.Interfaces.NetworkEventTarget toAll = VRC.Udon.Common.Interfaces.NetworkEventTarget.All;
 
-    public float Frequency 
-    { 
+    public float Frequency
+    {
         get
         {
             if (freqPointerIsDown)
                 return requestedFrequency;
             return frequency;
-        } 
+        }
         set
         {
             if (value != requestedFrequency)
             {
-                if (frequencyControl!=null)
+                if (frequencyControl != null)
                 {
                     if (frequencyControl.CurrentValue != value)
                         frequencyControl.CurrentValue = value;
@@ -61,7 +59,7 @@ public class WaveMonitor : UdonSharpBehaviour
                     CalcParameters();
             }
             RequestSerialization();
-        } 
+        }
     }
 
     public bool FreqPointerIsDown
@@ -73,7 +71,7 @@ public class WaveMonitor : UdonSharpBehaviour
             {
                 freqPointerIsDown = value;
                 if (value)
-                { 
+                {
                     if (frequencyQuenchTime <= 0)
                     {
                         frequencyQuenchTime = effectRampDuration;
@@ -82,7 +80,7 @@ public class WaveMonitor : UdonSharpBehaviour
                     }
                 }
                 else
-                { 
+                {
                     if (frequencyQuenchTime <= 0)
                         ResetEffect();
                 }
@@ -91,7 +89,7 @@ public class WaveMonitor : UdonSharpBehaviour
     }
 
 
-    public float MaxFrequency { get => maxFrequency;}
+    public float MaxFrequency { get => maxFrequency; }
     public float MinFrequency { get => minFrequency; private set => minFrequency = value; }
 
     public float LambdaMin
@@ -128,31 +126,24 @@ public class WaveMonitor : UdonSharpBehaviour
     public Camera obstaclesCamera;
 
     [Header("UI Toggles")]
-    public Toggle TogViewDisplacement;
-    public Toggle TogViewForce;
-    public Toggle TogViewVelocity;
-    public Toggle TogViewSquare;
-    public Toggle TogViewEnergy;
+    public Toggle togViewHeight;
+    public Toggle togViewVelocity;
+    public Toggle togViewPE;
+    public Toggle togViewKE;
+    public Toggle togViewEnergy;
     public Toggle TogglePlay;
     public Toggle TogglePause;
-    [SerializeField, UdonSynced,FieldChangeCallback(nameof(ShowDisplacement))]
-    private bool showDisplacement = true;
-    [SerializeField, UdonSynced, FieldChangeCallback(nameof(ShowVelocity))]
-    private bool showVelocity = false;
-    [SerializeField, UdonSynced, FieldChangeCallback(nameof(ShowForce))]
-    private bool showForce = false;
-    [SerializeField, UdonSynced, FieldChangeCallback(nameof(ShowSquareAmplitudes))]
-    private bool showSquaredAmplitudes = false;
-    [SerializeField, UdonSynced, FieldChangeCallback(nameof(ShowEnergy))]
-    private bool showEnergy = false;
-    [SerializeField, UdonSynced,FieldChangeCallback(nameof(AnimationPlay))]
+    [SerializeField, UdonSynced, FieldChangeCallback(nameof(DisplayMode))]
+    private int displayMode = 0;
+
+    [SerializeField, UdonSynced, FieldChangeCallback(nameof(AnimationPlay))]
     private bool animationPlay = true;
     [UdonSynced, FieldChangeCallback(nameof(ResetTriggerState))]
     private int resetTriggerState = 0;
     private int resetDoneState = 0;
 
     public int ResetTriggerState
-    { 
+    {
         get => resetTriggerState;
         set
         {
@@ -171,32 +162,46 @@ public class WaveMonitor : UdonSharpBehaviour
                 RequestSerialization();
             }
         }
-    } 
-    public bool AnimationPlay 
-    { 
+    }
+    public bool AnimationPlay
+    {
         get => animationPlay;
         set
         {
-            if (value && (TogglePlay != null) &&  (!TogglePlay.isOn)) 
+            if (value && (TogglePlay != null) && (!TogglePlay.isOn))
                 TogglePlay.isOn = true;
             if ((!value) && (TogglePause != null) && (!TogglePause.isOn))
                 TogglePause.isOn = true;
-            animationPlay= value;
+            animationPlay = value;
             RequestSerialization();
         }
     }
     private void UpdateToggles()
     {
-        if (TogViewDisplacement != null && showDisplacement)
-            TogViewDisplacement.isOn = true;
-        if (TogViewForce != null && showForce)
-            TogViewForce.isOn = true;
-        if (TogViewVelocity != null && showVelocity)
-            TogViewVelocity.isOn = true;
-        if (TogViewEnergy != null && showEnergy)
-            TogViewEnergy.isOn = true;
-        if (TogViewSquare != null && TogViewSquare.isOn != showSquaredAmplitudes)
-            TogViewSquare.isOn = showSquaredAmplitudes;
+        switch (displayMode)
+        {
+            case 1:
+                if (togViewPE != null && !togViewPE.isOn)
+                    togViewPE.isOn = true;
+                break;
+            case 2:
+                if (togViewVelocity != null && !togViewVelocity.isOn)
+                    togViewVelocity.isOn = true;
+                break;
+            case 3:
+                if (togViewKE != null && !togViewKE.isOn)
+                    togViewKE.isOn = true;
+                break;
+            case 4:
+                if (togViewEnergy != null && !togViewEnergy.isOn)
+                    togViewEnergy.isOn = true;
+                break;
+            default:
+                displayMode = 0;
+                if (togViewHeight != null && !togViewHeight.isOn)
+                    togViewHeight.isOn = true;
+                break;
+        }
     }
 
     private void UpdateViewControl()
@@ -204,117 +209,62 @@ public class WaveMonitor : UdonSharpBehaviour
         if (surfaceMaterial == null)
             return;
         surfaceMaterial.SetFloat("_K", angularWaveNumber);
-        if (showDisplacement)
-            surfaceMaterial.SetFloat("_ViewSelection", showSquaredAmplitudes ? 1f : 0f );
-        else if (showVelocity)
-             surfaceMaterial.SetFloat("_ViewSelection", showSquaredAmplitudes ? 3f : 2f);
-        else if (ShowEnergy)
-            surfaceMaterial.SetFloat("_ViewSelection", showSquaredAmplitudes ? 5f : 4f); 
+        surfaceMaterial.SetFloat("_ViewSelection", displayMode);
     }
 
-    /*private void UpdateFrequencyUI()
-    {
-        if (frequencySlider != null)
-        {
-            if (frequencySlider.value != requestedFrequency)
-                frequencySlider.value = requestedFrequency;
-        }
-        if (frequencyLabel != null)
-            frequencyLabel.text = string.Format("{0:0.00}Hz",requestedFrequency);
-    }*/
 
-
-    bool ShowDisplacement
+    private int DisplayMode
     {
-        get => showDisplacement;
+        get => displayMode;
         set
         {
-            if (showDisplacement != value)
-            {
-                showDisplacement = value;
-                UpdateViewControl();
-                if (!animationPlay)
-                    UpdateWaves(0);
-            }
-            if (showDisplacement)
-                UpdateToggles();
+            displayMode = value;
+            UpdateViewControl();
+            UpdateToggles();
             RequestSerialization();
+            if (!animationPlay)
+                UpdateWaves(0);
         }
     }
 
-    bool ShowForce
+    public void Tank0()
     {
-        get { return showForce; }
-        set
-        {
-            if (value != showForce)
-            {
-                showForce = value;
-                UpdateViewControl();
-                if (!animationPlay)
-                    UpdateWaves(0);
-            }
-            if (showForce)
-                UpdateToggles();
-            RequestSerialization();
-        }
+        if (iamOwner)
+            DisplayMode = 0;
+        else
+            SendCustomNetworkEvent(toTheOwner, nameof(Tank0));
     }
 
-    bool ShowVelocity
+    public void Tank1()
     {
-        get { return showVelocity; }
-        set
-        {
-            if (value != showVelocity)
-            {
-                showVelocity = value;
-                UpdateViewControl();
-                if (!animationPlay)
-                    UpdateWaves(0);
-            }
-            if (showVelocity)
-                UpdateToggles();
-            RequestSerialization();
-        }
+        if (iamOwner)
+            DisplayMode = 1;
+        else
+            SendCustomNetworkEvent(toTheOwner, nameof(Tank1));
     }
-
-    bool ShowEnergy
+    public void Tank2()
     {
-        get { return showEnergy; }
-        set
-        {
-            if (value != showEnergy)
-            {
-                showEnergy = value;
-                UpdateViewControl();
-                if (!animationPlay)
-                    UpdateWaves(0);
-            }
-            if (showEnergy)
-                UpdateToggles();
-            RequestSerialization();
-        }
+        if (iamOwner)
+            DisplayMode = 2;
+        else
+            SendCustomNetworkEvent(toTheOwner, nameof(Tank2));
     }
-
-    bool ShowSquareAmplitudes
+    public void Tank3()
     {
-        get { return showSquaredAmplitudes; }
-        set
-        {
-            if (value != showSquaredAmplitudes)
-            {
-                showSquaredAmplitudes = value;
-                UpdateViewControl();
-                if (!animationPlay)
-                    UpdateWaves(0);
-                UpdateToggles();
-            }
-            RequestSerialization();
-        }
+        if (iamOwner)
+            DisplayMode = 3;
+        else
+            SendCustomNetworkEvent(toTheOwner, nameof(Tank3));
+    }
+    public void Tank4()
+    {
+        if (iamOwner)
+            DisplayMode = 4;
+        else
+            SendCustomNetworkEvent(toTheOwner, nameof(Tank4));
     }
 
 
-    
     //* Slider changed
     float frequencyQuenchTime = 0;
     float frequencyQuenchDuration = 0;
@@ -391,47 +341,35 @@ public class WaveMonitor : UdonSharpBehaviour
         SendCustomNetworkEvent(toAll, nameof(ResetWaves));
     }
 
-    public void ViewHeightChanged()
+    public void onTogHeight()
     {
-        if (TogViewDisplacement != null)
-        {
-            ShowDisplacement = TogViewDisplacement.isOn;
-        }
+        if (togViewHeight != null && togViewHeight.isOn)
+            Tank0();
     }
 
-    public void ViewForceChanged()
+    public void onTogPE()
     {
-        if (TogViewForce != null)
-        {
-            ShowForce = TogViewForce.isOn;
-        }
+        if (togViewPE != null && togViewPE.isOn)
+            Tank1();
     }
 
-    public void ViewVelocityChanged()
+    public void onTogVel()
     {
-        if (TogViewVelocity != null)
-        {
-            ShowVelocity = TogViewVelocity.isOn;
-        }
+        if (togViewVelocity != null && togViewVelocity.isOn)
+            Tank2();
     }
 
-    public void ViewSquareChanged()
+    public void onTogKE()
     {
-        if (TogViewSquare != null)
-        {
-            ShowSquareAmplitudes = TogViewSquare.isOn;
-        }
-        ShowSquareAmplitudes = TogViewSquare.isOn;
+        if (togViewKE != null && togViewKE.isOn)
+            Tank3();
     }
 
-    public void ViewEnergyChanged()
+    public void onTogEnergy()
     {
-        if (TogViewEnergy != null)
-        {
-            ShowEnergy = TogViewEnergy.isOn;
-        }
+        if (togViewEnergy != null && togViewEnergy.isOn)
+            Tank4();
     }
-
 
     void CalcParameters()
     {
@@ -484,8 +422,6 @@ public class WaveMonitor : UdonSharpBehaviour
             frequencyControl.SetValues(frequency,minFrequency,maxFrequency);
         }
         CalcParameters();
-        showDisplacement= false; // Force update of displacement visible
-        ShowDisplacement = true;
         UpdateToggles();
         UpdateOwnerShip();
 
@@ -512,6 +448,7 @@ public class WaveMonitor : UdonSharpBehaviour
                 //obstaclesCamera.orthographicSize = SimDimensions.y / 2f;
             }
         }
+        DisplayMode = displayMode;
         IsStarted = true;
     }
 

@@ -8,12 +8,18 @@ using VRC.Udon;
 public class UIStateSelect : UdonSharpBehaviour
 {
     [SerializeField] UdonBehaviour clientModule;
+    bool iHaveTogReset = false;
     [SerializeField] Toggle togReset = null;
-    [SerializeField] Toggle togHeight = null;
-    [SerializeField] Toggle togVel = null;
-    [SerializeField] Toggle togEnergy = null;
-    [SerializeField] Toggle togSquare = null;
-    [SerializeField] ToggleGroup selGroup = null;
+    bool iHaveTogReal = false;
+    [SerializeField] Toggle togReal = null;
+    bool iHaveTogIm = false;
+    [SerializeField] Toggle togImaginary = null;
+    bool iHaveTogRealPwr = false;
+    [SerializeField] Toggle togRealPwr = null;
+    bool iHaveToImPwr = false;
+    [SerializeField] Toggle togImPwr = null;
+    bool iHaveTogProb = false;
+    [SerializeField] Toggle togProbability = null;
 
     [SerializeField, UdonSynced,FieldChangeCallback(nameof (PlaySim))] bool playSim = true;
     [SerializeField] Toggle togPlay = null;
@@ -24,52 +30,47 @@ public class UIStateSelect : UdonSharpBehaviour
     [SerializeField] string clientVariableName;
     [SerializeField] GameObject waveControls;
 
-    [SerializeField, UdonSynced, FieldChangeCallback(nameof(OptionSelect))]
-    public int optionSelect;
-    [SerializeField, UdonSynced, FieldChangeCallback(nameof(ModeSelect))]
-    public bool modeSelect;
+    [SerializeField, UdonSynced, FieldChangeCallback(nameof(DisplayMode))]
+    public int displayMode;
     [SerializeField]
     int clientMode;
 
 
     private void updateClientState()
     {
-        if (optionSelect <= 0 && selGroup != null)
-        {
-            if (togSquare != null)
-                togSquare.isOn = false;
-            if (togReset != null && !togReset.isOn)
-                togReset.isOn = true;
-        }
         if (waveControls != null)
-            waveControls.SetActive(optionSelect > 0);
-        if (togHeight != null && optionSelect == 1 && !togHeight.isOn) 
-            togHeight.isOn = true;
-        if (togVel != null && optionSelect == 2 && !togVel.isOn)
-            togVel.isOn = true;
-        if (togEnergy != null && optionSelect == 3 && !togEnergy.isOn)
-            togEnergy.isOn = true;
-        if (togSquare != null && togSquare.isOn != modeSelect)
-            togSquare.isOn = modeSelect;
-        int newOption = -1;
-        switch (optionSelect)
+            waveControls.SetActive(displayMode >= 0);
+        switch (displayMode)
         {
             case 0:
-                newOption = -1;
+                if (iHaveTogReal && !togReal.isOn)
+                    togReal.isOn = true;
                 break;
             case 1:
-                newOption = modeSelect ? 1 : 0;
+                if (iHaveTogRealPwr && !togRealPwr.isOn)
+                    togRealPwr.isOn = true;
                 break;
             case 2:
-                newOption = modeSelect ? 3 : 2;
+                if (iHaveTogIm && !togImaginary.isOn)
+                    togImaginary.isOn = true;
                 break;
             case 3:
-                newOption =  4;
+                if (iHaveToImPwr && !togImPwr.isOn)
+                    togImPwr.isOn = true;
+                break;
+            case 4:
+                if (iHaveTogProb && !togProbability.isOn)
+                    togProbability.isOn = true;
+                break;
+            default:
+                displayMode = -1;
+                if (iHaveTogReset && !togReset.isOn)
+                    togReset.isOn = true;
                 break;
         }
-        if (newOption != clientMode)
+        if (displayMode != clientMode)
         {
-            clientMode = newOption;
+            clientMode = displayMode;
             if (iHaveClientVar)
                 clientModule.SetProgramVariable<int>(clientVariableName, clientMode);
         }
@@ -78,12 +79,12 @@ public class UIStateSelect : UdonSharpBehaviour
         if (btnIncSources != null)
             btnIncSources.interactable = clientMode >= 0;
     }
-    private int OptionSelect 
+    private int DisplayMode 
     {  
-        get => optionSelect;
+        get => displayMode;
         set 
         {
-            optionSelect = value;
+            displayMode = value;
             updateClientState();
             RequestSerialization();
         }
@@ -108,17 +109,6 @@ public class UIStateSelect : UdonSharpBehaviour
         }
         clientModule.SendCustomEvent("decSrc");
     }
-    private bool ModeSelect
-    {
-        get => modeSelect;
-        set
-        {
-            modeSelect = value;
-            updateClientState();
-            RequestSerialization();
-        }
-    }
-
     private bool PlaySim
     {
         get => playSim;
@@ -135,7 +125,7 @@ public class UIStateSelect : UdonSharpBehaviour
     public void selState0()
     {
         if (iAmOwner)
-            OptionSelect = 0;
+            DisplayMode = 0;
         else
             SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner,nameof(selState0));
     }
@@ -143,14 +133,14 @@ public class UIStateSelect : UdonSharpBehaviour
     public void selState1()
     {
         if (iAmOwner)
-            OptionSelect = 1;
+            DisplayMode = 1;
         else
             SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner, nameof(selState1));
     }
     public void selState2()
     {
         if (iAmOwner)
-            OptionSelect = 2;
+            DisplayMode = 2;
         else
             SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner, nameof(selState2));
     }
@@ -158,32 +148,25 @@ public class UIStateSelect : UdonSharpBehaviour
     public void selState3()
     {
         if (iAmOwner)
-            OptionSelect = 3;
+            DisplayMode = 3;
         else
             SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner, nameof(selState3));
+    }
+
+    public void selState4()
+    {
+        if (iAmOwner)
+            DisplayMode = 4;
+        else
+            SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner, nameof(selState4));
     }
 
     public void selClose()
     {
         if (iAmOwner)
-            OptionSelect = 0;
+            DisplayMode = -1;
         else
             SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner, nameof(selClose));
-    }
-
-    public void modeOn()
-    {
-        if (iAmOwner)
-            ModeSelect = true;
-        else
-            SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner, nameof(modeOn));
-    }
-    public void modeOff()
-    {
-        if (iAmOwner)
-            ModeSelect = false;
-        else
-            SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner, nameof(modeOff));
     }
 
     public void simPlay()
@@ -202,49 +185,36 @@ public class UIStateSelect : UdonSharpBehaviour
             SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner, nameof(simStop));
     }
 
-    public void selMode()
+    public void onMode()
     {
-        if (togSquare == null)
-            return;
-        if (togSquare.isOn != modeSelect)
+        if (iHaveTogReal && togReal.isOn)
         {
-            if (modeSelect)
-                modeOff();
-            else
-                modeOn();
-        }
-    }
-
-    public void togSel0()
-    {
-        if (togReset == null)
-            return;
-        if (togReset.isOn && optionSelect > 0)
             selState0();
-    }
-
-    public void togSel1()
-    {
-        if (togHeight == null)
             return;
-        if (togHeight.isOn && optionSelect != 1)
-            selState1();
-    }
-    public void togSel2()
-    {
-        if (togVel == null)
-            return;
-        if (togVel.isOn && optionSelect != 2)
+        }
+        if (iHaveTogIm && togImaginary.isOn)
+        {
             selState2();
-    }
-    public void togSel3()
-    {
-        if (togEnergy == null)
             return;
-        if (togEnergy.isOn && optionSelect != 3)
+        }
+        if (iHaveTogRealPwr && togRealPwr.isOn)
+        {
+            selState1();
+            return;
+        }
+        if (iHaveToImPwr && togImPwr.isOn)
+        {
             selState3();
+            return;
+        }
+        if (iHaveTogProb && togProbability.isOn)
+        {
+            selState4();
+            return;
+        }
+        if (iHaveTogReset && togReset.isOn)
+            selClose();
     }
-
 
     public void onPlayState()
     {
@@ -275,6 +245,12 @@ public class UIStateSelect : UdonSharpBehaviour
     private bool iHaveClientVar = false;
     void Start()
     {
+        iHaveTogReset = togReset != null;
+        iHaveTogReal =  togReal != null;
+        iHaveTogIm = togImaginary != null;
+        iHaveTogRealPwr = togRealPwr != null;
+        iHaveToImPwr = togImPwr != null;
+        iHaveTogProb = togProbability != null;
 
         UpdateOwnerShip();
         iHaveClientVar = (clientModule != null) && (!string.IsNullOrEmpty(clientVariableName));
