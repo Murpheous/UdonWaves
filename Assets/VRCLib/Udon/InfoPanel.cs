@@ -15,7 +15,7 @@ public class InfoPanel : UdonSharpBehaviour
     [SerializeField] Vector2 panelSize = Vector2.one;
     [SerializeField] Vector2 shrinkSize = Vector2.one;
     [SerializeField] bool showHidePanel = true;
- //   [SerializeField] float textBorder = 20;
+    //   [SerializeField] float textBorder = 20;
     RectTransform panelXfrm;
     [SerializeField] TextMeshProUGUI infoText;
     [SerializeField] Toggle[] toggles = null;
@@ -36,7 +36,7 @@ public class InfoPanel : UdonSharpBehaviour
     [SerializeField,TextArea] string defaultText = string.Empty;
     public int ShowPanel
     {
-        get => showPanel; 
+        get => showPanel;
         set
         {
             showPanel = value;
@@ -61,9 +61,14 @@ public class InfoPanel : UdonSharpBehaviour
                 if (hasClose)
                     closeButton.gameObject.SetActive(showPanel >= 0);
                 Vector2 newSize = showPanel >= 0 ? panelSize : shrinkSize;
+                bool validSize = (newSize.x > 0) && (newSize.y > 0);
                 Vector3 newPosition = showPanel >= 0 ? Vector3.zero : new Vector3(0, -(panelSize.y - shrinkSize.y) / 2.0f, 0);
-                panelXfrm.sizeDelta = newSize;
-                panelXfrm.localPosition = newPosition;
+                if (validSize)
+                {
+                    panelXfrm.sizeDelta = newSize;
+                    panelXfrm.localPosition = newPosition;
+                }
+                panelXfrm.gameObject.SetActive(validSize);
                 //if (textRect != null)
                 //{
                 //    Vector2 newTextDim = new Vector2(newSize.x - textBorder, newSize.y - textBorder);

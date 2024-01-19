@@ -10,10 +10,9 @@ using Unity.Collections;
 [UdonBehaviourSyncMode(BehaviourSyncMode.Manual)]
 public class VectorDiagram : UdonSharpBehaviour
 {
-    [SerializeField] float displayWidth = 1.940f;
-    [SerializeField, FieldChangeCallback(nameof(DisplayHeight))] public float displayHeight = 0.920f;
+    [SerializeField, FieldChangeCallback(nameof(DisplayRect))] public Vector2 displayRect = new Vector2(1.95f,0.95f);
     private float halfHeight = 0.46f;
-    [SerializeField] GameObject linePrefab;
+
     [Tooltip("Source Count"),SerializeField, Range(1,16),FieldChangeCallback(nameof(NumSources))] public int numSources = 2;
     [Tooltip("Source Width (mm)"),SerializeField, FieldChangeCallback(nameof(SourceWidth))] float sourceWidth;
     [Tooltip("Source Pitch (mm)"), SerializeField,FieldChangeCallback(nameof(SourcePitch))] public float sourcePitch = 436.5234f;
@@ -32,15 +31,15 @@ public class VectorDiagram : UdonSharpBehaviour
     private bool needsUpdate = false;
     private float arrowLength = 0.1f;
     
-    public float DisplayHeight
+    public Vector2 DisplayRect
     {
-        get => displayHeight;
+        get => displayRect;
         set
         {
-            if (displayHeight == value)
+            if (displayRect == value)
                 return;
-            displayHeight = value;
-            halfHeight = displayHeight/2f;
+            displayRect = value;
+            halfHeight = displayRect.y/2f;
             needsUpdate = true;
         }
     }
@@ -106,16 +105,17 @@ public class VectorDiagram : UdonSharpBehaviour
                 switch (demoMode)
                 {
                 case 3:
-                        startPoint.y = sinTheta * displayWidth;
-                        lineLength = arrowLength / 4f;
+                        lineLength = arrowLength / 5f;
+                        float deltay = sinTheta * lineLength;
+                        startPoint.y = sinTheta * (displayRect.x-lineLength);
                         Vector2 startDelta = new Vector2(cosTheta, sinTheta);
                         startDelta *= lineLength;
-                        if (startPoint.y <= halfHeight)
-                            startPoint.x = displayWidth;
+                        if (startPoint.y <= halfHeight - deltay)
+                            startPoint.x = displayRect.x - lineLength;
                         else
                         {
-                            startPoint.y = halfHeight;
-                            startPoint.x = halfHeight/Mathf.Tan(thetaRadians); // halfHeightx = x * tan
+                            startPoint.y = halfHeight - deltay;
+                            startPoint.x = startPoint.y/Mathf.Tan(thetaRadians); // halfHeightx = x * tan
                         }
                         endPoint = startPoint + startDelta;
                         labelPoint = endPoint;
@@ -125,16 +125,16 @@ public class VectorDiagram : UdonSharpBehaviour
                     if (endPoint.y <= halfHeight)
                     {
                         endPoint.x = Mathf.Cos(thetaRadians) * arrowLength;
-                        labelPoint.x = displayWidth;
+                        labelPoint.x = displayRect.x;
                     }
                     labelPoint.y = endPoint.y;
                     break;
 
                 default:
-                    endPoint.y = sinTheta * displayWidth;
+                    endPoint.y = sinTheta * displayRect.x;
                     if (endPoint.y <= halfHeight)
                     {
-                        endPoint.x = displayWidth;
+                        endPoint.x = displayRect.x;
                         lineLength = endPoint.magnitude;
                     }
                     else
@@ -224,7 +224,7 @@ public class VectorDiagram : UdonSharpBehaviour
                         kLines[i].Alpha = 1f;
                         if (demoMode == 2)
                         {
-                            kLines[i].LineLength = displayWidth;
+                            kLines[i].LineLength = displayRect.x;
                             kLines[i].transform.localPosition = new Vector3(0, labelPoints[j].y, 0);
                         }
                         else
@@ -337,6 +337,5 @@ public class VectorDiagram : UdonSharpBehaviour
     void Start()
     {
         needsUpdate = true;
-        DisplayHeight = displayHeight;
     }
 }

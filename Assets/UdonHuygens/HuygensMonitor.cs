@@ -15,8 +15,8 @@ public class HuygensMonitor : UdonSharpBehaviour
     public int displayMode = 1;
     [SerializeField] Vector2Int simResolution = new Vector2Int(2048,1280);
     [Tooltip("Panel Width (mm)"),SerializeField] float panelWidth = 2.048f;
-    [SerializeField] float panelHeight = 1.28f;
-    [SerializeField] float defaultPanelHeight = 0.92f;
+    [SerializeField] Vector2 displayRect = new Vector2(1.99f, 1.33f);
+    [SerializeField] Vector2 defaultDisplayRect = new Vector2(1.95f,0.95f);
     [SerializeField] float sourceOffset;
     [SerializeField,UdonSynced,FieldChangeCallback(nameof(NumSources))] int numSources = 2;
     [SerializeField] TextMeshProUGUI lblSourceCount;
@@ -57,7 +57,7 @@ public class HuygensMonitor : UdonSharpBehaviour
                         scaleSlider.IsInteractible = true;
                 }
                 if (vectorDrawing != null)
-                    vectorDrawing.SetProgramVariable<float>("displayHeight", panelHeight);
+                    vectorDrawing.SetProgramVariable<Vector2>("displayRect", displayRect);
             }
             else
             {
@@ -74,7 +74,7 @@ public class HuygensMonitor : UdonSharpBehaviour
                 NumSources = 2;
                 SimScale = defaultScale;
                 if (vectorDrawing != null)
-                    vectorDrawing.SetProgramVariable<float>("displayHeight", defaultPanelHeight);
+                    vectorDrawing.SetProgramVariable<Vector2>("displayRect", defaultDisplayRect);
             }
             displayMode = value;
             updateNeeded = true;
