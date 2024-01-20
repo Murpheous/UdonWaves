@@ -13,10 +13,10 @@ public class WavePanelControl : UdonSharpBehaviour
     private Material matSIM = null;
     private bool iHaveSimMaterial = false;
  
-    [SerializeField] Slider speedSlider;
+    [SerializeField] UdonSlider speedSlider;
+    [SerializeField] public bool speedPtr = false;
     private bool iHaveSpeedControl = false;
-    bool speedPtr = false;
-    [SerializeField, UdonSynced, FieldChangeCallback(nameof(WaveSpeed))] float waveSpeed;
+    [SerializeField, UdonSynced, FieldChangeCallback(nameof(WaveSpeed))] public float waveSpeed;
 
     [SerializeField] Toggle togPlay;
     [SerializeField,UdonSynced, FieldChangeCallback(nameof(PlaySim))] bool playSim;
@@ -35,17 +35,17 @@ public class WavePanelControl : UdonSharpBehaviour
     [SerializeField] Toggle togProbability;
     bool iHaveTogProb = false;
 
-    [SerializeField] Slider lambdaSlider;
+    [SerializeField] UdonSlider lambdaSlider;
     private bool iHaveLambdaControl = false;
-    bool lambdaPtr = false;
+    public bool lambdaPtr = false;
     [SerializeField, Range(1, 100)] float defaultLambda = 24;
-    [SerializeField, Range(1, 100),UdonSynced,FieldChangeCallback(nameof(Lambda))] float lambda = 24;
+    [SerializeField, Range(1, 100),UdonSynced,FieldChangeCallback(nameof(Lambda))] public float lambda = 24;
 
-    [SerializeField] Slider scaleSlider;
+    [SerializeField] UdonSlider scaleSlider;
     private bool iHaveScaleControl = false;
-    bool scalePtr = false;
+    public bool scalePtr = false;
     [SerializeField, Range(1, 10)] float defaultScale = 24;
-    [SerializeField, Range(1, 10), UdonSynced, FieldChangeCallback(nameof(SimScale))] float simScale = 24;
+    [SerializeField, Range(1, 10), UdonSynced, FieldChangeCallback(nameof(SimScale))] public float simScale = 24;
 
     // Debug
     [SerializeField] Vector2Int panelPixels = new Vector2Int(2048,1024);
@@ -62,8 +62,8 @@ public class WavePanelControl : UdonSharpBehaviour
         set
         {
             waveSpeed = Mathf.Clamp(value,0,5);
-            if (!speedPtr && iHaveSpeedControl && speedSlider.value != waveSpeed)
-                speedSlider.value = waveSpeed;
+            if (!speedPtr && iHaveSpeedControl)
+                speedSlider.SetValue(waveSpeed);
             UpdatePhaseSpeed();
             RequestSerialization();
         }
@@ -118,14 +118,6 @@ public class WavePanelControl : UdonSharpBehaviour
         }
     }
 
-    public void onSpeed()
-    {
-        if (iHaveSpeedControl && speedPtr)
-        {
-          WaveSpeed = speedSlider.value;
-        }
-    }
-
     public void onPlayState()
     {
         if (togPlay == null)
@@ -137,15 +129,6 @@ public class WavePanelControl : UdonSharpBehaviour
             PlaySim = !playSim;
     }
 
-    public void sPtrDn()
-    {
-        speedPtr = true;
-    }
-    public void sPtrUp()
-    {
-        speedPtr = false;
-    }
-
     public float Lambda
     {
         get => lambda;
@@ -154,8 +137,8 @@ public class WavePanelControl : UdonSharpBehaviour
             lambda = value;
             if (iHaveSimMaterial)
                 matSIM.SetFloat("_LambdaPx", lambda);
-            if (!lambdaPtr && iHaveLambdaControl && (lambdaSlider.value != value))
-                    lambdaSlider.value = value;
+            if (!lambdaPtr && iHaveLambdaControl)
+                    lambdaSlider.SetValue(value);
             UpdatePhaseSpeed();
             RequestSerialization();
         }
@@ -169,8 +152,8 @@ public class WavePanelControl : UdonSharpBehaviour
             simScale = value;
             if (iHaveSimMaterial)
                 matSIM.SetFloat("_Scale", simScale);
-            if (!scalePtr && iHaveScaleControl && (scaleSlider.value != value))
-                scaleSlider.value = value;
+            if (!scalePtr && iHaveScaleControl)
+                scaleSlider.SetValue(value);
             RequestSerialization();
         }
     }
@@ -202,42 +185,6 @@ public class WavePanelControl : UdonSharpBehaviour
             DisplayMode = 4;
             return;
         }
-    }
-
-    public void onScale()
-    {
-        if (iHaveScaleControl)
-        {
-            SimScale = scaleSlider.value;
-        }
-    }
-
-    public void scPtrDn()
-    {
-
-        scalePtr = true;
-    }
-    public void scPtrUp()
-    {
-        scalePtr = false;
-    }
-
-    public void onLambda()
-    {
-        if (iHaveLambdaControl && lambdaPtr)
-        {
-            Lambda = lambdaSlider.value;
-        }
-    }
-
-    public void lPtrDn()
-    {
-
-        lambdaPtr = true;
-    }
-    public void lPtrUp()
-    {
-        lambdaPtr = false;
     }
 
     void Start()
