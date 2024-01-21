@@ -23,9 +23,9 @@ RenderSettings:
   m_AmbientSkyColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
   m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
   m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
-  m_AmbientIntensity: 1.14
+  m_AmbientIntensity: 2.04
   m_AmbientMode: 0
-  m_SubtractiveShadowColor: {r: 0.29411766, g: 0.12941177, b: 0.14509805, a: 1}
+  m_SubtractiveShadowColor: {r: 0.3882353, g: 0.27058825, b: 0.5176471, a: 1}
   m_SkyboxMaterial: {fileID: 2100000, guid: 1bfe8d8872c9c4913a7c3dbafee488e2, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 0.64
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 1260129841}
-  m_IndirectSpecularColor: {r: 0.046405695, g: 0.027172502, b: 0.017589282, a: 0.64}
+  m_IndirectSpecularColor: {r: 0.03537978, g: 0.01493159, b: 0.003930175, a: 0.64}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -4274,13 +4274,13 @@ MonoBehaviour:
   useAssignedLayers: 0
   DynamicPrefabs: []
   DynamicMaterials:
-  - {fileID: 2100000, guid: ea0664f5fe016184c890683a8ddd2d59, type: 2}
-  - {fileID: 2100000, guid: 37c189884fcfb194ab6d4c96f89e547f, type: 2}
   - {fileID: 2100000, guid: a8369b958175ff74eafc4ab4ddd09a6b, type: 2}
   - {fileID: 2100000, guid: 0174816599450f24d9e87af9d8bb7450, type: 2}
+  - {fileID: 2100000, guid: 7835a3aa7fcfcde4cb81d63b59d2c6c0, type: 2}
   - {fileID: 2100000, guid: b4e17b586351c0141b746eff1088a6c3, type: 2}
   - {fileID: 2100000, guid: c20e1d68ff90238488f45d827e9c778e, type: 2}
-  - {fileID: 2100000, guid: 7835a3aa7fcfcde4cb81d63b59d2c6c0, type: 2}
+  - {fileID: 2100000, guid: 37c189884fcfb194ab6d4c96f89e547f, type: 2}
+  - {fileID: 2100000, guid: ea0664f5fe016184c890683a8ddd2d59, type: 2}
   - {fileID: 2100000, guid: 69559c351b3ca3347b89fc50c8e943f9, type: 2}
   - {fileID: 2100000, guid: 5e5d3008bea0ba749ae0449602cad72e, type: 2}
   - {fileID: 2100000, guid: 4fa0e7fe273f6ff4a8e1eb320ed0d357, type: 2}
@@ -4450,6 +4450,18 @@ MonoBehaviour:
     ID: 72
   - gameObject: {fileID: 521355020}
     ID: 73
+  - gameObject: {fileID: 943896609}
+    ID: 74
+  - gameObject: {fileID: 1629433194}
+    ID: 75
+  - gameObject: {fileID: 1877391946}
+    ID: 76
+  - gameObject: {fileID: 1023005082}
+    ID: 77
+  - gameObject: {fileID: 1648387485}
+    ID: 78
+  - gameObject: {fileID: 1207379077}
+    ID: 79
   portraitCameraPositionOffset: {x: 0, y: 0, z: 0}
   portraitCameraRotationOffset: {x: 0, y: 1, z: 0, w: -0.00000004371139}
 --- !u!4 &367000747
@@ -4942,11 +4954,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Wave
+  m_text: 'Surface
 
-    Height
-
-'
+    Height'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ddbcc27b0346e4644a45316aaf00c441, type: 2}
   m_sharedMaterial: {fileID: 4410821715232426517, guid: ddbcc27b0346e4644a45316aaf00c441,
@@ -10592,6 +10602,26 @@ PrefabInstance:
       propertyPath: m_fontColor32.rgba
       value: 4294958996
       objectReference: {fileID: 0}
+    - target: {fileID: 469481845871911723, guid: 62089fe512597f74f805f3743b8333a5,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: -40
+      objectReference: {fileID: 0}
+    - target: {fileID: 469481845871911723, guid: 62089fe512597f74f805f3743b8333a5,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: -40
+      objectReference: {fileID: 0}
+    - target: {fileID: 469481845871911723, guid: 62089fe512597f74f805f3743b8333a5,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 469481845871911723, guid: 62089fe512597f74f805f3743b8333a5,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 685609078402008540, guid: 62089fe512597f74f805f3743b8333a5,
         type: 3}
       propertyPath: m_Sprite
@@ -10636,7 +10666,7 @@ PrefabInstance:
     - target: {fileID: 685609079758924776, guid: 62089fe512597f74f805f3743b8333a5,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 30
+      value: 37
       objectReference: {fileID: 0}
     - target: {fileID: 685609079758924777, guid: 62089fe512597f74f805f3743b8333a5,
         type: 3}
@@ -10655,8 +10685,20 @@ PrefabInstance:
       objectReference: {fileID: 836702202}
     - target: {fileID: 759059608446944014, guid: 62089fe512597f74f805f3743b8333a5,
         type: 3}
+      propertyPath: defaultText
+      value: '<line-height=125%><align=center><b>Don''t Panic</b></align>
+
+        </line-height>'
+      objectReference: {fileID: 0}
+    - target: {fileID: 759059608446944014, guid: 62089fe512597f74f805f3743b8333a5,
+        type: 3}
       propertyPath: panelSize.x
       value: 725
+      objectReference: {fileID: 0}
+    - target: {fileID: 759059608446944014, guid: 62089fe512597f74f805f3743b8333a5,
+        type: 3}
+      propertyPath: panelSize.y
+      value: 400
       objectReference: {fileID: 0}
     - target: {fileID: 759059608446944014, guid: 62089fe512597f74f805f3743b8333a5,
         type: 3}
@@ -10757,7 +10799,7 @@ PrefabInstance:
     - target: {fileID: 1391353353332897860, guid: 62089fe512597f74f805f3743b8333a5,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 360
+      value: 400
       objectReference: {fileID: 0}
     - target: {fileID: 1391353353332897860, guid: 62089fe512597f74f805f3743b8333a5,
         type: 3}
@@ -10817,7 +10859,7 @@ PrefabInstance:
     - target: {fileID: 1391353353332897860, guid: 62089fe512597f74f805f3743b8333a5,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0.324
+      value: 0.3375
       objectReference: {fileID: 0}
     - target: {fileID: 1391353353332897860, guid: 62089fe512597f74f805f3743b8333a5,
         type: 3}
@@ -10838,15 +10880,17 @@ PrefabInstance:
         type: 3}
       propertyPath: pageBodies.Array.data[0]
       value: "Carolyne Van Vliet\u2019s 2010 paper <i>Linear Momentum Quantization
-        in Periodic Structures II</i> showed how principles of formalism allow the
-        conventional conceptual model of quantum interactions to flip around to have
-        the scattering object interact in a distributed manner while the incident
-        particles remain localized. "
+        in Periodic Structures II</i> shows how the mathematics of quantum theory
+        allows for reversing the conventional picture of wave/particle quantum interactions.
+        \r\n\r\nInstead of requiring particles to adopt quantum wave properties around
+        supposedly classical objects transiently, the same mathematics also works
+        in a context where scattering objects interact in a distributed manner on
+        localized particles.\r"
       objectReference: {fileID: 0}
     - target: {fileID: 1949190569399080650, guid: 62089fe512597f74f805f3743b8333a5,
         type: 3}
       propertyPath: pageTitles.Array.data[0]
-      value: Overview
+      value: Life, the Universe and Everything...
       objectReference: {fileID: 0}
     - target: {fileID: 1949190569399080650, guid: 62089fe512597f74f805f3743b8333a5,
         type: 3}
@@ -10892,7 +10936,7 @@ PrefabInstance:
     - target: {fileID: 3438419577815233409, guid: 62089fe512597f74f805f3743b8333a5,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 360
+      value: 400
       objectReference: {fileID: 0}
     - target: {fileID: 3438419577815233409, guid: 62089fe512597f74f805f3743b8333a5,
         type: 3}
@@ -12106,6 +12150,12 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 86e6a7c85edf397409c9d0d01ac47ab1, type: 3}
+--- !u!1 &943896609 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8875727916190515726, guid: be8cbc708b9ecf74ebda4c903d3d578e,
+    type: 3}
+  m_PrefabInstance: {fileID: 7838544626912846812}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &949491459
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -12947,6 +12997,12 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 5614672752500565273, guid: 96006584a5cad1a4d9b5f91842bddb11,
     type: 3}
   m_PrefabInstance: {fileID: 1015586560}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1023005082 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8875727916190515726, guid: be8cbc708b9ecf74ebda4c903d3d578e,
+    type: 3}
+  m_PrefabInstance: {fileID: 1335491739}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1026876617
 GameObject:
@@ -15009,7 +15065,20 @@ PrefabInstance:
     - target: {fileID: 7618224890888347476, guid: 55364beb7ba2a8947a1432fca720b16d,
         type: 3}
       propertyPath: pageBodies.Array.data[0]
-      value: 
+      value: 'The wave barrier layout connects to two simulations:
+
+        <b>Wave-table:</b>
+        <indent=5%>where it acts as a mask that passively blocks wave propagation.
+        Reflection is damped using a Murs absorbing boundary.</indent>
+
+        <b>Particles:</b>
+        where it acts as a mask that passively blocks wave propagation.
+
+
+        <b>Particles:</b>
+        where it acts as a mask that passively blocks wave propagation.
+
+'
       objectReference: {fileID: 0}
     - target: {fileID: 7618224890888347476, guid: 55364beb7ba2a8947a1432fca720b16d,
         type: 3}
@@ -15397,6 +15466,12 @@ MonoBehaviour:
   waveControls: {fileID: 514536777}
   displayMode: -1
   clientMode: -2
+--- !u!1 &1207379077 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8422898547930235107, guid: be8cbc708b9ecf74ebda4c903d3d578e,
+    type: 3}
+  m_PrefabInstance: {fileID: 1335491739}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1224076776
 GameObject:
   m_ObjectHideFlags: 0
@@ -15657,8 +15732,8 @@ Light:
   serializedVersion: 10
   m_Type: 1
   m_Shape: 0
-  m_Color: {r: 0.7830189, g: 0.41336793, b: 0.025854412, a: 1}
-  m_Intensity: 0.25
+  m_Color: {r: 1, g: 0.7570755, b: 0.514151, a: 1}
+  m_Intensity: 0.2
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -16180,6 +16255,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5069859427971716785, guid: be8cbc708b9ecf74ebda4c903d3d578e,
+        type: 3}
+      propertyPath: maxValue
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5069859427971716785, guid: be8cbc708b9ecf74ebda4c903d3d578e,
+        type: 3}
+      propertyPath: currentValue
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5069859427971716785, guid: be8cbc708b9ecf74ebda4c903d3d578e,
         type: 3}
@@ -16758,17 +16843,33 @@ PrefabInstance:
     - target: {fileID: 7618224890888347476, guid: 55364beb7ba2a8947a1432fca720b16d,
         type: 3}
       propertyPath: pageBodies.Array.data[0]
-      value: "A wave's energy flux is due to the transport of two energy components,
-        kinetic and potential. \r\n\r\nThe wave surface controls switch the view
-        between amplitudes, potential/kinetic energy, and the total energy flux.\r\n<indent=5%><b>Wave
-        height:</b> square to see potential energy transport.\r\n<b>Vertical Velocity</b>
-        square to see the kinetic energy transport.\r\n<b>Energy Flux:</b> the sum
-        of kinetic and potential energy.</indent>\r\n"
+      value: 'A surface wave''s momentum arises from the speed and direction of surface
+        energy transport, comprised of kinetic energy and potential energy.
+
+        
+
+        Select:
+
+        <indent=5%><b>Surface
+        Height</b> proportional to the surface tension.
+
+        <b>Vertical Velocity:</b>
+        the amplitude of vertical velocity.
+
+        <b>Potential Energy:</b> local
+        potential energy.
+
+        <b>Kinetic Energy:</b> local surface kinetic
+        energy.
+
+        <b>Energy Flux:</b> the total energy transport.</indent>
+
+'
       objectReference: {fileID: 0}
     - target: {fileID: 7618224890888347476, guid: 55364beb7ba2a8947a1432fca720b16d,
         type: 3}
       propertyPath: pageTitles.Array.data[0]
-      value: Making Wave Momentum Visible
+      value: Making Surface Energy Transport Visible
       objectReference: {fileID: 0}
     - target: {fileID: 7618224890888347476, guid: 55364beb7ba2a8947a1432fca720b16d,
         type: 3}
@@ -17670,6 +17771,12 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2140737338}
     m_Modifications:
+    - target: {fileID: 3750894006700352753, guid: 0c87f2723bf02a94d88a245aef802857,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 5ad648f1215ba6240a367400173bdcb3,
+        type: 3}
     - target: {fileID: 3750894006700352756, guid: 0c87f2723bf02a94d88a245aef802857,
         type: 3}
       propertyPath: m_Name
@@ -19793,6 +19900,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9085046f02f69544eb97fd06b6048fe2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &1629433194 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7799424274668332567, guid: be8cbc708b9ecf74ebda4c903d3d578e,
+    type: 3}
+  m_PrefabInstance: {fileID: 7838544626912846812}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1636784015
 GameObject:
   m_ObjectHideFlags: 0
@@ -19950,6 +20063,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &1648387485 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7799424274668332567, guid: be8cbc708b9ecf74ebda4c903d3d578e,
+    type: 3}
+  m_PrefabInstance: {fileID: 1335491739}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1656911211
 GameObject:
   m_ObjectHideFlags: 0
@@ -20669,10 +20788,12 @@ PrefabInstance:
     - target: {fileID: 7618224890888347476, guid: 55364beb7ba2a8947a1432fca720b16d,
         type: 3}
       propertyPath: pageBodies.Array.data[0]
-      value: "Utilizes a numerical model that iterates over a 2048x1024 grid. \nEach
-        point stores the surface\u2019s vertical displacement and velocity.\r\nEach
-        iteration involves calculating the force from the local curvature of the
-        surface and then applying the force to modify the velocity.\r\n"
+      value: "The wave-table simulation<sup>*</sup> utilizes a numerical wave model
+        that iterates over a 2048x1024 data point grid that simulates the surface\u2019s
+        vertical displacement and velocity. \r\n\r\nAt each iteration, the local
+        vertical force on the grid point is calculated from the surface's local curvature
+        and then applied to modify the velocity and height of the mesh point.\r\n\r\n<size=75%>*The
+        GPU code is adapted from a wave simulation example provided by Michael Moroz.</size>\r\n"
       objectReference: {fileID: 0}
     - target: {fileID: 7618224890888347476, guid: 55364beb7ba2a8947a1432fca720b16d,
         type: 3}
@@ -22264,6 +22385,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fafe2cfe61f6974895a912c3755e8f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &1877391946 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8422898547930235107, guid: be8cbc708b9ecf74ebda4c903d3d578e,
+    type: 3}
+  m_PrefabInstance: {fileID: 7838544626912846812}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1880658633
 GameObject:
   m_ObjectHideFlags: 0
@@ -26817,6 +26944,12 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -20
       objectReference: {fileID: 0}
+    - target: {fileID: 3317347673403757333, guid: 6e8869507d2d24a499b5ba2161c7cb48,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 5ad648f1215ba6240a367400173bdcb3,
+        type: 3}
     - target: {fileID: 3555150121314433204, guid: 6e8869507d2d24a499b5ba2161c7cb48,
         type: 3}
       propertyPath: m_AnchorMax.x

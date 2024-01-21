@@ -17,6 +17,7 @@ public class WavePanelControl : UdonSharpBehaviour
     [SerializeField] public bool speedPtr = false;
     private bool iHaveSpeedControl = false;
     [SerializeField, UdonSynced, FieldChangeCallback(nameof(WaveSpeed))] public float waveSpeed;
+    [SerializeField] float defaultSpeed = 1;
 
     [SerializeField] Toggle togPlay;
     [SerializeField,UdonSynced, FieldChangeCallback(nameof(PlaySim))] bool playSim;
@@ -46,10 +47,6 @@ public class WavePanelControl : UdonSharpBehaviour
     public bool scalePtr = false;
     [SerializeField, Range(1, 10)] float defaultScale = 24;
     [SerializeField, Range(1, 10), UdonSynced, FieldChangeCallback(nameof(SimScale))] public float simScale = 24;
-
-    // Debug
-    [SerializeField] Vector2Int panelPixels = new Vector2Int(2048,1024);
-
     private void UpdatePhaseSpeed()
     {
         if (iHaveSimMaterial)
@@ -197,6 +194,7 @@ public class WavePanelControl : UdonSharpBehaviour
             defaultLambda = matSIM.GetFloat("_LambdaPx");
             float panelAspect = thePanel.transform.localScale.y/thePanel.transform.localScale.x;
             defaultScale = matSIM.GetFloat("_Scale");
+            defaultSpeed = matSIM.GetFloat("_PhaseSpeed");
         }
         iHaveTogReal = togReal != null;
         iHaveTogIm = togImaginary  != null;
@@ -210,8 +208,8 @@ public class WavePanelControl : UdonSharpBehaviour
         {
             DisplayMode = Mathf.RoundToInt(matSIM.GetFloat("_DisplayMode"));
         }
-        WaveSpeed = waveSpeed;
         Lambda = defaultLambda;
+        WaveSpeed = defaultSpeed;
         SimScale = defaultScale;
     }
 }

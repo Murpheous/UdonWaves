@@ -62,6 +62,7 @@ public class UdonSlider : UdonSharpBehaviour
         reportedValue = value;
         currentValue = value;
         mySlider.value = value;
+        Updatelabel();
     }
     public void SetLimits(float min, float max)
     {
@@ -131,8 +132,8 @@ public class UdonSlider : UdonSharpBehaviour
                     else
                         SliderClient.SetProgramVariable<Single>(clientVariableName, currentValue);
                 }
-                Updatelabel();
             }
+            Updatelabel();
         }
     }
     public float MaxValue
