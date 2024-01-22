@@ -141,12 +141,10 @@ public class UdonSlider : UdonSharpBehaviour
         get => maxValue;
         set
         {
-            if (maxValue != value)
-            {
-                maxValue = value;
-                if (mySlider != null)
-                    mySlider.maxValue = maxValue;
-            }
+            if (mySlider == null)
+                mySlider = gameObject.GetComponent<Slider>();
+            maxValue = value;
+            mySlider.maxValue = maxValue;
         }
     }
 
@@ -155,12 +153,10 @@ public class UdonSlider : UdonSharpBehaviour
         get => minValue;
         set
         {
-            if (minValue != value)
-            {
-                minValue = value;
-                if (mySlider != null)
-                    mySlider.minValue = minValue;
-            }
+            if (mySlider == null)
+                mySlider = gameObject.GetComponent<Slider>();
+            minValue = value;
+            mySlider.minValue = minValue;
         }
     }
 

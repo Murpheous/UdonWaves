@@ -4454,13 +4454,13 @@ MonoBehaviour:
     ID: 74
   - gameObject: {fileID: 1629433194}
     ID: 75
-  - gameObject: {fileID: 1877391946}
+  - gameObject: {fileID: 0}
     ID: 76
   - gameObject: {fileID: 1023005082}
     ID: 77
   - gameObject: {fileID: 1648387485}
     ID: 78
-  - gameObject: {fileID: 1207379077}
+  - gameObject: {fileID: 0}
     ID: 79
   portraitCameraPositionOffset: {x: 0, y: 0, z: 0}
   portraitCameraRotationOffset: {x: 0, y: 1, z: 0, w: -0.00000004371139}
@@ -12998,6 +12998,18 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 1015586560}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1021899770 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2436598371199844727, guid: be8cbc708b9ecf74ebda4c903d3d578e,
+    type: 3}
+  m_PrefabInstance: {fileID: 1335491739}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1023005082 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8875727916190515726, guid: be8cbc708b9ecf74ebda4c903d3d578e,
@@ -15466,12 +15478,6 @@ MonoBehaviour:
   waveControls: {fileID: 514536777}
   displayMode: -1
   clientMode: -2
---- !u!1 &1207379077 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8422898547930235107, guid: be8cbc708b9ecf74ebda4c903d3d578e,
-    type: 3}
-  m_PrefabInstance: {fileID: 1335491739}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1224076776
 GameObject:
   m_ObjectHideFlags: 0
@@ -16198,6 +16204,12 @@ PrefabInstance:
       propertyPath: m_AnchorMin.x
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 609274959380378847, guid: be8cbc708b9ecf74ebda4c903d3d578e,
+        type: 3}
+      propertyPath: serializedProgramAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: 9a9729eb9cebf2b4bb0e9e2a38b3f73c,
+        type: 2}
     - target: {fileID: 952994405989445044, guid: be8cbc708b9ecf74ebda4c903d3d578e,
         type: 3}
       propertyPath: serializationData.Prefab
@@ -16235,11 +16247,60 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1884831010832026029, guid: be8cbc708b9ecf74ebda4c903d3d578e,
         type: 3}
+    - target: {fileID: 2145137614288560324, guid: be8cbc708b9ecf74ebda4c903d3d578e,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2145137614288560324, guid: be8cbc708b9ecf74ebda4c903d3d578e,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2145137614288560324, guid: be8cbc708b9ecf74ebda4c903d3d578e,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2262320857576607942, guid: be8cbc708b9ecf74ebda4c903d3d578e,
+        type: 3}
+      propertyPath: serializedProgramAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: 9a9729eb9cebf2b4bb0e9e2a38b3f73c,
+        type: 2}
+    - target: {fileID: 2719255282060182875, guid: be8cbc708b9ecf74ebda4c903d3d578e,
+        type: 3}
+      propertyPath: serializationData.Prefab
+      value: 
+      objectReference: {fileID: 2719255282060182875, guid: be8cbc708b9ecf74ebda4c903d3d578e,
+        type: 3}
+    - target: {fileID: 3262583256041880071, guid: be8cbc708b9ecf74ebda4c903d3d578e,
+        type: 3}
+      propertyPath: serializedProgramAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: 9a9729eb9cebf2b4bb0e9e2a38b3f73c,
+        type: 2}
+    - target: {fileID: 3741908286090499144, guid: be8cbc708b9ecf74ebda4c903d3d578e,
+        type: 3}
+      propertyPath: serializedProgramAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: 9cac6677ef927b64190bc7a5b7b4f404,
+        type: 2}
     - target: {fileID: 4737070637684334418, guid: be8cbc708b9ecf74ebda4c903d3d578e,
         type: 3}
       propertyPath: thePanel
       value: 
       objectReference: {fileID: 1501493223}
+    - target: {fileID: 4737070637684334418, guid: be8cbc708b9ecf74ebda4c903d3d578e,
+        type: 3}
+      propertyPath: numSources
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4737070637684334418, guid: be8cbc708b9ecf74ebda4c903d3d578e,
+        type: 3}
+      propertyPath: lblSourceCount
+      value: 
+      objectReference: {fileID: 1021899770}
     - target: {fileID: 4737070637684334418, guid: be8cbc708b9ecf74ebda4c903d3d578e,
         type: 3}
       propertyPath: serializationData.Prefab
@@ -16277,6 +16338,17 @@ PrefabInstance:
       propertyPath: m_Name
       value: WaveDisplayUI
       objectReference: {fileID: 0}
+    - target: {fileID: 5665660423876471277, guid: be8cbc708b9ecf74ebda4c903d3d578e,
+        type: 3}
+      propertyPath: _syncMethod
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5665660423876471277, guid: be8cbc708b9ecf74ebda4c903d3d578e,
+        type: 3}
+      propertyPath: serializedProgramAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: 9a9729eb9cebf2b4bb0e9e2a38b3f73c,
+        type: 2}
     - target: {fileID: 5979574504478716723, guid: be8cbc708b9ecf74ebda4c903d3d578e,
         type: 3}
       propertyPath: m_AnchorMax.x
@@ -16325,7 +16397,7 @@ PrefabInstance:
     - target: {fileID: 6933651634064751028, guid: be8cbc708b9ecf74ebda4c903d3d578e,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 580
+      value: 620
       objectReference: {fileID: 0}
     - target: {fileID: 6933651634064751028, guid: be8cbc708b9ecf74ebda4c903d3d578e,
         type: 3}
@@ -16392,6 +16464,16 @@ PrefabInstance:
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 1555087500}
+    - target: {fileID: 7875864251661468043, guid: be8cbc708b9ecf74ebda4c903d3d578e,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7875864251661468043, guid: be8cbc708b9ecf74ebda4c903d3d578e,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 9088951548689101614, guid: be8cbc708b9ecf74ebda4c903d3d578e,
         type: 3}
       propertyPath: m_AnchorMax.x
@@ -16846,7 +16928,7 @@ PrefabInstance:
       value: 'A surface wave''s momentum arises from the speed and direction of surface
         energy transport, comprised of kinetic energy and potential energy.
 
-        
+
 
         Select:
 
@@ -16859,10 +16941,10 @@ PrefabInstance:
         <b>Potential Energy:</b> local
         potential energy.
 
-        <b>Kinetic Energy:</b> local surface kinetic
-        energy.
+        <b>Kinetic Energy:</b> local surface kinetic energy.
 
-        <b>Energy Flux:</b> the total energy transport.</indent>
+        <b>Energy
+        Flux:</b> the total energy transport.</indent>
 
 '
       objectReference: {fileID: 0}
@@ -21305,7 +21387,7 @@ MonoBehaviour:
   sourceOffset: 0
   numSources: 2
   lblSourceCount: {fileID: 164288239}
-  sourcePitch: 447
+  slitPitch: 447
   dt: 0.04
   lambdaSlider: {fileID: 1829315921}
   pitchSlider: {fileID: 3994723554949606282}
@@ -22219,14 +22301,14 @@ Transform:
   m_GameObject: {fileID: 1842415301}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.7071068, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: -5, y: 1.24, z: 0}
+  m_LocalPosition: {x: -4, y: 1.24, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1501493222}
   - {fileID: 1331642180}
   - {fileID: 1619678893}
-  m_Father: {fileID: 2104117578}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
 --- !u!1001 &1870930473
 PrefabInstance:
@@ -22385,12 +22467,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fafe2cfe61f6974895a912c3755e8f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &1877391946 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8422898547930235107, guid: be8cbc708b9ecf74ebda4c903d3d578e,
-    type: 3}
-  m_PrefabInstance: {fileID: 7838544626912846812}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1880658633
 GameObject:
   m_ObjectHideFlags: 0
@@ -24597,7 +24673,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 456796347}
-  - {fileID: 1842415302}
   - {fileID: 297528819}
   - {fileID: 434430524}
   - {fileID: 1568408113}
@@ -26600,7 +26675,7 @@ PrefabInstance:
     - target: {fileID: 3105796665125844900, guid: 31e7e93e607c6f84cb8d0146dee84675,
         type: 3}
       propertyPath: clientVariableName
-      value: sourcePitch
+      value: slitPitch
       objectReference: {fileID: 0}
     - target: {fileID: 3105796665125844900, guid: 31e7e93e607c6f84cb8d0146dee84675,
         type: 3}
@@ -29581,6 +29656,12 @@ PrefabInstance:
       propertyPath: m_AnchorMin.x
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 609274959380378847, guid: be8cbc708b9ecf74ebda4c903d3d578e,
+        type: 3}
+      propertyPath: serializedProgramAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: 9a9729eb9cebf2b4bb0e9e2a38b3f73c,
+        type: 2}
     - target: {fileID: 952994405989445044, guid: be8cbc708b9ecf74ebda4c903d3d578e,
         type: 3}
       propertyPath: serializationData.Prefab
@@ -29618,6 +29699,45 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1884831010832026029, guid: be8cbc708b9ecf74ebda4c903d3d578e,
         type: 3}
+    - target: {fileID: 2145137614288560324, guid: be8cbc708b9ecf74ebda4c903d3d578e,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2145137614288560324, guid: be8cbc708b9ecf74ebda4c903d3d578e,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2145137614288560324, guid: be8cbc708b9ecf74ebda4c903d3d578e,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2262320857576607942, guid: be8cbc708b9ecf74ebda4c903d3d578e,
+        type: 3}
+      propertyPath: serializedProgramAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: 9a9729eb9cebf2b4bb0e9e2a38b3f73c,
+        type: 2}
+    - target: {fileID: 2719255282060182875, guid: be8cbc708b9ecf74ebda4c903d3d578e,
+        type: 3}
+      propertyPath: serializationData.Prefab
+      value: 
+      objectReference: {fileID: 2719255282060182875, guid: be8cbc708b9ecf74ebda4c903d3d578e,
+        type: 3}
+    - target: {fileID: 3262583256041880071, guid: be8cbc708b9ecf74ebda4c903d3d578e,
+        type: 3}
+      propertyPath: serializedProgramAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: 9a9729eb9cebf2b4bb0e9e2a38b3f73c,
+        type: 2}
+    - target: {fileID: 3741908286090499144, guid: be8cbc708b9ecf74ebda4c903d3d578e,
+        type: 3}
+      propertyPath: serializedProgramAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: 9cac6677ef927b64190bc7a5b7b4f404,
+        type: 2}
     - target: {fileID: 4737070637684334418, guid: be8cbc708b9ecf74ebda4c903d3d578e,
         type: 3}
       propertyPath: thePanel
@@ -29650,6 +29770,17 @@ PrefabInstance:
       propertyPath: m_Name
       value: WaveDisplayUI
       objectReference: {fileID: 0}
+    - target: {fileID: 5665660423876471277, guid: be8cbc708b9ecf74ebda4c903d3d578e,
+        type: 3}
+      propertyPath: _syncMethod
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5665660423876471277, guid: be8cbc708b9ecf74ebda4c903d3d578e,
+        type: 3}
+      propertyPath: serializedProgramAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: 9a9729eb9cebf2b4bb0e9e2a38b3f73c,
+        type: 2}
     - target: {fileID: 5979574504478716723, guid: be8cbc708b9ecf74ebda4c903d3d578e,
         type: 3}
       propertyPath: m_AnchorMax.x
@@ -29698,7 +29829,7 @@ PrefabInstance:
     - target: {fileID: 6933651634064751028, guid: be8cbc708b9ecf74ebda4c903d3d578e,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 580
+      value: 620
       objectReference: {fileID: 0}
     - target: {fileID: 6933651634064751028, guid: be8cbc708b9ecf74ebda4c903d3d578e,
         type: 3}
@@ -29765,6 +29896,16 @@ PrefabInstance:
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 1555087500}
+    - target: {fileID: 7875864251661468043, guid: be8cbc708b9ecf74ebda4c903d3d578e,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7875864251661468043, guid: be8cbc708b9ecf74ebda4c903d3d578e,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 9088951548689101614, guid: be8cbc708b9ecf74ebda4c903d3d578e,
         type: 3}
       propertyPath: m_AnchorMax.x
@@ -30269,6 +30410,7 @@ SceneRoots:
   - {fileID: 1555087501}
   - {fileID: 1260129842}
   - {fileID: 488133822}
+  - {fileID: 1842415302}
   - {fileID: 1061463975}
   - {fileID: 1757424772}
   - {fileID: 1945401910}

@@ -20,8 +20,8 @@ public class HuygensMonitor : UdonSharpBehaviour
     [SerializeField] float sourceOffset;
     [SerializeField,UdonSynced,FieldChangeCallback(nameof(NumSources))] int numSources = 2;
     [SerializeField] TextMeshProUGUI lblSourceCount;
-    [SerializeField, Range(50,500),UdonSynced, FieldChangeCallback(nameof(SourcePitch))] 
-    float sourcePitch = 436.5234f;
+    [SerializeField, Range(20,500),UdonSynced, FieldChangeCallback(nameof(SlitPitch))] 
+    float slitPitch = 447f;
     // Timing
     [SerializeField, Range(0.01f, 0.2f)] float dt = 0.1f;
     [Header("Controls")]
@@ -69,7 +69,7 @@ public class HuygensMonitor : UdonSharpBehaviour
                     scaleSlider.IsInteractible = false;
                 if (useCRT)
                     simCRT.Initialize();
-                SourcePitch = defaultPitch;
+                SlitPitch = defaultPitch;
                 Lambda = defaultLambda;
                 NumSources = 2;
                 SimScale = defaultScale;
@@ -80,16 +80,16 @@ public class HuygensMonitor : UdonSharpBehaviour
             updateNeeded = true;
         }
     }
-    public float SourcePitch
+    public float SlitPitch
     {
-        get => sourcePitch;
+        get => slitPitch;
         set
         {
-            sourcePitch = value;
+            slitPitch = value;
             if (vectorDrawing != null)
-                vectorDrawing.SetProgramVariable<float>("sourcePitch", sourcePitch);
+                vectorDrawing.SetProgramVariable<float>("slitPitch", slitPitch);
             if (iHaveSimMaterial)
-                matSIM.SetFloat("_SlitPitchPx", sourcePitch * mmToPixels);
+                matSIM.SetFloat("_SlitPitchPx", slitPitch * mmToPixels);
             if (pitchSlider != null)
             {
                 if ((!isStarted || pitchSlider.CurrentValue != value) && !pitchPtr)
@@ -284,7 +284,7 @@ public class HuygensMonitor : UdonSharpBehaviour
     void Start()
     {
         defaultLambda = lambda;
-        defaultPitch = sourcePitch;
+        defaultPitch = slitPitch;
         defaultScale = simScale;
         mmToPixels = simResolution.x/panelWidth;
         player = Networking.LocalPlayer;
@@ -307,9 +307,9 @@ public class HuygensMonitor : UdonSharpBehaviour
         if (lambdaSlider != null)
             lambdaSlider.SetValues(lambda, 30, 80);
         if (pitchSlider != null)
-            pitchSlider.SetValues(sourcePitch, 50, 500);
+            pitchSlider.SetValues(slitPitch, 50, 500);
         Lambda = lambda;
-        SourcePitch = sourcePitch;
+        SlitPitch = slitPitch;
         DisplayMode = displayMode;
         SimScale = simScale;
         

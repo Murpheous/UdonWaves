@@ -1,4 +1,7 @@
-﻿using UdonSharp;
+﻿using System.Diagnostics;
+using System.Diagnostics.Contracts;
+using TMPro;
+using UdonSharp;
 using UnityEngine;
 using UnityEngine.UI;
 using VRC.SDKBase;
@@ -42,11 +45,23 @@ public class WavePanelControl : UdonSharpBehaviour
     [SerializeField, Range(1, 100)] float defaultLambda = 24;
     [SerializeField, Range(1, 100),UdonSynced,FieldChangeCallback(nameof(Lambda))] public float lambda = 24;
 
+    [SerializeField]
+    private UdonSlider pitchSlider;
+    private bool iHavePitchControl = false;
+    public bool pitchPtr = false;
+    [SerializeField, Range(20, 500), UdonSynced, FieldChangeCallback(nameof(SlitPitch))]
+    float slitPitch = 250;
+    float defaultPitch = 250;
+    int defaultSources = 2;
+    [SerializeField, UdonSynced, FieldChangeCallback(nameof(NumSources))] private int numSources = 2;
+    [SerializeField] TextMeshProUGUI lblSourceCount;
+
     [SerializeField] UdonSlider scaleSlider;
     private bool iHaveScaleControl = false;
     public bool scalePtr = false;
     [SerializeField, Range(1, 10)] float defaultScale = 24;
     [SerializeField, Range(1, 10), UdonSynced, FieldChangeCallback(nameof(SimScale))] public float simScale = 24;
+
     private void UpdatePhaseSpeed()
     {
         if (iHaveSimMaterial)
@@ -77,6 +92,34 @@ public class WavePanelControl : UdonSharpBehaviour
             UpdatePhaseSpeed();
             RequestSerialization();
         }
+    }
+
+    public int NumSources
+    {
+        get => numSources;
+        set
+        {
+            if (value < 1)
+                value = 1;
+            if (value > 7)
+                value = 7;
+            numSources = value;
+            if (iHaveSimMaterial)
+                matSIM.SetFloat("_NumSources", numSources);
+            if (lblSourceCount != null)
+                lblSourceCount.text = numSources.ToString();
+            RequestSerialization();
+        }
+    }
+    
+    public void incSources()
+    {
+        NumSources = numSources + 1;
+    }
+
+    public void decSources()
+    {
+        NumSources = numSources - 1;
     }
 
     private int DisplayMode
@@ -141,6 +184,23 @@ public class WavePanelControl : UdonSharpBehaviour
         }
     }
 
+    public float SlitPitch
+    {
+        get => slitPitch;
+        set
+        {
+            slitPitch = value;
+            if (iHaveSimMaterial)
+                matSIM.SetFloat("_SlitPitchPx", slitPitch);
+            if (pitchSlider != null)
+            {
+                if (!pitchPtr && iHavePitchControl)
+                    pitchSlider.SetValue(value);
+            }
+            RequestSerialization();
+        }
+    }
+
     public float SimScale
     {
         get => simScale;
@@ -192,9 +252,10 @@ public class WavePanelControl : UdonSharpBehaviour
         if (iHaveSimMaterial)
         {
             defaultLambda = matSIM.GetFloat("_LambdaPx");
-            float panelAspect = thePanel.transform.localScale.y/thePanel.transform.localScale.x;
             defaultScale = matSIM.GetFloat("_Scale");
             defaultSpeed = matSIM.GetFloat("_PhaseSpeed");
+            defaultPitch = matSIM.GetFloat("_SlitPitchPx"); 
+            defaultSources = Mathf.RoundToInt(matSIM.GetFloat("_NumSources"));
         }
         iHaveTogReal = togReal != null;
         iHaveTogIm = togImaginary  != null;
@@ -204,12 +265,20 @@ public class WavePanelControl : UdonSharpBehaviour
         iHaveSpeedControl = speedSlider != null;
         iHaveLambdaControl = lambdaSlider != null;
         iHaveScaleControl = scaleSlider != null;
+        iHavePitchControl = pitchSlider != null;
         if (iHaveSimMaterial)
         {
             DisplayMode = Mathf.RoundToInt(matSIM.GetFloat("_DisplayMode"));
         }
         Lambda = defaultLambda;
+        NumSources = defaultSources;
         WaveSpeed = defaultSpeed;
         SimScale = defaultScale;
+        if (iHavePitchControl)
+        {
+            pitchSlider.MaxValue = 500;
+            pitchSlider.MinValue = 20;
+        }
+        SlitPitch = defaultPitch;
     }
 }
