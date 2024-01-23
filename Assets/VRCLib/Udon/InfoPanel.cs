@@ -12,12 +12,13 @@ public class InfoPanel : UdonSharpBehaviour
 {
     [SerializeField] private ToggleGroup toggleGroup;
     [SerializeField] private Button closeButton;
+    [SerializeField] private bool growShrink = true;
     [SerializeField] Vector2 panelSize = Vector2.one;
     [SerializeField] Vector2 shrinkSize = Vector2.one;
-    [SerializeField] bool showHidePanel = true;
+    [SerializeField] bool showHideContentPanel= true;
     //   [SerializeField] float textBorder = 20;
-    RectTransform panelXfrm;
-    [SerializeField] TextMeshProUGUI infoText;
+    [SerializeField] RectTransform contentPanelRect;
+    [SerializeField] TextMeshProUGUI contentText;
     [SerializeField] Toggle[] toggles = null;
     [SerializeField] InfoPage[] pages = null;
     int toggleCount = 0;
@@ -30,51 +31,52 @@ public class InfoPanel : UdonSharpBehaviour
 //    private VRC.Udon.Common.Interfaces.NetworkEventTarget toTheOwner = VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner;
 //    private VRC.Udon.Common.Interfaces.NetworkEventTarget toAll = VRC.Udon.Common.Interfaces.NetworkEventTarget.All;
 
-    [SerializeField,UdonSynced,FieldChangeCallback(nameof(ShowPanel))] 
-    private int showPanel = -1;
+    [SerializeField,UdonSynced,FieldChangeCallback(nameof(ActiveInfoPage))] 
+    private int activeInfoPage = -1;
 
     [SerializeField,TextArea] string defaultText = string.Empty;
-    public int ShowPanel
+    public int ActiveInfoPage
     {
-        get => showPanel;
+        get => activeInfoPage;
         set
         {
-            showPanel = value;
-            Debug.Log("ShowPanel=" + value);
+            activeInfoPage = value;
+            Debug.Log("ActiveInfoPage=" + value);
             if (hasTextField)
             {
                 if (value >= 0)
                 {
-                    infoText.text = "";
+                    contentText.text = "";
                     string title = "";
                     if (pages[value] != null)
                     {
                         title = pages[value].PageTitle;
-                        infoText.text = string.Format("<line-height=125%><align=center><b>{0}</b></align>\n</line-height><margin=2%>{1}</margin>", title, pages[value].PageBody);
+                        contentText.text = string.Format("<line-height=125%><align=center><b>{0}</b></align>\n</line-height><margin=2%>{1}</margin>", title, pages[value].PageBody);
                     }
                 }
                 else
-                    infoText.text = defaultText;
+                    contentText.text = defaultText;
             }
-            if (showHidePanel)
+            if (showHideContentPanel)
             {
                 if (hasClose)
-                    closeButton.gameObject.SetActive(showPanel >= 0);
-                Vector2 newSize = showPanel >= 0 ? panelSize : shrinkSize;
-                bool validSize = (newSize.x > 0) && (newSize.y > 0);
-                Vector3 newPosition = showPanel >= 0 ? Vector3.zero : new Vector3(0, -(panelSize.y - shrinkSize.y) / 2.0f, 0);
-                if (validSize)
+                    closeButton.gameObject.SetActive(activeInfoPage >= 0);
+                if (growShrink)
                 {
-                    panelXfrm.sizeDelta = newSize;
-                    panelXfrm.localPosition = newPosition;
+                    Vector2 newSize = activeInfoPage >= 0 ? panelSize : shrinkSize;
+                    bool validSize = (newSize.x > 0) && (newSize.y > 0);
+                    Vector3 newPosition = activeInfoPage >= 0 ? Vector3.zero : new Vector3(0, -(panelSize.y - shrinkSize.y) / 2.0f, 0);
+                    if (validSize)
+                    {
+                        contentPanelRect.sizeDelta = newSize;
+                        contentPanelRect.localPosition = newPosition;
+                    }
+                    contentPanelRect.gameObject.SetActive(validSize);
                 }
-                panelXfrm.gameObject.SetActive(validSize);
-                //if (textRect != null)
-                //{
-                //    Vector2 newTextDim = new Vector2(newSize.x - textBorder, newSize.y - textBorder);
-                //    textRect.sizeDelta = newTextDim;
-                    //textRect.localPosition = newPosition;
-                //}
+                else
+                {
+                    contentPanelRect.gameObject.SetActive(activeInfoPage >= 0);
+                }
             }
         }
     }
@@ -121,7 +123,7 @@ public class InfoPanel : UdonSharpBehaviour
             }
             togglePending = false;
             selectedToggle = value;
-            ShowPanel = selectedToggle;
+            ActiveInfoPage = selectedToggle;
             if (value >= 0 && value < toggleCount)
             {
                 if (toggles[selectedToggle] != null)
@@ -177,14 +179,12 @@ public class InfoPanel : UdonSharpBehaviour
             toggleGroup = gameObject.GetComponent<ToggleGroup>();
         toggleGroup.allowSwitchOff = true;
         toggleGroup.SetAllTogglesOff(false);
-        hasTextField = infoText != null;
-        hasClose = closeButton != null;
-        //if (hasTextField)
-        //{
-        //    textRect = infoText.GetComponent<RectTransform>();
-        //}
-        panelXfrm = transform.GetChild(0).GetComponent<RectTransform>();
-        panelSize = panelXfrm.sizeDelta;
+        hasTextField = contentText != null;
+        hasClose = closeButton != null && closeButton.gameObject.activeSelf;
+        if (contentPanelRect != null)
+            panelSize = contentPanelRect.sizeDelta;
+        if (growShrink)
+            growShrink = (panelSize.x * panelSize.y) * (shrinkSize.x * shrinkSize.y) > 0;
         toggleGroup.EnsureValidState();
         onToggle();
     }

@@ -1,8 +1,6 @@
 ﻿
 using UdonSharp;
 using UnityEngine;
-using TMPro;
-using UnityEngine.UI;
 using VRC.SDKBase;
 using VRC.Udon;
 using Unity.Collections;
@@ -14,8 +12,8 @@ public class VectorDiagram : UdonSharpBehaviour
     private float halfHeight = 0.46f;
 
     [Tooltip("Source Count"),SerializeField, Range(1,16),FieldChangeCallback(nameof(NumSources))] public int numSources = 2;
-    [Tooltip("Source Width (mm)"),SerializeField, FieldChangeCallback(nameof(SourceWidth))] float sourceWidth;
-    [Tooltip("Source Pitch (mm)"), SerializeField,FieldChangeCallback(nameof(SourcePitch))] public float sourcePitch = 436.5234f;
+    [Tooltip("Slit Width (mm)"),SerializeField, FieldChangeCallback(nameof(SourceWidth))] float sourceWidth;
+    [Tooltip("Slit Pitch (mm)"), SerializeField,FieldChangeCallback(nameof(SlitPitch))] public float slitPitch = 436.5234f;
     [Tooltip("Lambda (mm)"), SerializeField, FieldChangeCallback(nameof(Lambda))] public float lambda = 48.61111f;
     [SerializeField] private float arrowLambda = 18;
     [SerializeField, FieldChangeCallback(nameof(DemoMode))] public int demoMode;
@@ -89,7 +87,7 @@ public class VectorDiagram : UdonSharpBehaviour
         {
             float thetaRadians;
             if (numSources > 1)
-                sinTheta = i * lambda / sourcePitch;
+                sinTheta = i * lambda / slitPitch;
             else
                 sinTheta = i == 0 ? 0 : (2 * i + 1) / WidthX2;
             float lineLength = arrowLength;
@@ -303,14 +301,14 @@ public class VectorDiagram : UdonSharpBehaviour
             needsUpdate = true;
         }
     }
-    public float SourcePitch
+    public float SlitPitch
     {
-        get => sourcePitch; 
+        get => slitPitch; 
         set
         {
-            sourcePitch = value;
+            slitPitch = value;
             needsUpdate = true;
-            //Debug.Log("Vect Gap: " +  sourcePitch);
+            //Debug.Log("Vect Gap: " +  slitPitch);
         } 
     }
     public float Lambda
