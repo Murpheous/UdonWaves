@@ -126,7 +126,7 @@ public class particleSim : UdonSharpBehaviour
                 shapeModule.scale = shapeScale;
             }
         }
-        if (quantumDistribution != null)
+        if (iHaveQuantumDistribution)
         {
             float slitPitch = apertureControl.AperturePitch;
             float slitWidth = apertureControl.ApertureWidth;
@@ -247,6 +247,7 @@ public class particleSim : UdonSharpBehaviour
         if ((particles == null) || (particles.Length < numParticles))
             particles = new ParticleSystem.Particle[numParticles+200];
         numParticles = particleEmitter.GetParticles(particles);
+        bool scatteringValid = iHaveQuantumDistribution && quantumDistribution.SettingsLoaded;
         for (int i=0; i<numParticles; i++)
         {
             bool particleChanged = false;
@@ -258,9 +259,10 @@ public class particleSim : UdonSharpBehaviour
                 particle.remainingLifetime = 0;
                 particleChanged = true;
             }
-            else  */if (startLifeTime < 10 && pos.x < apertureX)
+            else  */
+            if (startLifeTime < 10 && pos.x < apertureX)
             {// At Grating
-                if (quantumDistribution !=null)
+                if (scatteringValid)
                 {
                     Vector3 vUpdated;
                     Vector3 unit = Vector3.right;
@@ -272,12 +274,14 @@ public class particleSim : UdonSharpBehaviour
                         unit.x = -Mathf.Sqrt(1 - (unit.z * unit.z));
                         vUpdated = unit * particleSpeed;
                         particle.velocity = vUpdated;
+                        particle.remainingLifetime = 60f;
                     }
+                    // Set Velocity
                 }
-                // Set Velocity
-                particleChanged = true;
+                else
+                    particle.remainingLifetime = 0;
                 particle.startLifetime = 20f;
-                particle.remainingLifetime = 60f;
+                particleChanged = true;
             }
             if (particleChanged)
             {
@@ -358,9 +362,10 @@ public class particleSim : UdonSharpBehaviour
             return;
     }
 
-
+    bool iHaveQuantumDistribution = false;
     void Start()
     {
+        iHaveQuantumDistribution = quantumDistribution != null;
         UpdateOwnerShip();
         if (particleEmitter != null)
         {

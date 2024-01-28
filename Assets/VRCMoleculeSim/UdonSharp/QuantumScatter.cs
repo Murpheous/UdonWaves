@@ -44,6 +44,7 @@ public class QuantumScatter : UdonSharpBehaviour
     private bool settingsChanged = false;
     [SerializeField]
     private bool settingsLoaded = false;
+    public bool SettingsLoaded { get => settingsLoaded; }
     [SerializeField]
     private bool gotSettings = false;
     //[SerializeField]
