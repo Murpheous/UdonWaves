@@ -207,7 +207,7 @@ float noiseSwitched(float2 t)
 {
     // Sampling a lookup texture for blue noise
     // Coords must be aligned to a pixel boundary when sampling the texture
-    float2 noiseCoord = t + floor(_Time.y * _Noise_TexelSize.zw);
+    float2 noiseCoord = t + floor(_SinTime.x * _Noise_TexelSize.zw * 16.0);
     noiseCoord *= _Noise_TexelSize.xy;
     float4 noise = tex2D(_Noise, noiseCoord);
     int no = (_Time.y % (1.0/8.0))*32;
@@ -282,8 +282,11 @@ float sunRayMask (float4 projPos, float4 lightScr, float2 scrPos)
     float4 uv_diff = projPos - lightScr;
     float4 uv_centre = lightScr;
 
+    const float ditherWidth = 12.5f;
+    float ditherWeight = clamp(length(uv_diff), -ditherWidth, ditherWidth);
+
     //float dither = (intensity(scrPos + _SinTime.x))*3;
-    float dither = T(noiseSwitched(scrPos))*2.5;
+    float dither = T(noiseSwitched(scrPos))*ditherWeight;
     float dist = _Distance;
     float4 uv = uv_centre + uv_diff;
 
@@ -294,7 +297,7 @@ float sunRayMask (float4 projPos, float4 lightScr, float2 scrPos)
         float decay = 0.99; 
         float weight = 1.0/NUM_SAMPLES; 
         [unroll]
-        for ( float s=1; s<NUM_SAMPLES; s++) {              
+        for ( float s=1; s<NUM_SAMPLES; s++) {
             uv = uv_centre + uv_diff / (1.0 + dist * (s / NUM_SAMPLES) * (s+dither)*weight);
             finalColor += Linear01Depth
             (SAMPLE_DEPTH_TEXTURE_PROJ(_CameraDepthTexture, UNITY_PROJ_COORD(uv)))

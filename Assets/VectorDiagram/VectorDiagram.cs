@@ -16,6 +16,7 @@ public class VectorDiagram : UdonSharpBehaviour
     [Tooltip("Slit Pitch (mm)"), SerializeField,FieldChangeCallback(nameof(SlitPitch))] public float slitPitch = 436.5234f;
     [Tooltip("Lambda (mm)"), SerializeField, FieldChangeCallback(nameof(Lambda))] public float lambda = 48.61111f;
     [SerializeField] private float arrowLambda = 18;
+    [SerializeField] private float layerGap = 0.003f;
     [SerializeField, FieldChangeCallback(nameof(DemoMode))] public int demoMode;
     [SerializeField] UdonPointer[] kVectors;
     [SerializeField] UdonPointer[] kComponents;
@@ -77,6 +78,7 @@ public class VectorDiagram : UdonSharpBehaviour
         }
         if (kVectors == null || kVectors.Length == 0)
             return;
+        Vector3 layerOffset = new Vector3(0,0,layerGap);
         kEndPoints = new Vector2[kVectors.Length];
         kStartPoints = new Vector2[kVectors.Length];
         beamAngles = new string[kVectors.Length];
@@ -147,7 +149,7 @@ public class VectorDiagram : UdonSharpBehaviour
             }
             if (kVectors[i] != null && endPoint.x > 0)
             {
-                kVectors[i].transform.localPosition = startPoint;
+                kVectors[i].transform.localPosition = (Vector3)startPoint + layerOffset;
                 kVectors[i].ShowTip = demoMode >= 2;
                 kVectors[i].LineLength = lineLength;
                 kVectors[i].ThetaDegrees = thetaRadians * Mathf.Rad2Deg;
@@ -189,7 +191,7 @@ public class VectorDiagram : UdonSharpBehaviour
                     }
                     if (demoMode > 0 && labelPoints[posIdx].x > 0)
                     {
-                        vecLabels[i].LocalPostion = labelPoints[posIdx];
+                        vecLabels[i].LocalPostion = (Vector3)labelPoints[posIdx]+(layerOffset*1.5f);
                         vecLabels[i].Visible = true;
                     }
                     else
@@ -223,7 +225,7 @@ public class VectorDiagram : UdonSharpBehaviour
                         if (demoMode == 2)
                         {
                             kLines[i].LineLength = displayRect.x;
-                            kLines[i].transform.localPosition = new Vector3(0, labelPoints[j].y, 0);
+                            kLines[i].transform.localPosition = new Vector3(0, labelPoints[j].y, layerGap*2);
                         }
                         else
                         {
@@ -237,6 +239,7 @@ public class VectorDiagram : UdonSharpBehaviour
     }
     private void componentDisplay(int demoMode)
     {
+        Vector3 layerOffset = new Vector3(0, 0, layerGap*1.5f);
         if ( kComponents == null)
             return;            
         if (demoMode < 2)
@@ -258,7 +261,7 @@ public class VectorDiagram : UdonSharpBehaviour
             if (kComponents[j] != null)
             {
                 kComponents[j].LineLength = kEndPoints[j + 1].y - kStartPoints[j +1].y;
-                Vector3 lpos = new Vector3(kEndPoints[j + 1].x, kStartPoints[j + 1].y);
+                Vector3 lpos = (Vector3)kEndPoints[j + 1] + layerOffset;
                 if (lpos.x >= 0)
                 {
                     kComponents[j].transform.localPosition = lpos;
@@ -267,7 +270,7 @@ public class VectorDiagram : UdonSharpBehaviour
                 else
                 {
                     lpos.x = 0;
-                    kComponents[j].transform.localPosition = Vector3.zero;
+                    kComponents[j].transform.localPosition = layerOffset;
                     kComponents[j].Alpha = 0;
                 }
             }
