@@ -94,7 +94,7 @@ public class VectorDiagram : UdonSharpBehaviour
                 sinTheta = i == 0 ? 0 : (2 * i + 1) / WidthX2;
             float lineLength = arrowLength;
             Vector2 endPoint = Vector2.left;
-            Vector2 startPoint = Vector2.zero;
+            Vector2 startPoint = Vector3.zero;
             Vector2 labelPoint = Vector2.left;
             bool sinIsValid = Mathf.Abs(sinTheta) < 1f;
             thetaRadians = sinIsValid ? Mathf.Asin(sinTheta) : 0;
@@ -104,7 +104,16 @@ public class VectorDiagram : UdonSharpBehaviour
             {
                 switch (demoMode)
                 {
-                case 3:
+                    case 2:
+                        endPoint.y = sinTheta * arrowLength;
+                        if (endPoint.y <= halfHeight)
+                        {
+                            endPoint.x = Mathf.Cos(thetaRadians) * arrowLength;
+                            labelPoint.x = displayRect.x;
+                        }
+                        labelPoint.y = endPoint.y;
+                        break;
+                    case 3:
                         lineLength = arrowLength / 5f;
                         float deltay = sinTheta * lineLength;
                         startPoint.y = sinTheta * (displayRect.x-lineLength);
@@ -120,33 +129,27 @@ public class VectorDiagram : UdonSharpBehaviour
                         endPoint = startPoint + startDelta;
                         labelPoint = endPoint;
                         break;
-                case 2:
-                    endPoint.y = sinTheta * arrowLength;
-                    if (endPoint.y <= halfHeight)
-                    {
-                        endPoint.x = Mathf.Cos(thetaRadians) * arrowLength;
-                        labelPoint.x = displayRect.x;
-                    }
-                    labelPoint.y = endPoint.y;
-                    break;
 
                 default:
-                    endPoint.y = sinTheta * displayRect.x;
-                    if (endPoint.y <= halfHeight)
-                    {
-                        endPoint.x = displayRect.x;
-                        lineLength = endPoint.magnitude;
-                    }
-                    else
-                    {
-                        endPoint.y = halfHeight;
-                        lineLength = halfHeight / sinTheta;
-                        endPoint.x = lineLength * Mathf.Cos(thetaRadians);
-                    }
-                    labelPoint = endPoint;
-                    break;
+                        endPoint.y = sinTheta * displayRect.x;
+                        if (endPoint.y <= halfHeight)
+                        {
+                            endPoint.x = displayRect.x;
+                            lineLength = endPoint.magnitude;
+                        }
+                        else
+                        {
+                            endPoint.y = halfHeight;
+                            lineLength = halfHeight / sinTheta;
+                            endPoint.x = lineLength * Mathf.Cos(thetaRadians);
+                        }
+                        labelPoint = endPoint;
+                        break;
                 }
             }
+            kEndPoints[i] = endPoint;
+            kStartPoints[i] = startPoint;
+            labelPoints[i] = labelPoint;
             if (kVectors[i] != null && endPoint.x > 0)
             {
                 kVectors[i].transform.localPosition = (Vector3)startPoint + layerOffset;
@@ -160,9 +163,6 @@ public class VectorDiagram : UdonSharpBehaviour
             {
                 kVectors[i].Alpha = 0f;
             }
-            kEndPoints[i] = endPoint;
-            kStartPoints[i] = startPoint;
-            labelPoints[i] = labelPoint;
         }
         if (vecLabels != null && vecLabels.Length > 0)
         {
@@ -191,7 +191,7 @@ public class VectorDiagram : UdonSharpBehaviour
                     }
                     if (demoMode > 0 && labelPoints[posIdx].x > 0)
                     {
-                        vecLabels[i].LocalPostion = (Vector3)labelPoints[posIdx]+(layerOffset*1.5f);
+                        vecLabels[i].LocalPostion = (Vector3)labelPoints[posIdx]+(layerOffset*0.5f);
                         vecLabels[i].Visible = true;
                     }
                     else
@@ -207,6 +207,7 @@ public class VectorDiagram : UdonSharpBehaviour
     {
         if (kLines == null)
             return;
+        Vector3 offset = new Vector3(0,0,layerGap*.75f);
         int posMax = (kEndPoints == null) || (labelPoints == null) ? 0 : kEndPoints.Length;
         for (int i = 0; i < kLines.Length; i++)
         {
@@ -225,12 +226,12 @@ public class VectorDiagram : UdonSharpBehaviour
                         if (demoMode == 2)
                         {
                             kLines[i].LineLength = displayRect.x;
-                            kLines[i].transform.localPosition = new Vector3(0, labelPoints[j].y, layerGap*2);
+                            kLines[i].transform.localPosition = new Vector3(0, labelPoints[j].y, 0) + offset;
                         }
                         else
                         {
                             kLines[i].LineLength = kEndPoints[j].x - kStartPoints[j].x;
-                            kLines[i].transform.localPosition = kStartPoints[j];
+                            kLines[i].transform.localPosition = (Vector3)kStartPoints[j]+ offset;
                         }
                     }
                 }
@@ -239,7 +240,7 @@ public class VectorDiagram : UdonSharpBehaviour
     }
     private void componentDisplay(int demoMode)
     {
-        Vector3 layerOffset = new Vector3(0, 0, layerGap*1.5f);
+        Vector3 linePos = new Vector3(0,0, layerGap * 1.5f);
         if ( kComponents == null)
             return;            
         if (demoMode < 2)
@@ -260,17 +261,17 @@ public class VectorDiagram : UdonSharpBehaviour
         {
             if (kComponents[j] != null)
             {
-                kComponents[j].LineLength = kEndPoints[j + 1].y - kStartPoints[j +1].y;
-                Vector3 lpos = (Vector3)kEndPoints[j + 1] + layerOffset;
-                if (lpos.x >= 0)
+                float len = kEndPoints[j + 1].y - kStartPoints[j +1].y;
+                linePos.x = kEndPoints[j + 1].x;
+                linePos.y = kEndPoints[j + 1].y-len;
+                kComponents[j].LineLength = len;
+                if (linePos.x >= 0)
                 {
-                    kComponents[j].transform.localPosition = lpos;
+                    kComponents[j].transform.localPosition = linePos;
                     kComponents[j].Alpha = 1;
                 }
                 else
                 {
-                    lpos.x = 0;
-                    kComponents[j].transform.localPosition = layerOffset;
                     kComponents[j].Alpha = 0;
                 }
             }
