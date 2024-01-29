@@ -67,9 +67,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: This is the info text
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: ddbcc27b0346e4644a45316aaf00c441, type: 2}
-  m_sharedMaterial: {fileID: 4410821715232426517, guid: ddbcc27b0346e4644a45316aaf00c441,
-    type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -292,10 +291,12 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 4926412167092619927}
   toggleGroup: {fileID: 4193235092411364038}
   closeButton: {fileID: 2013130002804789347}
+  growShrink: 1
   panelSize: {x: 730, y: 360}
   shrinkSize: {x: 730, y: 75}
-  showHidePanel: 1
-  infoText: {fileID: 0}
+  showHideContentPanel: 1
+  contentPanelRect: {fileID: 0}
+  contentText: {fileID: 0}
   toggles:
   - {fileID: 685609079758924777}
   - {fileID: 0}
@@ -308,7 +309,7 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
-  showPanel: 0
+  activeInfoPage: -1
   defaultText: <align=center>Welcome</align>
   selectedToggle: -1
 --- !u!114 &4926412167092619927
