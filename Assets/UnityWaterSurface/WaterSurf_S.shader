@@ -5,7 +5,8 @@ Properties
 {
     _DispTex("Disp Texture", 2D) = "gray" {}
     _Color("Color", color) = (1, 1, 0, 0)
-    _ColorNeg("ColorBase", color) = (0, 0.3, 1, 0)
+    _ColorFlat("Flat Color", color) = (0, 0.3, 1, 0)
+    _ColorBase("Base Color", color) = (0, 0.1, .1, 0)
     _ColorVel("ColorVelocity", color) = (0, 0.3, 1, 0)
     _ColorFlow("ColorFlow", color) = (1, 0.3, 0, 0)
     _UseHeight("Use Sfc Height",Range(0.0,1)) = 1    
@@ -30,7 +31,8 @@ SubShader
 sampler2D _DispTex;
 float4 _DispTex_TexelSize;
 fixed4 _Color;
-fixed4 _ColorNeg;
+fixed4 _ColorFlat;
+fixed4 _ColorBase;
 fixed4 _ColorVel;
 fixed4 _ColorFlow;
 float _UseHeight;
@@ -74,11 +76,11 @@ void disp(inout appdata_full v)
         if (_UseSquare)
             hgt *= hgt*.5;
     }
-    if (_UseVelocity > 0.5)
+    if (_UseVelocity > 0.75)
     {
         vel = tex2Dlod(_DispTex, float4(v.texcoord.xy, 0, 0)).g / _K;
         if (_UseSquare)
-            vel *= vel*.5;
+            vel *= vel*.75;
     }
     p.y = (hgt + vel) * _Displacement;
     v.vertex.xyz = p;
@@ -136,12 +138,31 @@ void surf(Input IN, inout SurfaceOutputStandard o)
     {
        theColor = _ColorFlow;
     }
-    float range = showSquared ? value : (value +1.25);
-        
+
     float d1 = _Displacement * (delta.y - delta.x);
     float d2 = _Displacement * (delta.w - delta.z);
-    o.Albedo = lerp(_ColorNeg, theColor, range);
     o.Normal = normalize(float3(d1,2*_DispTex_TexelSize.x,d2));
+
+    if (showSquared)
+    {
+        o.Albedo = lerp(_ColorFlat, theColor, value*1.25);
+        o.Alpha = value + 0.2;
+    }
+    else
+    {
+        float abV = abs(value)*1.5;
+        if (value >= 0)
+        {
+            o.Albedo = lerp(_ColorFlat, theColor, abV);
+            o.Alpha = abV + 0.4;
+        }
+        else
+        {
+            o.Albedo = lerp(_ColorFlat, _ColorBase, abV);
+            o.Alpha = clamp(0.4 + value,0,1);
+        }
+    }
+    
 }
 
 ENDCG
