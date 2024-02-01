@@ -72,13 +72,13 @@ void disp(inout appdata_full v)
     {
         hgt = tex2Dlod(_DispTex, float4(v.texcoord.xy, 0, 0)).r;
         if (_UseSquare)
-            hgt *= hgt;
+            hgt *= hgt*.5;
     }
     if (_UseVelocity > 0.5)
     {
         vel = tex2Dlod(_DispTex, float4(v.texcoord.xy, 0, 0)).g / _K;
         if (_UseSquare)
-            vel *= vel;
+            vel *= vel*.5;
     }
     p.y = (hgt + vel) * _Displacement;
     v.vertex.xyz = p;
@@ -136,7 +136,7 @@ void surf(Input IN, inout SurfaceOutputStandard o)
     {
        theColor = _ColorFlow;
     }
-    float range = showSquared ? value : (value+1);
+    float range = showSquared ? value : (value +1.25);
         
     float d1 = _Displacement * (delta.y - delta.x);
     float d2 = _Displacement * (delta.w - delta.z);
