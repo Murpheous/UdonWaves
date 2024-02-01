@@ -72,6 +72,9 @@ public class PlaneMesh : UdonSharpBehaviour
         theMesh.uv = uvs;
         //theMesh.RecalculateNormals();
         mf.mesh = theMesh;
+        triangles = null;
+        vertices = null;
+        uvs = null;
         return true;
     }
     bool CalculatePlaneDefinition()

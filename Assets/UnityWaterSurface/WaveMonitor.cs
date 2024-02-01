@@ -209,7 +209,34 @@ public class WaveMonitor : UdonSharpBehaviour
         if (surfaceMaterial == null)
             return;
         surfaceMaterial.SetFloat("_K", angularWaveNumber);
-        surfaceMaterial.SetFloat("_ViewSelection", displayMode);
+        switch (displayMode)
+        {
+            case 1: // Height Sqaured
+                surfaceMaterial.SetFloat("_UseHeight", 1);
+                surfaceMaterial.SetFloat("_UseVelocity", 0);
+                surfaceMaterial.SetFloat("_UseSquare", 1);
+                break;
+            case 2: // Velocity
+                surfaceMaterial.SetFloat("_UseHeight", 0);
+                surfaceMaterial.SetFloat("_UseVelocity", 1);
+                surfaceMaterial.SetFloat("_UseSquare", 0);
+                break;
+            case 3: // Velocity Squared
+                surfaceMaterial.SetFloat("_UseHeight", 0);
+                surfaceMaterial.SetFloat("_UseVelocity", 1);
+                surfaceMaterial.SetFloat("_UseSquare", 1);
+                break;
+            case 4: // Both Squared
+                surfaceMaterial.SetFloat("_UseHeight", 1);
+                surfaceMaterial.SetFloat("_UseVelocity", 1);
+                surfaceMaterial.SetFloat("_UseSquare", 1);
+                break;
+            default:
+                surfaceMaterial.SetFloat("_UseHeight", 1);
+                surfaceMaterial.SetFloat("_UseVelocity", 0);
+                surfaceMaterial.SetFloat("_UseSquare", 0);
+                break;
+        }
     }
 
 
