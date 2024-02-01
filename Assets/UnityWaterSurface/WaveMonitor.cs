@@ -13,7 +13,14 @@ public class WaveMonitor : UdonSharpBehaviour
     public int tankResolutionY = 1536;
     [SerializeField]
     WaveSlitControls gratingControl;
-
+    [SerializeField]
+    Material matTankWalls;
+    [SerializeField]
+    Color TankHeightColour = Color.white;
+    [SerializeField]
+    Color TankVelColour = Color.blue;
+    [SerializeField]
+    Color TankFlowColour = Color.red;
     [Header("Stimulus")]
     public float effectX = 3;
     public float effectAmplitude = 1f;
@@ -204,6 +211,27 @@ public class WaveMonitor : UdonSharpBehaviour
         }
     }
 
+    private void UpdateTank()
+    {
+        if (matTankWalls == null)
+            return;
+        Color theColour = TankHeightColour;
+        switch (displayMode)
+        {
+            case 2: // Velocity
+            case 3: // Velocity Squared
+                theColour = TankVelColour;
+                break;
+            case 4: // Both Squared
+                theColour = TankFlowColour;
+                break;
+            default:
+                theColour = TankHeightColour;
+                break;
+        }
+        matTankWalls.EnableKeyword("_EMISSION");
+        matTankWalls.SetColor("_EmissionColor", theColour);
+    }
     private void UpdateViewControl()
     {
         if (surfaceMaterial == null)
@@ -246,6 +274,7 @@ public class WaveMonitor : UdonSharpBehaviour
         set
         {
             displayMode = value;
+            UpdateTank();
             UpdateViewControl();
             UpdateToggles();
             RequestSerialization();

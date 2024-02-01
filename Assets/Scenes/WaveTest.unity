@@ -28017,6 +28017,10 @@ MonoBehaviour:
   tankResolutionX: 2048
   tankResolutionY: 1280
   gratingControl: {fileID: 1224076779}
+  matTankWalls: {fileID: 2100000, guid: 73f15352496d2c3488a48c90aedf2234, type: 2}
+  TankHeightColour: {r: 0.29411766, g: 0.54901963, b: 0.105882354, a: 1}
+  TankVelColour: {r: 0.7075472, g: 0.44215405, b: 0.07676221, a: 1}
+  TankFlowColour: {r: 0.6981132, g: 0.11525452, b: 0.3717124, a: 1}
   effectX: 1
   effectAmplitude: 3
   frequency: 2.4
@@ -28024,12 +28028,12 @@ MonoBehaviour:
   freqPointerIsDown: 0
   waveSpeedPixels: 75
   CFL: 0.6
-  CFLSq: 0.25
-  effectPeriod: 1
-  absorbFactor: 0.25
-  dt: 0
-  angularWaveNumber: 40
-  lambdaEffect: 1
+  CFLSq: 0.36
+  effectPeriod: 0.41666666
+  absorbFactor: -0.24999999
+  dt: 0.008
+  angularWaveNumber: 0.20106193
+  lambdaEffect: 31.25
   simulationMaterial: {fileID: 2100000, guid: 2dcfa7fe472afa24cab4179976935e21, type: 2}
   surfaceMaterial: {fileID: 2100000, guid: 87440f63aab3d884c8843f939cc5af01, type: 2}
   obstaclesTex: {fileID: 8400000, guid: 75384e9f3fbb12d4b819f3eaa345f5e7, type: 2}
