@@ -4,6 +4,7 @@
 Properties
 {
     _DispTex("Disp Texture", 2D) = "gray" {}
+    _MeshSpacing("Mesh XY",Vector) = (0.003,0.003,0.00125,0.002) 
     _Color("Color", color) = (1, 1, 0, 0)
     _ColorFlat("Flat Color", color) = (0, 0.3, 1, 0)
     _ColorBase("Base Color", color) = (0, 0.1, .1, 0)
@@ -25,11 +26,12 @@ SubShader
 
     CGPROGRAM
 
-    #pragma surface surf Standard alpha addshadow fullforwardshadows vertex:disp
+    #pragma surface surf Standard alpha addshadow fullforwardshadows vertex:vert
     #pragma target 5.0
 
 sampler2D _DispTex;
 float4 _DispTex_TexelSize;
+float4 _MeshSpacing;
 fixed4 _Color;
 fixed4 _ColorFlat;
 fixed4 _ColorBase;
@@ -43,52 +45,82 @@ half _Glossiness;
 half _Metallic;
 float _Displacement;
 
-/*
-struct appdata 
-{
-    float4 vertex   : POSITION;
-    float4 tangent  : TANGENT;
-    float3 normal   : NORMAL;
-    float2 texcoord : TEXCOORD0;
-    float2 texcoord1 : TEXCOORD1;
-    float2 texcoord2 : TEXCOORD2;
-};
-*/
 
 struct Input 
 {
     float2 uv_DispTex;
 };
-/*
-float4 tessDistance(appdata v0, appdata v1, appdata v2) 
-{
-    return UnityDistanceBasedTess(v0.vertex, v1.vertex, v2.vertex, _MinDist, _MaxDist, _TessFactor);
-}
-*/
-void disp(inout appdata_full v)
+
+float vSample(float2 coord )
 {
     float hgt = 0;
     float vel = 0;
-    float3 p = v.vertex.xyz;
+    float3 duv = float3(_DispTex_TexelSize.xy, 0);
+
     if (_UseHeight > 0.5)
     {
-        hgt = tex2Dlod(_DispTex, float4(v.texcoord.xy, 0, 0)).r;
-        if (_UseSquare)
-            hgt *= hgt*.5;
+        hgt = tex2Dlod(_DispTex, float4(coord, 0, 0)).r;
+        if (_UseSquare > 0.5)
+            hgt *= hgt*.3;
     }
     if (_UseVelocity > 0.75)
     {
-        vel = tex2Dlod(_DispTex, float4(v.texcoord.xy, 0, 0)).g / _K;
-        if (_UseSquare)
-            vel *= vel*.75;
+        vel = tex2Dlod(_DispTex, float4(coord, 0, 0)).g / _K;
+        if (_UseSquare > 0.5)
+            vel *= vel*.3;
     }
-    p.y = (hgt + vel) * _Displacement;
-    v.vertex.xyz = p;
+    return (hgt + vel) * _Displacement;
 }
 
-float sq(float x)
+float4 vQuadSample(float2 coord)
 {
-    return (x * x);
+    float3 duv = float3(_MeshSpacing.yz,0);
+    float r = vSample(coord - duv.xz);
+    float l = vSample(coord + duv.xz);
+    float u = vSample(coord - duv.zy);
+    float d = vSample(coord + duv.zy);
+    return float4 (r,l,u,d);
+}
+
+float fSample(float2 coord, bool squared)
+{
+    float hgt = 0;
+    float vel = 0;
+    if (_UseHeight > 0.5)
+    {
+        hgt = tex2D(_DispTex, coord).r;
+        if (squared)
+        {
+            hgt *= hgt;
+        }
+    }
+    if (_UseVelocity > 0.5)
+    {
+        vel = tex2D(_DispTex, coord).g/ _K;
+        if (squared)
+        {
+            vel *= vel;
+        }
+    }
+    return hgt + vel;
+}
+
+float4 fQuadSample(float2 coord, float3 duv, bool squared)
+{
+    float r = fSample(coord - duv.xz, squared);
+    float l = fSample(coord + duv.xz, squared);
+    float u = fSample(coord - duv.zy, squared);
+    float d = fSample(coord + duv.zy, squared);
+    return float4 (r,l,u,d);
+}
+
+void vert(inout appdata_base v)
+{
+    v.vertex.y = vSample(v.texcoord.xy);
+    float4 delta = vQuadSample(v.texcoord.xy);
+    float d1 =  (delta.y - delta.x);
+    float d2 = (delta.w - delta.z);
+    v.normal = normalize(float3(d1,_MeshSpacing.x + _MeshSpacing.y,d2));
 }
 
 void surf(Input IN, inout SurfaceOutputStandard o) 
@@ -102,51 +134,21 @@ void surf(Input IN, inout SurfaceOutputStandard o)
     bool showVel = (_UseVelocity > 0.5);
 
     float3 duv = float3(_DispTex_TexelSize.xy, 0);
-    float value = 0;
-    float4 delta = float4(0,0,0,0);
+    float value = fSample(IN.uv_DispTex, showSquared);
     fixed4 theColor = _Color;
-    if (showAmp)
-    {
-        value = tex2D(_DispTex, IN.uv_DispTex).r;
-        delta = float4( tex2D(_DispTex, IN.uv_DispTex - duv.xz).r,
-                        tex2D(_DispTex, IN.uv_DispTex + duv.xz).r,
-                        tex2D(_DispTex, IN.uv_DispTex - duv.zy).r, 
-                        tex2D(_DispTex, IN.uv_DispTex + duv.zy).r);
-        if (showSquared)
-        {
-            value *= value;
-            delta *= delta;
-        }
-    }
-    if (showVel)
-    {
-        float valueV = tex2D(_DispTex, IN.uv_DispTex).g/ _K;
-        float4 deltaV = float4(tex2D(_DispTex, IN.uv_DispTex - duv.xz).g / _K,
-                        tex2D(_DispTex, IN.uv_DispTex + duv.xz).g / _K,
-                        tex2D(_DispTex, IN.uv_DispTex - duv.zy).g / _K,
-                        tex2D(_DispTex, IN.uv_DispTex + duv.zy).g / _K);
-        if (showSquared)
-        {
-            valueV *= valueV;
-            deltaV *= deltaV;
-        }
-        theColor = _ColorVel;
-        value += valueV;
-        delta += deltaV;
-    }
     if (showAmp && showVel)
-    {
        theColor = _ColorFlow;
-    }
-
-    float d1 = _Displacement * (delta.y - delta.x);
-    float d2 = _Displacement * (delta.w - delta.z);
-    o.Normal = normalize(float3(d1,2*_DispTex_TexelSize.x,d2));
+    else if (showVel)
+        theColor = _ColorVel;
+    //float4 delta = fQuadSample(IN.uv_DispTex, duv, showSquared);
+    //float d1 = _Displacement * (delta.y - delta.x);
+    //float d2 = _Displacement * (delta.w - delta.z);
+    //o.Normal = normalize(float3(d1,2*_DispTex_TexelSize.x,d2));
 
     if (showSquared)
     {
         o.Albedo = lerp(_ColorFlat, theColor, value*1.25);
-        o.Alpha = value + 0.2;
+        o.Alpha = value + 0.3;
     }
     else
     {

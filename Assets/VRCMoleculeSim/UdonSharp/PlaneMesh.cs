@@ -128,6 +128,8 @@ public class PlaneMesh : UdonSharpBehaviour
             MeshRenderer mr = GetComponent<MeshRenderer>();
             if (material != null)
             {
+                Vector4 ms = new Vector4(dimensions.x / resolution.x, dimensions.y / resolution.y, 1.0f / resolution.x, 1.0f / resolution.y);
+                material.SetVector("_MeshSpacing", ms);
                 mr.material = material;
             }
         }
