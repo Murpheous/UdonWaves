@@ -3,8 +3,10 @@
 
 Properties
 {
-    _DispTex("Disp Texture", 2D) = "gray" {}
-    _MeshSpacing("Mesh XY",Vector) = (0.003,0.003,0.00125,0.002) 
+    _WaveTex("Wave Texture", 2D) = "gray" {}
+    _MeshSpacing("Mesh XY",Vector) = (0.003,0.003,0.00125,0.002)
+    _VertexNormals("Use vertex heights",float) = 1
+    _SurfNormals("Use surface normals",float) = 0
     _Color("Color", color) = (1, 1, 0, 0)
     _ColorFlat("Flat Color", color) = (0, 0.3, 1, 0)
     _ColorBase("Base Color", color) = (0, 0.1, .1, 0)
@@ -23,15 +25,18 @@ SubShader
     {
 
     Tags { "Queue" = "Transparent" "RenderType" = "Transparent" }
+    Cull Off
 
     CGPROGRAM
 
     #pragma surface surf Standard alpha addshadow fullforwardshadows vertex:vert
     #pragma target 5.0
 
-sampler2D _DispTex;
-float4 _DispTex_TexelSize;
+sampler2D _WaveTex;
+float4 _WaveTex_TexelSize;
 float4 _MeshSpacing;
+float _VertexNormals;
+float _SurfNormals;
 fixed4 _Color;
 fixed4 _ColorFlat;
 fixed4 _ColorBase;
@@ -48,28 +53,62 @@ float _Displacement;
 
 struct Input 
 {
-    float2 uv_DispTex;
+    float2 uv_WaveTex;
 };
 
 float vSample(float2 coord )
 {
     float hgt = 0;
     float vel = 0;
-    float3 duv = float3(_DispTex_TexelSize.xy, 0);
+    float3 duv = float3(_WaveTex_TexelSize.xy, 0);
 
     if (_UseHeight > 0.5)
     {
-        hgt = tex2Dlod(_DispTex, float4(coord, 0, 0)).r;
+        hgt = tex2Dlod(_WaveTex, float4(coord, 0, 0)).r;
         if (_UseSquare > 0.5)
             hgt *= hgt*.3;
     }
     if (_UseVelocity > 0.75)
     {
-        vel = tex2Dlod(_DispTex, float4(coord, 0, 0)).g / _K;
+        vel = tex2Dlod(_WaveTex, float4(coord, 0, 0)).g / _K;
         if (_UseSquare > 0.5)
             vel *= vel*.3;
     }
     return (hgt + vel) * _Displacement;
+}
+
+
+float fSample(float2 coord, bool squared)
+{
+    float hgt = 0;
+    float vel = 0;
+    if (_UseHeight > 0.5)
+    {
+        hgt = tex2D(_WaveTex, coord).r;
+        if (squared)
+        {
+            hgt *= hgt;
+        }
+    }
+    if (_UseVelocity > 0.5)
+    {
+        vel = tex2D(_WaveTex, coord).g/ _K;
+        if (squared)
+        {
+            vel *= vel;
+        }
+    }
+    return hgt + vel;
+}
+
+
+float4 fQuadSample(float2 coord, float3 duv, bool squared)
+{
+    float r = fSample(coord - duv.xz, squared);
+    float l = fSample(coord + duv.xz, squared);
+    float u = fSample(coord - duv.zy, squared);
+    float d = fSample(coord + duv.zy, squared);
+    return float4 (r,l,u,d);
 }
 
 float4 vQuadSample(float2 coord)
@@ -82,45 +121,18 @@ float4 vQuadSample(float2 coord)
     return float4 (r,l,u,d);
 }
 
-float fSample(float2 coord, bool squared)
+void vert(inout appdata_full v)
 {
-    float hgt = 0;
-    float vel = 0;
-    if (_UseHeight > 0.5)
-    {
-        hgt = tex2D(_DispTex, coord).r;
-        if (squared)
-        {
-            hgt *= hgt;
-        }
-    }
-    if (_UseVelocity > 0.5)
-    {
-        vel = tex2D(_DispTex, coord).g/ _K;
-        if (squared)
-        {
-            vel *= vel;
-        }
-    }
-    return hgt + vel;
-}
 
-float4 fQuadSample(float2 coord, float3 duv, bool squared)
-{
-    float r = fSample(coord - duv.xz, squared);
-    float l = fSample(coord + duv.xz, squared);
-    float u = fSample(coord - duv.zy, squared);
-    float d = fSample(coord + duv.zy, squared);
-    return float4 (r,l,u,d);
-}
-
-void vert(inout appdata_base v)
-{
-    v.vertex.y = vSample(v.texcoord.xy);
-    float4 delta = vQuadSample(v.texcoord.xy);
-    float d1 =  (delta.y - delta.x);
-    float d2 = (delta.w - delta.z);
-    v.normal = normalize(float3(d1,_MeshSpacing.x + _MeshSpacing.y,d2));
+    if (_VertexNormals > 0.5)
+    {
+        float h = vSample(v.texcoord.xy);
+        float4 delta = vQuadSample(v.texcoord.xy);
+        float d1 =  (delta.y - delta.x);
+        float d2 = (delta.w - delta.z);
+        v.normal = normalize(float3(d1,_MeshSpacing.x + _MeshSpacing.y,d2));
+        v.vertex.y = (2*h + delta.x + delta.y + delta.z + delta.w)/6.0;
+    }
 }
 
 void surf(Input IN, inout SurfaceOutputStandard o) 
@@ -133,18 +145,20 @@ void surf(Input IN, inout SurfaceOutputStandard o)
     bool showAmp = (_UseHeight > 0.5);
     bool showVel = (_UseVelocity > 0.5);
 
-    float3 duv = float3(_DispTex_TexelSize.xy, 0);
-    float value = fSample(IN.uv_DispTex, showSquared);
+    float3 duv = float3(_WaveTex_TexelSize.xy, 0);
+    float value = fSample(IN.uv_WaveTex, showSquared);
     fixed4 theColor = _Color;
     if (showAmp && showVel)
        theColor = _ColorFlow;
     else if (showVel)
         theColor = _ColorVel;
-    //float4 delta = fQuadSample(IN.uv_DispTex, duv, showSquared);
-    //float d1 = _Displacement * (delta.y - delta.x);
-    //float d2 = _Displacement * (delta.w - delta.z);
-    //o.Normal = normalize(float3(d1,2*_DispTex_TexelSize.x,d2));
-
+    if (_SurfNormals > 0.5)
+    {
+        float4 delta = fQuadSample(IN.uv_WaveTex, duv, showSquared);
+        float d1 = _Displacement * (delta.y - delta.x);
+        float d2 = _Displacement * (delta.w - delta.z);
+        o.Normal = normalize(float3(d1,2*_WaveTex_TexelSize.x,d2));
+    }
     if (showSquared)
     {
         o.Albedo = lerp(_ColorFlat, theColor, value*1.25);

@@ -74,7 +74,9 @@ float4 fragNew(v2f_customrendertexture i) : SV_Target
     int maxX = _CustomRenderTextureWidth - 2;
     int maxY = _CustomRenderTextureHeight - 2;
     // Barrier & Boundaries
-    bool isOnObstacle = (O(pos).b > 0.5);
+    float3 Obs = O(pos).rgb;
+    bool isOnObstacle = (Obs.b > 0.5);
+    bool isUser = !isOnObstacle && ((Obs.r + Obs.g) > 0.1);
     bool atObstacleMaxX = (!isOnObstacle && (O(pos + duv.xz).b > 0.5));
     bool atObstacleMinX = (!isOnObstacle && (O(pos - duv.xz).b > 0.5));
     bool atObstacleMaxY = (!isOnObstacle && (O(pos + duv.zy).b > 0.5));
@@ -82,11 +84,14 @@ float4 fragNew(v2f_customrendertexture i) : SV_Target
     bool  inDriveRow = ((int)floor(_DriveSettings.x) == xPixel);
     bool  inDriveColumns = inDriveRow && ((floor(_DriveSettings.y) <= yPixel) && (floor(_DriveSettings.z) >= yPixel));
 
+
     if (inDriveColumns)
     {
         float tRadians = A(pos).a * _T2Radians;
         updated.x = _DriveAmplitude * sin(tRadians);
     }
+    else if (isUser)
+        updated.x=0;
     else if (!isOnObstacle)
     {
         if ((xPixel <= 1) || atObstacleMinX)

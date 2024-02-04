@@ -14,8 +14,29 @@ public class PlaneMesh : UdonSharpBehaviour
     [SerializeField]
     private Vector2 dimensions = new Vector2(1, 0.625f);
     [SerializeField]
-    private Vector2Int resolution = new Vector2Int(513, 320);
+    private Vector2Int highRes = new Vector2Int(640, 400);
+    [SerializeField]
+    private Vector2Int lowRes = new Vector2Int(16, 10);
+    [SerializeField,FieldChangeCallback(nameof(UseHighRes))]
+    public bool useHighRes = true;
+    public bool UseHighRes
+    {
+        get => useHighRes;
+        set
+        {
+            if (value != useHighRes)
+            {
+                useHighRes = value;
+            }
+            RequestSerialization();
+            if (useHighRes)
+                AssignBigMesh();
+            else
+                AssignSmallMesh();
+        }
+    }
 
+    /*
     public Vector2 Dimensions
     {
         get => dimensions;
@@ -30,7 +51,8 @@ public class PlaneMesh : UdonSharpBehaviour
             dimensions = value;
         }
     }
-
+    */
+    /*
     public Vector2Int Resolution
     {
         get => resolution;
@@ -45,53 +67,104 @@ public class PlaneMesh : UdonSharpBehaviour
             resolution = value;
         }
     }
-
+    */
 
     public Material material;
     bool isInitialized = false;
 
-    Mesh theMesh;
+    Mesh smallMesh;
+    Mesh bigMesh;
     MeshFilter mf;
 
     Vector3[] vertices;
     Vector2[] uvs;
     int[] triangles;
 
-    bool AssignPlane()
+    bool AssignBigMesh()
     {
         if (mf == null)
             mf = GetComponent<MeshFilter>();
         if (mf == null)
             return false;
-
-        theMesh = new Mesh();
-        if (triangles.Length >= 32767)
-            theMesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
-        theMesh.vertices = vertices;
-        theMesh.triangles = triangles;
-        theMesh.uv = uvs;
-        //theMesh.RecalculateNormals();
-        mf.mesh = theMesh;
-        triangles = null;
-        vertices = null;
-        uvs = null;
+        if (bigMesh == null)
+            ConstructBigMesh();
+        if (bigMesh == null)
+            return false;
+        mf.mesh = bigMesh;
+        if (material != null)
+        {
+            Vector4 ms = new Vector4(dimensions.x / highRes.x, dimensions.y / highRes.y, 1.0f / highRes.x, 1.0f / highRes.y);
+            material.SetVector("_MeshSpacing", ms);
+        }
         return true;
     }
-    bool CalculatePlaneDefinition()
+
+    bool AssignSmallMesh()
     {
-        if ((resolution.x <= 0) || (resolution.y <= 0) || (dimensions.x <= 0) || (dimensions.y <= 0))
+        if (mf == null)
+            mf = GetComponent<MeshFilter>();
+        if (mf == null)
             return false;
-        int vertLen = (resolution.x+1) * (resolution.y + 1);
+        if (smallMesh == null)
+            ConstructSmallMesh();
+        if (smallMesh == null)
+            return false;
+        mf.mesh = smallMesh;
+        if (material != null)
+        {
+            Vector4 ms = new Vector4(dimensions.x / lowRes.x, dimensions.y / lowRes.y, 1.0f / lowRes.x, 1.0f / lowRes.y);
+            material.SetVector("_MeshSpacing", ms);
+        }
+        return true;
+    }
+
+    private void ConstructSmallMesh()
+    {
+        if (CalculatePlaneDefinition(lowRes))
+        {
+            smallMesh = new Mesh();
+            if (triangles.Length >= 32767)
+                smallMesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
+            smallMesh.vertices = vertices;
+            smallMesh.triangles = triangles;
+            smallMesh.uv = uvs;
+            triangles = null;
+            vertices = null;
+            uvs = null;
+        }
+    }
+
+    private void ConstructBigMesh()
+    {
+        if (CalculatePlaneDefinition(highRes))
+        {
+            bigMesh = new Mesh();
+            if (triangles.Length >= 32767)
+                bigMesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
+            bigMesh.vertices = vertices;
+            bigMesh.triangles = triangles;
+            bigMesh.uv = uvs;
+            triangles = null;
+            vertices = null;
+            uvs = null;
+        }
+    }
+
+    bool CalculatePlaneDefinition(Vector2Int res)
+    {
+        if ((res.x <= 0) || (res.y <= 0) || (dimensions.x <= 0) || (dimensions.y <= 0))
+            return false;
+        int vertLen = (res.x+1) * (res.y + 1);
         vertices = new Vector3[vertLen];
         uvs = new Vector2[vertLen];
-        float xPitch = dimensions.x / resolution.x;
-        float yPitch = dimensions.y / resolution.y;
+        float xPitch = dimensions.x / res.x;
+        float yPitch = dimensions.y / res.y;
         float xOffset = dimensions.x / 2;
         float yOffset = dimensions.y / 2;
         int nVertex = 0;
-        for (int y = 0; y < resolution.y + 1; y++)
+        for (int y = 0; y < res.y + 1; y++)
         {
-            for (int x = 0; x < resolution.x + 1; x++)
+            for (int x = 0; x < res.x + 1; x++)
             {
                 vertices[nVertex] = new Vector3(xOffset - x * xPitch, 0, yOffset - y * yPitch);
                 uvs[nVertex] = new Vector2(x * xPitch / dimensions.x, y * yPitch / dimensions.y);
@@ -99,20 +172,20 @@ public class PlaneMesh : UdonSharpBehaviour
             }
         }
 
-        triangles = new int[resolution.x*resolution.y*6];
+        triangles = new int[res.x*res.y*6];
         int nTriangle = 0;
-        for (int row = 0; row < resolution.y; row++)
+        for (int row = 0; row < res.y; row++)
         {
-            for (int col = 0; col < resolution.x; col++)
+            for (int col = 0; col < res.x; col++)
             {
-                int i = row * resolution.x + row + col;
+                int i = row * res.x + row + col;
                 // First Triangle
                 triangles[nTriangle++] = i;
-                triangles[nTriangle++] = (i + 1 + resolution.x);
-                triangles[nTriangle++] = (i + 2 + resolution.x);
+                triangles[nTriangle++] = (i + 1 + res.x);
+                triangles[nTriangle++] = (i + 2 + res.x);
                 // Second Triangle
                 triangles[nTriangle++] = i;
-                triangles[nTriangle++] = (i + 2 + resolution.x);
+                triangles[nTriangle++] = (i + 2 + res.x);
                 triangles[nTriangle++] = (i + 1);
             }
         }
@@ -121,18 +194,15 @@ public class PlaneMesh : UdonSharpBehaviour
 
     private void Start()
     {
-        CalculatePlaneDefinition();
-        AssignPlane();
+        ConstructSmallMesh();
+        ConstructBigMesh();
         if (mf !=  null)
         {
             MeshRenderer mr = GetComponent<MeshRenderer>();
             if (material != null)
-            {
-                Vector4 ms = new Vector4(dimensions.x / resolution.x, dimensions.y / resolution.y, 1.0f / resolution.x, 1.0f / resolution.y);
-                material.SetVector("_MeshSpacing", ms);
                 mr.material = material;
-            }
         }
+        UseHighRes = useHighRes;
     }
 
 }
