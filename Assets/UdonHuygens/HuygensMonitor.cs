@@ -7,8 +7,8 @@ using VRC.Udon;
 [UdonBehaviourSyncMode(BehaviourSyncMode.Manual)]
 public class HuygensMonitor : UdonSharpBehaviour
 {
-    [SerializeField] CustomRenderTexture simCRT;
-    [SerializeField] bool useCRT = false;
+    [SerializeField, Tooltip("Custom Render texture (only if required)")] CustomRenderTexture simCRT;
+    [SerializeField, Tooltip("Use Render texture mode")] bool useCRT = false;
     [Tooltip("Simulation Material")] public Material matSIM = null;
     [Tooltip("DisplayPanel")] public MeshRenderer thePanel;
     [SerializeField,FieldChangeCallback(nameof(DisplayMode))]
