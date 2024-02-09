@@ -5,7 +5,7 @@ Properties
 {
     _WaveTex("Wave Texture", 2D) = "gray" {}
     _MeshSpacing("Mesh XY",Vector) = (0.003,0.003,0.00125,0.002)
-    _VertexNormals("Use vertex heights",float) = 1
+    _VertexNormals("Use vertex normals",float) = 1
     _SurfNormals("Use surface normals",float) = 0
     _Color("Color", color) = (1, 1, 0, 0)
     _ColorFlat("Flat Color", color) = (0, 0.3, 1, 0)
@@ -128,7 +128,7 @@ void vert(inout appdata_full v)
     {
         float h = vSample(v.texcoord.xy);
         float4 delta = vQuadSample(v.texcoord.xy);
-        float d1 =  (delta.y - delta.x);
+        float d1 =  (delta.x - delta.y);
         float d2 = (delta.w - delta.z);
         v.normal = normalize(float3(d1,_MeshSpacing.x + _MeshSpacing.y,d2));
         v.vertex.y = (2*h + delta.x + delta.y + delta.z + delta.w)/6.0;
@@ -155,7 +155,7 @@ void surf(Input IN, inout SurfaceOutputStandard o)
     if (_SurfNormals > 0.5)
     {
         float4 delta = fQuadSample(IN.uv_WaveTex, duv, showSquared);
-        float d1 = _Displacement * (delta.y - delta.x);
+        float d1 = _Displacement * (delta.x - delta.y);
         float d2 = _Displacement * (delta.w - delta.z);
         o.Normal = normalize(float3(d1,2*_WaveTex_TexelSize.x,d2));
     }

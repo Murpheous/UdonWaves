@@ -1231,11 +1231,13 @@ public class MoleculeExperiment : UdonSharpBehaviour
         {
             targetPosition = targetTransform.position;
         }
-        // Initialise checkboxes if present.
+        // Forces initialise checkboxes if present.
         UseGravity = useGravity;
         UseQuantumScatter = useQuantumScatter;
+        UseMonochrome = useMonochrome;
         GravityIndex = gravityIndex;
         PlanckIndex = planckIndex;
+        // Forces review of settngs after start
         gravityChanged = true;
         settingsChanged = true;
         trajectoryChanged = true;

@@ -45,7 +45,7 @@ public class SyncedToggle : UdonSharpBehaviour
     public void setState(bool state = false)
     {
         currentState = state;
-        reportedState |= state;
+        reportedState = state;
         if (hasToggle)
         {
             if (toggle.isOn != state)

@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: MAT_WaterSurf
-  m_Shader: {fileID: 4800000, guid: 70a95831812e04d4e8ac7c09152b1b76, type: 3}
+  m_Name: LeftWallCRT_Display
+  m_Shader: {fileID: 4800000, guid: 0eb0e8585d06c9d4eac4fff7f517a976, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -16,7 +16,7 @@ Material:
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 2999
+  m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses: []
   m_LockedProperties: 
@@ -39,16 +39,12 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _DispTex:
-        m_Texture: {fileID: 8600000, guid: be8c672ce9314b1409c245d2c813b108, type: 2}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     - _EmissionMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 8600000, guid: e8e7dd6a3b595d746b22a8beea84d7d4, type: 2}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -63,8 +59,8 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _WaveTex:
-        m_Texture: {fileID: 8600000, guid: be8c672ce9314b1409c245d2c813b108, type: 2}
+    - _WaveMesh:
+        m_Texture: {fileID: 8600000, guid: e8e7dd6a3b595d746b22a8beea84d7d4, type: 2}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
@@ -72,42 +68,33 @@ Material:
     - _BumpScale: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
-    - _Displacement: 0.002
+    - _DisplayMode: 5
     - _DstBlend: 0
     - _GlossMapScale: 1
-    - _Glossiness: 0.875
+    - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _K: 0.43084702
-    - _MaxDist: 29.6
-    - _Metallic: 0.713
-    - _MinDist: 0.1
+    - _LambdaPx: 49.642857
+    - _Metallic: 0
     - _Mode: 0
+    - _NumSources: 2
     - _OcclusionStrength: 1
+    - _OutputRaw: 0
     - _Parallax: 0.02
-    - _ShowAmpSquared: 0.015
-    - _ShowEnergy: 0
+    - _Phase: 0
+    - _PhaseSpeed: 1
+    - _Scale: 1
+    - _SlitPitchPx: 448
+    - _SlitWidePx: 12
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
-    - _SurfNormals: 1
-    - _TessFactor: 50
     - _UVSec: 0
-    - _UseHeight: 1
-    - _UseSquare: 0
-    - _UseVelocity: 0
-    - _VertexNormals: 0
-    - _ViewSelection: 0
+    - _WaveStrength: 0.01
     - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 0.61902934, g: 1, b: 0.23113209, a: 1}
-    - _ColorBase: {r: 0, g: 0.16860181, b: 0.38679248, a: 1}
-    - _ColorEnergy: {r: 1, g: 0.29999998, b: 0, a: 1}
-    - _ColorFlat: {r: 0, g: 0.35306427, b: 0.7264151, a: 1}
-    - _ColorFlow: {r: 1, g: 0.2216981, b: 0.8702831, a: 1}
-    - _ColorNeg: {r: 0.2854267, g: 0, b: 0.5754717, a: 1}
-    - _ColorVel: {r: 1, g: 0.7124893, b: 0, a: 0.5529412}
+    - _Color: {r: 0.3882353, g: 0.7921569, b: 0.99215686, a: 1}
+    - _ColorFlow: {r: 0.99215686, g: 0.27450982, b: 0.7294118, a: 1}
+    - _ColorNeg: {r: 0.24705882, g: 0.2, b: 0.4627451, a: 1}
+    - _ColorVel: {r: 1, g: 0.7058824, b: 0.41960785, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _MeshSize: {r: 0.00375, g: 0.00375, b: 0.0015625, a: 0.0025}
-    - _MeshSpacing: {r: 0.003, g: 0.003, b: 0.00125, a: 0.002}
-    - _SpecColor: {r: 0.5, g: 0.5, b: 0.5, a: 0.5}
   m_BuildTextureStacks: []

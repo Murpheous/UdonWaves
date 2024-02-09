@@ -1,9 +1,7 @@
-﻿using System.Diagnostics;
-using System.Diagnostics.Contracts;
-using TMPro;
-using UdonSharp;
+﻿using UdonSharp;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 using VRC.SDKBase;
 using VRC.Udon;
 
@@ -11,10 +9,12 @@ using VRC.Udon;
 
 public class WavePanelControl : UdonSharpBehaviour
 {
-    [Tooltip("Wave Display Mesh")] public MeshRenderer thePanel;
-    private Material matSIM = null;
-    private bool iHaveSimMaterial = false;
- 
+    [SerializeField, Tooltip("Custom Render texture")]
+    private CustomRenderTexture simCRT;
+
+    [Tooltip("Wave Display Mesh")] 
+    public MeshRenderer thePanel;
+
     [SerializeField] UdonSlider speedSlider;
     [SerializeField] public bool speedPtr = false;
     private bool iHaveSpeedControl = false;
@@ -24,6 +24,7 @@ public class WavePanelControl : UdonSharpBehaviour
     [SerializeField] Toggle togPlay;
     [SerializeField,UdonSynced, FieldChangeCallback(nameof(PlaySim))] bool playSim;
 
+    [Header("Display Mode")]
     [SerializeField, UdonSynced, FieldChangeCallback(nameof(DisplayMode))]
     public int displayMode;
 
@@ -34,7 +35,9 @@ public class WavePanelControl : UdonSharpBehaviour
     [SerializeField] Toggle togRealPwr;
     bool iHaveTogRealPwr = false;
     [SerializeField] Toggle togImPwr;
-    bool iHaveToImPwr = false;
+    bool iHaveTogImPwr = false;
+    [SerializeField] Toggle togAmplitude;
+    bool iHaveTogAmp = false;
     [SerializeField] Toggle togProbability;
     bool iHaveTogProb = false;
 
@@ -73,10 +76,76 @@ public class WavePanelControl : UdonSharpBehaviour
     [SerializeField, Range(1, 10)] float defaultScale = 24;
     [SerializeField, Range(1, 10), UdonSynced, FieldChangeCallback(nameof(SimScale))] public float simScale = 24;
 
+    [Header("Serialized for monitoring in Editor")]
+    [SerializeField]
+    private Material matPanel = null;
+    [SerializeField]
+    private Material matSimControl = null;
+    [SerializeField]
+    private Material matSimDisplay = null;
+    [SerializeField, Tooltip("Check to invoke CRT Update")]
+    private bool crtUpdateNeeded = false;
+    [SerializeField]
+    private bool iHaveCRT = false;
+    [SerializeField]
+    private bool iHavePanelMaterial = false;
+    [SerializeField]
+    private bool iHaveSimDisplay = false;
+    [SerializeField]
+    private bool iHaveSimControl = false;
+
+    private void configureSimControl(bool vanillaDisplay)
+    {
+        if (vanillaDisplay)
+        { 
+            if (iHaveCRT)
+            { // Display mode and wave speed controls get handled by the panel material
+                matSimDisplay = simCRT.material;
+                matSimControl = simCRT.material;
+                simCRT.material.SetFloat("_OutputRaw", 0);
+            }
+            else
+            {
+                // No CRT and not a compatible display
+                matSimDisplay = null;
+                matSimControl = null;
+                Debug.Log("Warning:configureSimControl() no Interference control/display material");
+            }
+        }
+        else 
+        {
+            if (iHaveCRT)
+            { // Display mode and wave speed controls get handled by the CRT
+                matSimDisplay = matPanel;
+                matSimControl = simCRT.material;
+                if (iHaveCRT && iHaveSimControl)
+                    matSimControl.SetFloat("_OutputRaw", 1);
+            }
+            else
+            {
+                matSimDisplay = matPanel;
+                matSimControl = matPanel;
+            }
+
+        }
+        iHaveSimControl = matSimControl != null;
+        iHaveSimDisplay = matSimDisplay != null;
+    }
+
+    private bool PanelHasVanillaMaterial
+    {
+        get
+        {
+            if (!iHavePanelMaterial)
+                return true;
+            return !matPanel.HasProperty("_DisplayMode");
+        }
+    }
+
     private void UpdatePhaseSpeed()
     {
-        if (iHaveSimMaterial)
-            matSIM.SetFloat("_PhaseSpeed", playSim ? waveSpeed * defaultLambda / lambda : 0f);
+        if (iHaveSimDisplay)
+            matSimDisplay.SetFloat("_PhaseSpeed", playSim ? waveSpeed * defaultLambda / lambda : 0f);
     }
 
     float WaveSpeed
@@ -107,18 +176,18 @@ public class WavePanelControl : UdonSharpBehaviour
 
     private void updateGrating()
     {
-        if (!iHaveSimMaterial)
+        if (!iHaveSimControl)
             return;
-        matSIM.SetFloat("_SlitPitchPx", slitPitch);
+        matSimControl.SetFloat("_SlitPitchPx", slitPitch);
         if (numSources > 1 && slitPitch <= slitWidth)
         {
             float gratingWidth = (numSources - 1) * slitPitch + slitWidth;
-            matSIM.SetFloat("_NumSources", 1f);
-            matSIM.SetFloat("_SlitWidePx", gratingWidth);
+            matSimControl.SetFloat("_NumSources", 1f);
+            matSimControl.SetFloat("_SlitWidePx", gratingWidth);
             return;
         }
-        matSIM.SetFloat("_NumSources", numSources);
-        matSIM.SetFloat("_SlitWidePx", slitWidth);
+        matSimControl.SetFloat("_NumSources", numSources);
+        matSimControl.SetFloat("_SlitWidePx", slitWidth);
     }
     public int NumSources
     {
@@ -153,8 +222,8 @@ public class WavePanelControl : UdonSharpBehaviour
         set
         {
             displayMode = value;
-            if (iHaveSimMaterial)
-                matSIM.SetFloat("_DisplayMode", value);
+            if (iHaveSimDisplay)
+                matSimDisplay.SetFloat("_DisplayMode", value);
             switch (displayMode)
             {
                 case 0:
@@ -170,10 +239,13 @@ public class WavePanelControl : UdonSharpBehaviour
                         togImaginary.isOn = true;
                     break;
                 case 3:
-                    if (iHaveToImPwr && !togImPwr.isOn)
+                    if (iHaveTogImPwr && !togImPwr.isOn)
                         togImPwr.isOn = true;
                     break;
                 case 4:
+                    if (iHaveTogAmp && !togAmplitude.isOn)
+                        togAmplitude.isOn = true;
+                    break;
                 default:
                     if (iHaveTogProb && !togProbability.isOn)
                         togProbability.isOn = true;
@@ -200,8 +272,8 @@ public class WavePanelControl : UdonSharpBehaviour
         set
         {
             lambda = value;
-            if (iHaveSimMaterial)
-                matSIM.SetFloat("_LambdaPx", lambda);
+            if (iHaveSimControl)
+                matSimControl.SetFloat("_LambdaPx", lambda);
             if (!lambdaPtr && iHaveLambdaControl)
                     lambdaSlider.SetValue(value);
             UpdatePhaseSpeed();
@@ -243,8 +315,8 @@ public class WavePanelControl : UdonSharpBehaviour
         set
         {
             simScale = value;
-            if (iHaveSimMaterial)
-                matSIM.SetFloat("_Scale", simScale);
+            if (iHaveSimControl)
+                matSimControl.SetFloat("_Scale", simScale);
             if (!scalePtr && iHaveScaleControl)
                 scaleSlider.SetValue(value);
             RequestSerialization();
@@ -268,50 +340,66 @@ public class WavePanelControl : UdonSharpBehaviour
             DisplayMode = 1;
             return;
         }
-        if (iHaveToImPwr && togImPwr.isOn && displayMode != 3)
+        if (iHaveTogImPwr && togImPwr.isOn && displayMode != 3)
         {
             DisplayMode = 3;
             return;
         }
-        if (iHaveTogProb && togProbability.isOn && displayMode != 4)
+        if (iHaveTogAmp && togAmplitude.isOn && displayMode != 4)
         {
             DisplayMode = 4;
+            return;
+        }
+        if (iHaveTogProb && togProbability.isOn && displayMode != 5)
+        {
+            DisplayMode = 5;
             return;
         }
     }
 
     void Start()
     {
+        iHaveTogReal = togReal != null;
+        iHaveTogIm = togImaginary != null;
+        iHaveTogRealPwr = togRealPwr != null;
+        iHaveTogImPwr = togImPwr != null;
+        iHaveTogProb = togProbability != null;
+        iHaveTogAmp = togAmplitude != null;
+
         if (thePanel != null)
-            matSIM = thePanel.material;
-        iHaveSimMaterial = matSIM != null;
-        if (iHaveSimMaterial)
+            matPanel = thePanel.material;
+        iHavePanelMaterial = matPanel != null;
+
+        if (simCRT != null)
         {
-            defaultWidth = matSIM.GetFloat("_SlitWidePx");
-            defaultLambda = matSIM.GetFloat("_LambdaPx");
-            defaultScale = matSIM.GetFloat("_Scale");
-            defaultSpeed = matSIM.GetFloat("_PhaseSpeed");
-            defaultPitch = matSIM.GetFloat("_SlitPitchPx"); 
-            defaultSources = Mathf.RoundToInt(matSIM.GetFloat("_NumSources"));
+            iHaveCRT = true;
+            simCRT.Initialize();
         }
+        configureSimControl(PanelHasVanillaMaterial);
+        if (iHaveSimControl)
+        {
+            defaultWidth = matSimControl.GetFloat("_SlitWidePx");
+            defaultLambda = matSimControl.GetFloat("_LambdaPx");
+            defaultScale = matSimControl.GetFloat("_Scale");
+            defaultPitch = matSimControl.GetFloat("_SlitPitchPx"); 
+            defaultSources = Mathf.RoundToInt(matSimControl.GetFloat("_NumSources"));
+        }
+        defaultSpeed = waveSpeed;
+        if (!iHaveCRT && iHaveSimDisplay)
+            defaultSpeed = matSimDisplay.GetFloat("_PhaseSpeed");
+
         slitPitch = defaultPitch;
         slitWidth = defaultWidth;
         numSources = defaultSources;
 
-        iHaveTogReal = togReal != null;
-        iHaveTogIm = togImaginary  != null;
-        iHaveTogRealPwr = togRealPwr != null;
-        iHaveToImPwr = togImPwr != null;
-        iHaveTogProb = togProbability  != null;
+
         iHaveWidthControl = widthSlider != null;
         iHaveSpeedControl = speedSlider != null;
         iHaveLambdaControl = lambdaSlider != null;
         iHaveScaleControl = scaleSlider != null;
         iHavePitchControl = pitchSlider != null;
-        if (iHaveSimMaterial)
-        {
-            DisplayMode = Mathf.RoundToInt(matSIM.GetFloat("_DisplayMode"));
-        }
+        if (iHaveSimDisplay)
+            DisplayMode = Mathf.RoundToInt(matSimDisplay.GetFloat("_DisplayMode"));
 
         Lambda = defaultLambda;
         WaveSpeed = defaultSpeed;

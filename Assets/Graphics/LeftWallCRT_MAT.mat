@@ -7,18 +7,14 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: M_SingleII
-  m_Shader: {fileID: 4800000, guid: 6b4e6b2e154cd25488855c6df089e0ce, type: 3}
+  m_Name: LeftWallCRT_MAT
+  m_Shader: {fileID: 4800000, guid: 10afa14e8319035469e7d527132bce9e, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
-  m_InvalidKeywords:
-  - _ALPHAPREMULTIPLY_ON
-  - _EMISSION
-  - _GLOSSYREFLECTIONS_OFF
-  - _SPECULARHIGHLIGHTS_OFF
-  m_LightmapFlags: 0
-  m_EnableInstancingVariants: 1
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
   stringTagMap: {}
@@ -43,16 +39,12 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _Displacement:
+    - _EmissionMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _EmissionMap:
-        m_Texture: {fileID: 8600000, guid: 6abd3b16618eec241ad540e317cb3106, type: 2}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 7ddaf38d6b1a3e0499d5d20c97d4dc5e, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -67,59 +59,36 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _WaveSurface:
-        m_Texture: {fileID: 8600000, guid: 6abd3b16618eec241ad540e317cb3106, type: 2}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _BUILTIN_QueueControl: 0
-    - _BUILTIN_QueueOffset: 0
     - _BumpScale: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DisplayMode: 5
-    - _DstBlend: 10
-    - _GlossMapScale: 0.39
+    - _DstBlend: 0
+    - _GlossMapScale: 1
     - _Glossiness: 0.5
-    - _GlossyReflections: 0
+    - _GlossyReflections: 1
     - _LambdaPx: 10
-    - _LeftPx: 1
-    - _Metallic: 0.656
-    - _Mode: 3
+    - _Metallic: 0
+    - _Mode: 0
     - _NumSources: 2
     - _OcclusionStrength: 1
+    - _OutputRaw: 1
     - _Parallax: 0.02
-    - _PhaseSpeed: 1
+    - _Phase: 0
     - _Scale: 10
     - _SlitPitchPx: 250
     - _SlitWidePx: 40
     - _SmoothnessTextureChannel: 0
-    - _SpecularHighlights: 0
+    - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _UVSec: 0
-    - _WaveStrength: 0
-    - _ZWrite: 0
-    - _mmHigh: 512
-    - _mmWide: 2048
+    - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 0.38781592, g: 0.7913096, b: 0.990566, a: 1}
-    - _ColorFlow: {r: 0.99215686, g: 0.2745098, b: 0.72892576, a: 1}
+    - _Color: {r: 0.3882353, g: 0.7921569, b: 0.99215686, a: 1}
+    - _ColorFlow: {r: 0.99215686, g: 0.27450982, b: 0.7294118, a: 1}
     - _ColorNeg: {r: 0.24705882, g: 0.2, b: 0.4627451, a: 1}
-    - _ColorVel: {r: 1, g: 0.7067149, b: 0.4198113, a: 1}
-    - _EmissionColor: {r: 0.53459114, g: 0.85383856, b: 1, a: 1}
-    - _IdleShade: {r: 1, g: 1, b: 1, a: 1}
+    - _ColorVel: {r: 1, g: 0.7058824, b: 0.41960785, a: 1}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
   m_BuildTextureStacks: []
---- !u!114 &3235155610083451853
-MonoBehaviour:
-  m_ObjectHideFlags: 11
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 639247ca83abc874e893eb93af2b5e44, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  version: 0

@@ -70,8 +70,7 @@ public class PlaneMesh : UdonSharpBehaviour
     */
 
     public Material material;
-    bool isInitialized = false;
-
+    
     Mesh smallMesh;
     Mesh bigMesh;
     MeshFilter mf;
@@ -162,12 +161,17 @@ public class PlaneMesh : UdonSharpBehaviour
         float xOffset = dimensions.x / 2;
         float yOffset = dimensions.y / 2;
         int nVertex = 0;
+        float xPos = 0;
+        float yPos = 0;
+
         for (int y = 0; y < res.y + 1; y++)
         {
+            yPos = y * xPitch;
             for (int x = 0; x < res.x + 1; x++)
             {
-                vertices[nVertex] = new Vector3(xOffset - x * xPitch, 0, yOffset - y * yPitch);
-                uvs[nVertex] = new Vector2(x * xPitch / dimensions.x, y * yPitch / dimensions.y);
+                xPos = x * xPitch;
+                vertices[nVertex] = new Vector3(xPos - xOffset, 0, yOffset - yPos);
+                uvs[nVertex] = new Vector2(xPos / dimensions.x, yPos / dimensions.y);
                 nVertex++;
             }
         }
