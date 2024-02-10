@@ -142,10 +142,10 @@ public class WavePanelControl : UdonSharpBehaviour
         }
     }
 
-    private void UpdatePhaseSpeed()
+    private void UpdateWaveSpeed()
     {
         if (iHaveSimDisplay)
-            matSimDisplay.SetFloat("_PhaseSpeed", playSim ? waveSpeed * defaultLambda / lambda : 0f);
+            matSimDisplay.SetFloat("_Frequency", playSim ? waveSpeed * defaultLambda / lambda : 0f);
     }
 
     float WaveSpeed
@@ -156,7 +156,7 @@ public class WavePanelControl : UdonSharpBehaviour
             waveSpeed = Mathf.Clamp(value,0,5);
             if (!speedPtr && iHaveSpeedControl)
                 speedSlider.SetValue(waveSpeed);
-            UpdatePhaseSpeed();
+            UpdateWaveSpeed();
             RequestSerialization();
         }
     }
@@ -169,7 +169,7 @@ public class WavePanelControl : UdonSharpBehaviour
             playSim = value;
             if (togPlay != null && togPlay.isOn != value)
                 togPlay.isOn = value;
-            UpdatePhaseSpeed();
+            UpdateWaveSpeed();
             RequestSerialization();
         }
     }
@@ -276,7 +276,7 @@ public class WavePanelControl : UdonSharpBehaviour
                 matSimControl.SetFloat("_LambdaPx", lambda);
             if (!lambdaPtr && iHaveLambdaControl)
                     lambdaSlider.SetValue(value);
-            UpdatePhaseSpeed();
+            UpdateWaveSpeed();
             RequestSerialization();
         }
     }
@@ -386,7 +386,7 @@ public class WavePanelControl : UdonSharpBehaviour
         }
         defaultSpeed = waveSpeed;
         if (!iHaveCRT && iHaveSimDisplay)
-            defaultSpeed = matSimDisplay.GetFloat("_PhaseSpeed");
+            defaultSpeed = matSimDisplay.GetFloat("_Frequency");
 
         slitPitch = defaultPitch;
         slitWidth = defaultWidth;

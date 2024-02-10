@@ -1684,7 +1684,7 @@ GameObject:
   - component: {fileID: 5632751262418528507}
   - component: {fileID: 4683153376964916738}
   m_Layer: 17
-  m_Name: UI Canvas
+  m_Name: Wave Sim Control
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1795,6 +1795,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4683153376964916738}
+  simCRT: {fileID: 0}
   thePanel: {fileID: 0}
   speedSlider: {fileID: 5069859427971716785}
   speedPtr: 0
@@ -1825,6 +1826,14 @@ MonoBehaviour:
   scalePtr: 0
   defaultScale: 1
   simScale: 1
+  matPanel: {fileID: 0}
+  matSimControl: {fileID: 0}
+  matSimDisplay: {fileID: 0}
+  crtUpdateNeeded: 0
+  iHaveCRT: 0
+  iHavePanelMaterial: 0
+  iHaveSimDisplay: 0
+  iHaveSimControl: 0
 --- !u!114 &4683153376964916738
 MonoBehaviour:
   m_ObjectHideFlags: 0

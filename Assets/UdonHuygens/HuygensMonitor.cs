@@ -29,6 +29,13 @@ public class HuygensMonitor : UdonSharpBehaviour
     // Timing
     [SerializeField, Range(0.01f, 0.2f)] float dt = 0.1f;
     [Header("Controls")]
+    [SerializeField, UdonSynced, FieldChangeCallback(nameof(WaveSpeed))] public float waveSpeed;
+    [SerializeField] float defaultSpeed = 1;
+
+    [SerializeField] UdonSlider speedSlider;
+    [SerializeField] public bool speedPtr = false;
+    private bool iHaveSpeedControl = false;
+
     [SerializeField]
     private SyncedSlider lambdaSlider;
     private bool iHaveLambdaControl = false;
@@ -213,7 +220,7 @@ public class HuygensMonitor : UdonSharpBehaviour
                 if ((!isStarted || lambdaSlider.CurrentValue != value) && !lambdaPtr)
                     lambdaSlider.CurrentValue = value;
             }
-            UpdatePhaseSpeed();
+            UpdateWaveSpeed();
             updateNeeded = true;
             RequestSerialization();
         } 
@@ -279,10 +286,23 @@ public class HuygensMonitor : UdonSharpBehaviour
 
     float waveTime = 0;
     float delta;
-    private void UpdatePhaseSpeed()
+    private void UpdateWaveSpeed()
     {
         if (iHaveSimMaterial && !useCRT)
-            matSIM.SetFloat("_PhaseSpeed", playSim ? defaultLambda/lambda : 0);
+            matSIM.SetFloat("_Frequency", playSim ? waveSpeed * defaultLambda/lambda : 0);
+    }
+
+    float WaveSpeed
+    {
+        get => waveSpeed;
+        set
+        {
+            waveSpeed = Mathf.Clamp(value, 0, 5);
+            if (!speedPtr && iHaveSpeedControl)
+                speedSlider.SetValue(waveSpeed);
+            UpdateWaveSpeed();
+            RequestSerialization();
+        }
     }
 
     [SerializeField, FieldChangeCallback(nameof(PlaySim))]
@@ -293,7 +313,7 @@ public class HuygensMonitor : UdonSharpBehaviour
         set
         {
             playSim = value;
-            UpdatePhaseSpeed();
+            UpdateWaveSpeed();
         }
     }
     bool updateNeeded = false;
@@ -322,11 +342,8 @@ public class HuygensMonitor : UdonSharpBehaviour
                 phaseTime += 1;
             if ( waveTime < 0)
             {
-                if (iHaveSimMaterial)
-                    matSIM.SetFloat("_Phase", phaseTime);
                 waveTime += dt;
-                if (useCRT)
-                    UpdateWaves();
+                UpdateWaves();
             }
         }
         if (updateNeeded)
@@ -339,10 +356,13 @@ public class HuygensMonitor : UdonSharpBehaviour
         iHaveWidthControl = widthSlider != null;
         iHaveLambdaControl = lambdaSlider != null;
         iHaveScaleControl = scaleSlider != null;
+        iHaveSpeedControl = speedSlider != null;
+
         defaultLambda = lambda;
         defaultPitch = slitPitch;
         defaultScale = simScale;
         defaultWidth = slitWidth;
+
         mmToPixels = simResolution.x/panelWidth;
         player = Networking.LocalPlayer;
         iAmOwner = Networking.IsOwner(this.gameObject);
@@ -361,6 +381,8 @@ public class HuygensMonitor : UdonSharpBehaviour
             matSIM = thePanel.material;
         }
         iHaveSimMaterial = matSIM != null;
+        if (iHaveSimMaterial)
+            defaultSpeed = matSIM.GetFloat("_Frequency");
         if (iHaveLambdaControl)
             lambdaSlider.SetValues(lambda, 30, 80);
         if (iHavePitchControl)
