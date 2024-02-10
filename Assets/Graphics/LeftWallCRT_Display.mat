@@ -43,6 +43,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _IdleTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _MainTex:
         m_Texture: {fileID: 8600000, guid: e8e7dd6a3b595d746b22a8beea84d7d4, type: 2}
         m_Scale: {x: 1, y: 1}
@@ -70,10 +74,13 @@ Material:
     - _DetailNormalMapScale: 1
     - _DisplayMode: 5
     - _DstBlend: 0
+    - _Frequency: 1
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
     - _LambdaPx: 49.642857
+    - _LeftPx: 50
+    - _LowerEdge: 76
     - _Metallic: 0
     - _Mode: 0
     - _NumSources: 2
@@ -82,6 +89,7 @@ Material:
     - _Parallax: 0.02
     - _Phase: 0
     - _PhaseSpeed: 1
+    - _RightPx: 1964
     - _Scale: 1
     - _SlitPitchPx: 448
     - _SlitWidePx: 12
@@ -89,6 +97,7 @@ Material:
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _UVSec: 0
+    - _UpperEdge: 972
     - _WaveStrength: 0.01
     - _ZWrite: 1
     m_Colors:
@@ -97,4 +106,5 @@ Material:
     - _ColorNeg: {r: 0.24705882, g: 0.2, b: 0.4627451, a: 1}
     - _ColorVel: {r: 1, g: 0.7058824, b: 0.41960785, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _IdleColour: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   m_BuildTextureStacks: []

@@ -18,6 +18,8 @@ public class UIStateSelect : UdonSharpBehaviour
     [SerializeField] Toggle togRealPwr = null;
     bool iHaveToImPwr = false;
     [SerializeField] Toggle togImPwr = null;
+    bool iHaveTogAmp = false;
+    [SerializeField] Toggle togAmplitude = null;
     bool iHaveTogProb = false;
     [SerializeField] Toggle togProbability = null;
 
@@ -59,6 +61,10 @@ public class UIStateSelect : UdonSharpBehaviour
                     togImPwr.isOn = true;
                 break;
             case 4:
+                if (iHaveTogAmp && !togAmplitude.isOn)
+                    togAmplitude.isOn = true;
+                break;
+            case 5:
                 if (iHaveTogProb && !togProbability.isOn)
                     togProbability.isOn = true;
                 break;
@@ -161,6 +167,15 @@ public class UIStateSelect : UdonSharpBehaviour
             SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner, nameof(selState4));
     }
 
+
+    public void selState5()
+    {
+        if (iAmOwner)
+            DisplayMode = 5;
+        else
+            SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner, nameof(selState5));
+    }
+
     public void selClose()
     {
         if (iAmOwner)
@@ -207,9 +222,14 @@ public class UIStateSelect : UdonSharpBehaviour
             selState3();
             return;
         }
-        if (iHaveTogProb && togProbability.isOn)
+        if (iHaveTogAmp && togAmplitude.isOn)
         {
             selState4();
+            return;
+        }
+        if (iHaveTogProb && togProbability.isOn)
+        {
+            selState5();
             return;
         }
         if (iHaveTogReset && togReset.isOn)
@@ -251,6 +271,7 @@ public class UIStateSelect : UdonSharpBehaviour
         iHaveTogRealPwr = togRealPwr != null;
         iHaveToImPwr = togImPwr != null;
         iHaveTogProb = togProbability != null;
+        iHaveTogAmp = togAmplitude != null;
 
         UpdateOwnerShip();
         iHaveClientVar = (clientModule != null) && (!string.IsNullOrEmpty(clientVariableName));

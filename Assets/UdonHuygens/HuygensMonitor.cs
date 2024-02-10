@@ -1,6 +1,6 @@
-﻿using TMPro;
+﻿using UnityEngine;
+using TMPro;
 using UdonSharp;
-using UnityEngine;
 using VRC.SDKBase;
 using VRC.Udon;
 
@@ -9,7 +9,7 @@ public class HuygensMonitor : UdonSharpBehaviour
 {
     [SerializeField, Tooltip("Custom Render texture (only if required)")] CustomRenderTexture simCRT;
     [SerializeField, Tooltip("Use Render texture mode")] bool useCRT = false;
-    [Tooltip("Simulation Material")] public Material matSIM = null;
+
     [Tooltip("DisplayPanel")] public MeshRenderer thePanel;
     [SerializeField,FieldChangeCallback(nameof(DisplayMode))]
     public int displayMode = 1;
@@ -27,7 +27,7 @@ public class HuygensMonitor : UdonSharpBehaviour
     float slitWidth = 10;
 
     // Timing
-    [SerializeField, Range(0.01f, 0.2f)] float dt = 0.1f;
+    [SerializeField, Tooltip("CRT Update Cadence"), Range(0.01f, 0.5f)] float dt = 0.3f;
     [Header("Controls")]
     [SerializeField, UdonSynced, FieldChangeCallback(nameof(WaveSpeed))] public float waveSpeed;
     [SerializeField] float defaultSpeed = 1;
@@ -57,16 +57,91 @@ public class HuygensMonitor : UdonSharpBehaviour
     [SerializeField,Range(1,10),UdonSynced,FieldChangeCallback(nameof(SimScale))] float simScale = 1f;
     [SerializeField] private UdonBehaviour vectorDrawing;
 
+    [Header("Serialized for monitoring in Editor")]
+    [SerializeField]
+    private Material matPanel = null;
+    [SerializeField]
+    private Material matSimControl = null;
+    [SerializeField]
+    private Material matSimDisplay = null;
+    [SerializeField, Tooltip("Check to invoke CRT Update")]
+    private bool crtUpdateNeeded = false;
+    [SerializeField]
+    private bool iHaveCRT = false;
+    [SerializeField]
+    private bool iHavePanelMaterial = false;
+    [SerializeField]
+    private bool iHaveSimDisplay = false;
+    [SerializeField]
+    private bool iHaveSimControl = false;
+    [SerializeField]
+    private bool CRTUpdatesMovement;
+
     private float defaultLambda;
     private float defaultPitch;
     private float defaultScale;
     private float defaultWidth;
+
+    private void configureSimControl(bool vanillaDisplay)
+    {
+        CRTUpdatesMovement = false;
+
+        if (vanillaDisplay)
+        {
+            if (iHaveCRT)
+            { // Display mode and wave speed controls get handled by the panel material
+                matSimDisplay = simCRT.material;
+                matSimControl = simCRT.material;
+                CRTUpdatesMovement = true;
+                simCRT.material.SetFloat("_OutputRaw", 0);
+            }
+            else
+            {
+                // No CRT and not a compatible display
+                matSimDisplay = null;
+                matSimControl = null;
+
+                Debug.Log("Warning:configureSimControl() no Interference control/display material");
+            }
+        }
+        else
+        {
+            if (iHaveCRT)
+            { // Display mode and wave speed controls get handled by the CRT
+                matSimDisplay = matPanel;
+                matSimControl = simCRT.material;
+                if (iHaveCRT && iHaveSimControl)
+                    matSimControl.SetFloat("_OutputRaw", 1);
+            }
+            else
+            {
+                matSimDisplay = matPanel;
+                matSimControl = matPanel;
+            }
+
+        }
+        iHaveSimControl = matSimControl != null;
+        iHaveSimDisplay = matSimDisplay != null;
+    }
+
+    
+    private bool PanelHasVanillaMaterial
+    {
+        get
+        {
+            if (!iHavePanelMaterial)
+                return true;
+            return !matPanel.HasProperty("_DisplayMode");
+        }
+    }
+
     private int DisplayMode
     {
         get => displayMode; 
         set
         {
-            matSIM.SetFloat("_DisplayMode", value);
+            if (iHaveSimDisplay) 
+                matSimDisplay.SetFloat("_DisplayMode", value);
             if (value >= 0)
             {
                 if (displayMode < 0) 
@@ -111,16 +186,16 @@ public class HuygensMonitor : UdonSharpBehaviour
     {
         if (!iHaveSimMaterial)
             return;
-        matSIM.SetFloat("_SlitPitchPx", slitPitch * mmToPixels);
+        matSimControl.SetFloat("_SlitPitchPx", slitPitch * mmToPixels);
         if (numSources > 1 && slitPitch <= slitWidth)
         {
             float gratingWidth = (numSources - 1) * slitPitch + slitWidth;
-            matSIM.SetFloat("_NumSources", 1f);
-            matSIM.SetFloat("_SlitWidePx", gratingWidth * mmToPixels);
+            matSimControl.SetFloat("_NumSources", 1f);
+            matSimControl.SetFloat("_SlitWidePx", gratingWidth * mmToPixels);
             return;
         }
-        matSIM.SetFloat("_NumSources", numSources);
-        matSIM.SetFloat("_SlitWidePx", slitWidth * mmToPixels);
+        matSimControl.SetFloat("_NumSources", numSources);
+        matSimControl.SetFloat("_SlitWidePx", slitWidth * mmToPixels);
         updateNeeded = true;
     }
 
@@ -194,7 +269,7 @@ public class HuygensMonitor : UdonSharpBehaviour
         {
             simScale = value;
             if (iHaveSimMaterial)
-                matSIM.SetFloat("_Scale", simScale);
+                matSimControl.SetFloat("_Scale", simScale);
             if (iHaveScaleControl)
             {
                 if ((!isStarted || scaleSlider.CurrentValue != value) && !scalePtr)
@@ -214,7 +289,7 @@ public class HuygensMonitor : UdonSharpBehaviour
             if (vectorDrawing != null)
                 vectorDrawing.SetProgramVariable<float>("lambda", lambda);
             if (iHaveSimMaterial)
-                matSIM.SetFloat("_LambdaPx", lambda * mmToPixels);
+                matSimControl.SetFloat("_LambdaPx", lambda * mmToPixels);
             if (iHaveLambdaControl)
             {
                 if ((!isStarted || lambdaSlider.CurrentValue != value) && !lambdaPtr)
@@ -288,8 +363,8 @@ public class HuygensMonitor : UdonSharpBehaviour
     float delta;
     private void UpdateWaveSpeed()
     {
-        if (iHaveSimMaterial && !useCRT)
-            matSIM.SetFloat("_Frequency", playSim ? waveSpeed * defaultLambda/lambda : 0);
+        if (iHaveSimControl)
+            matSimControl.SetFloat("_Frequency", playSim ? waveSpeed * defaultLambda/lambda : 0);
     }
 
     float WaveSpeed
@@ -322,7 +397,7 @@ public class HuygensMonitor : UdonSharpBehaviour
     [SerializeField]
     bool iHaveSimMaterial = false;
     float phaseTime = 0;
-    float phaseRate = 0.6f;
+    float phaseRate = 0.3f;
     void UpdateWaves()
     {   
         if(useCRT && displayMode >= 0)
@@ -333,17 +408,17 @@ public class HuygensMonitor : UdonSharpBehaviour
     private void Update()
     {
         if (!useCRT) return;
-        if (playSim && displayMode >= 0)
+        if (CRTUpdatesMovement)
         {
-            delta = Time.deltaTime;
-            waveTime -= delta;
-            phaseTime -= delta*phaseRate;
-            if (phaseTime < 0)
-                phaseTime += 1;
-            if ( waveTime < 0)
+            if (playSim && displayMode >= 0 && displayMode < 4)
             {
-                waveTime += dt;
-                UpdateWaves();
+                delta = Time.deltaTime;
+                waveTime -= delta;
+                if (waveTime < 0)
+                {
+                    waveTime += dt;
+                    UpdateWaves();
+                }
             }
         }
         if (updateNeeded)
@@ -357,6 +432,16 @@ public class HuygensMonitor : UdonSharpBehaviour
         iHaveLambdaControl = lambdaSlider != null;
         iHaveScaleControl = scaleSlider != null;
         iHaveSpeedControl = speedSlider != null;
+        if (thePanel != null)
+            matPanel = thePanel.material;
+        iHavePanelMaterial = matPanel != null;
+
+        if (simCRT != null)
+        {
+            iHaveCRT = true;
+            simCRT.Initialize();
+        }
+        configureSimControl(PanelHasVanillaMaterial);
 
         defaultLambda = lambda;
         defaultPitch = slitPitch;
@@ -370,7 +455,7 @@ public class HuygensMonitor : UdonSharpBehaviour
         {
             if (simCRT != null)
             {
-                matSIM = simCRT.material;
+                matSimControl = simCRT.material;
                 simCRT.Initialize();
             }
             else
@@ -378,11 +463,11 @@ public class HuygensMonitor : UdonSharpBehaviour
         }
         else
         {
-            matSIM = thePanel.material;
+            matSimControl = thePanel.material;
         }
-        iHaveSimMaterial = matSIM != null;
+        iHaveSimMaterial = matSimControl != null;
         if (iHaveSimMaterial)
-            defaultSpeed = matSIM.GetFloat("_Frequency");
+            defaultSpeed = matSimDisplay.GetFloat("_Frequency");
         if (iHaveLambdaControl)
             lambdaSlider.SetValues(lambda, 30, 80);
         if (iHavePitchControl)
@@ -390,9 +475,7 @@ public class HuygensMonitor : UdonSharpBehaviour
         if (iHaveWidthControl)
             widthSlider.SetValues(slitWidth, 1, 30);
         if (iHaveSimMaterial)
-        {
-            defaultWidth = matSIM.GetFloat("_SlitWidePx") / mmToPixels;
-        }
+            defaultWidth = matSimControl.GetFloat("_SlitWidePx") / mmToPixels;
         Lambda = lambda;
         SlitPitch = slitPitch;
         SlitWidth = slitWidth;

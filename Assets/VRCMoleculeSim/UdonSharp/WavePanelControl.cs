@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using TMPro;
 using VRC.SDKBase;
 using VRC.Udon;
+using System;
 
 [UdonBehaviourSyncMode(BehaviourSyncMode.Manual)]
 
@@ -20,6 +21,7 @@ public class WavePanelControl : UdonSharpBehaviour
     private bool iHaveSpeedControl = false;
     [SerializeField, UdonSynced, FieldChangeCallback(nameof(WaveSpeed))] public float waveSpeed;
     [SerializeField] float defaultSpeed = 1;
+    [SerializeField, Tooltip("CRT Update Cadence"), Range(0.01f, 0.5f)] float dt = 0.3f;
 
     [SerializeField] Toggle togPlay;
     [SerializeField,UdonSynced, FieldChangeCallback(nameof(PlaySim))] bool playSim;
@@ -93,16 +95,21 @@ public class WavePanelControl : UdonSharpBehaviour
     private bool iHaveSimDisplay = false;
     [SerializeField]
     private bool iHaveSimControl = false;
+    [SerializeField]
+    private bool CRTUpdatesMovement;
 
     private void configureSimControl(bool vanillaDisplay)
     {
+        CRTUpdatesMovement = false;
         if (vanillaDisplay)
         { 
             if (iHaveCRT)
             { // Display mode and wave speed controls get handled by the panel material
                 matSimDisplay = simCRT.material;
                 matSimControl = simCRT.material;
+                CRTUpdatesMovement = true;
                 simCRT.material.SetFloat("_OutputRaw", 0);
+                crtUpdateNeeded = true;
             }
             else
             {
@@ -120,6 +127,7 @@ public class WavePanelControl : UdonSharpBehaviour
                 matSimControl = simCRT.material;
                 if (iHaveCRT && iHaveSimControl)
                     matSimControl.SetFloat("_OutputRaw", 1);
+                crtUpdateNeeded= true;
             }
             else
             {
@@ -146,6 +154,7 @@ public class WavePanelControl : UdonSharpBehaviour
     {
         if (iHaveSimDisplay)
             matSimDisplay.SetFloat("_Frequency", playSim ? waveSpeed * defaultLambda / lambda : 0f);
+        crtUpdateNeeded |= iHaveCRT;
     }
 
     float WaveSpeed
@@ -179,6 +188,7 @@ public class WavePanelControl : UdonSharpBehaviour
         if (!iHaveSimControl)
             return;
         matSimControl.SetFloat("_SlitPitchPx", slitPitch);
+        crtUpdateNeeded |= iHaveCRT;
         if (numSources > 1 && slitPitch <= slitWidth)
         {
             float gratingWidth = (numSources - 1) * slitPitch + slitWidth;
@@ -196,8 +206,8 @@ public class WavePanelControl : UdonSharpBehaviour
         {
             if (value < 1)
                 value = 1;
-            if (value > 7)
-                value = 7;
+            if (value > 17)
+                value = 17;
             numSources = value;
             updateGrating();
             if (lblSourceCount != null)
@@ -224,6 +234,7 @@ public class WavePanelControl : UdonSharpBehaviour
             displayMode = value;
             if (iHaveSimDisplay)
                 matSimDisplay.SetFloat("_DisplayMode", value);
+            crtUpdateNeeded |= iHaveCRT;
             switch (displayMode)
             {
                 case 0:
@@ -274,6 +285,7 @@ public class WavePanelControl : UdonSharpBehaviour
             lambda = value;
             if (iHaveSimControl)
                 matSimControl.SetFloat("_LambdaPx", lambda);
+            crtUpdateNeeded |= iHaveCRT;
             if (!lambdaPtr && iHaveLambdaControl)
                     lambdaSlider.SetValue(value);
             UpdateWaveSpeed();
@@ -317,6 +329,7 @@ public class WavePanelControl : UdonSharpBehaviour
             simScale = value;
             if (iHaveSimControl)
                 matSimControl.SetFloat("_Scale", simScale);
+            crtUpdateNeeded |= iHaveCRT;
             if (!scalePtr && iHaveScaleControl)
                 scaleSlider.SetValue(value);
             RequestSerialization();
@@ -357,6 +370,41 @@ public class WavePanelControl : UdonSharpBehaviour
         }
     }
 
+    void UpdateWaves()
+    {
+        if (displayMode >= 0)
+            simCRT.Update(1);
+        crtUpdateNeeded = false;
+    }
+
+    float waveTime = 0;
+    float delta;
+    float phaseTime = 0;
+    float phaseRate = 0.3f;
+
+    private void Update()
+    {
+        if (!iHaveCRT)
+            return;
+        if (CRTUpdatesMovement)
+        {
+            if (playSim && displayMode >= 0 && displayMode < 4)
+            {
+                delta = Time.deltaTime;
+                waveTime -= delta;
+                if (waveTime < 0)
+                {
+                    waveTime += dt;
+                    UpdateWaves();
+                }
+            }
+
+        }
+        if (crtUpdateNeeded)
+        {
+            UpdateWaves();
+        }
+    }
     void Start()
     {
         iHaveTogReal = togReal != null;
@@ -373,8 +421,8 @@ public class WavePanelControl : UdonSharpBehaviour
         if (simCRT != null)
         {
             iHaveCRT = true;
-            simCRT.Initialize();
         }
+
         configureSimControl(PanelHasVanillaMaterial);
         if (iHaveSimControl)
         {
@@ -385,7 +433,7 @@ public class WavePanelControl : UdonSharpBehaviour
             defaultSources = Mathf.RoundToInt(matSimControl.GetFloat("_NumSources"));
         }
         defaultSpeed = waveSpeed;
-        if (!iHaveCRT && iHaveSimDisplay)
+        if (iHaveSimDisplay)
             defaultSpeed = matSimDisplay.GetFloat("_Frequency");
 
         slitPitch = defaultPitch;
@@ -412,5 +460,6 @@ public class WavePanelControl : UdonSharpBehaviour
         NumSources = defaultSources;
         SlitPitch = defaultPitch;
         SlitWidth = defaultWidth;
+        crtUpdateNeeded |= iHaveCRT;
     }
 }
