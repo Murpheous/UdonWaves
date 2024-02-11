@@ -893,7 +893,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Wave Display Controls
+  m_text: Simulation Controls
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ddbcc27b0346e4644a45316aaf00c441, type: 2}
   m_sharedMaterial: {fileID: 4410821715232426517, guid: ddbcc27b0346e4644a45316aaf00c441,
@@ -1801,6 +1801,7 @@ MonoBehaviour:
   speedPtr: 0
   waveSpeed: 1
   defaultSpeed: 1
+  dt: 0.3
   togPlay: {fileID: 8572109506217550539}
   playSim: 1
   displayMode: 0
@@ -1834,6 +1835,7 @@ MonoBehaviour:
   iHavePanelMaterial: 0
   iHaveSimDisplay: 0
   iHaveSimControl: 0
+  CRTUpdatesMovement: 0
 --- !u!114 &4683153376964916738
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2546,7 +2548,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: 'Amplitude
 
-    <size=80%>(Magnitude)'
+    <size=80%>(magnitude)'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ddbcc27b0346e4644a45316aaf00c441, type: 2}
   m_sharedMaterial: {fileID: 4410821715232426517, guid: ddbcc27b0346e4644a45316aaf00c441,
@@ -3925,7 +3927,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Surface:'
+  m_text: 'Amplitudes:'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ddbcc27b0346e4644a45316aaf00c441, type: 2}
   m_sharedMaterial: {fileID: 4410821715232426517, guid: ddbcc27b0346e4644a45316aaf00c441,
@@ -4656,6 +4658,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: InfoToggle
+      objectReference: {fileID: 0}
+    - target: {fileID: 8878407416592638581, guid: 55364beb7ba2a8947a1432fca720b16d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8878407416592638582, guid: 55364beb7ba2a8947a1432fca720b16d,
         type: 3}

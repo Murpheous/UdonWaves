@@ -124,6 +124,12 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &3514577 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4363275735536765419, guid: be8cbc708b9ecf74ebda4c903d3d578e,
+    type: 3}
+  m_PrefabInstance: {fileID: 278148140}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &12259086
 GameObject:
   m_ObjectHideFlags: 0
@@ -478,6 +484,12 @@ Transform:
   m_Children: []
   m_Father: {fileID: 297528819}
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
+--- !u!1 &44969916 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3089334170114326673, guid: be8cbc708b9ecf74ebda4c903d3d578e,
+    type: 3}
+  m_PrefabInstance: {fileID: 278148140}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &78237844 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4363275735536765419, guid: be8cbc708b9ecf74ebda4c903d3d578e,
@@ -2323,6 +2335,12 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 7013033673740437331, guid: be8cbc708b9ecf74ebda4c903d3d578e,
     type: 3}
   m_PrefabInstance: {fileID: 7838544626912846812}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &222085647 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8875727916190515726, guid: be8cbc708b9ecf74ebda4c903d3d578e,
+    type: 3}
+  m_PrefabInstance: {fileID: 278148140}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &223220042
 GameObject:
@@ -4184,7 +4202,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b9a305e18de0c04dbd257a21cd47087, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sharedProfile: {fileID: 11400000, guid: 0e9cf808129a6ed4e989408304db8eb0, type: 2}
+  sharedProfile: {fileID: 11400000, guid: 60000139e0d095b41ad60d6f0b059160, type: 2}
   isGlobal: 1
   blendDistance: 0
   weight: 1
@@ -4580,9 +4598,9 @@ PrefabInstance:
         type: 3}
       propertyPath: m_text
       value: "<margin=3%><size=120%><line-height=250%><align=\"center\"><b>Curiously,</b></align></line-height></size>\r\nAlthough
-        the Schr\xF6dinger equation and classical waves share some similarities in
-        their mathematical descriptions, the probability distributions calculated
-        by applying the Schr\xF6dinger equation are not wave equations.\r\n<size=120%><line-height=250%><align=\"center\"><b>Even
+        the solutions to the Schr\xF6dinger equation resemble features of classical
+        waves, the final probability distributions calculated from them are not described
+        by wave equations.\r\n<size=120%><line-height=250%><align=\"center\"><b>Even
         more curiously,</b></align></line-height></size>\r\nin free space, quantum
         probability distributions evolve like ensembles of classical particles undergoing
         ballistic diffusion.\r\r\nThese demonstrations expand on this idea by showing
@@ -4630,6 +4648,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: ScrollWhy
       objectReference: {fileID: 0}
+    - target: {fileID: 1413280202099117040, guid: 96006584a5cad1a4d9b5f91842bddb11,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2144157100222602263, guid: 96006584a5cad1a4d9b5f91842bddb11,
         type: 3}
       propertyPath: m_Color.a
@@ -4653,17 +4676,17 @@ PrefabInstance:
     - target: {fileID: 2837743861327209175, guid: 96006584a5cad1a4d9b5f91842bddb11,
         type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2837743861327209175, guid: 96006584a5cad1a4d9b5f91842bddb11,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2837743861327209175, guid: 96006584a5cad1a4d9b5f91842bddb11,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: -87
       objectReference: {fileID: 0}
     - target: {fileID: 3090056737428349660, guid: 96006584a5cad1a4d9b5f91842bddb11,
         type: 3}
@@ -4673,12 +4696,12 @@ PrefabInstance:
     - target: {fileID: 3121075168244013444, guid: 96006584a5cad1a4d9b5f91842bddb11,
         type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3121075168244013444, guid: 96006584a5cad1a4d9b5f91842bddb11,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3121075168244013444, guid: 96006584a5cad1a4d9b5f91842bddb11,
         type: 3}
@@ -4688,7 +4711,7 @@ PrefabInstance:
     - target: {fileID: 3568333454577784125, guid: 96006584a5cad1a4d9b5f91842bddb11,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: -302.03998
       objectReference: {fileID: 0}
     - target: {fileID: 3568333454577784125, guid: 96006584a5cad1a4d9b5f91842bddb11,
         type: 3}
@@ -5181,23 +5204,23 @@ MonoBehaviour:
   useAssignedLayers: 0
   DynamicPrefabs: []
   DynamicMaterials:
-  - {fileID: 2100000, guid: 69559c351b3ca3347b89fc50c8e943f9, type: 2}
-  - {fileID: 2100000, guid: 5e5d3008bea0ba749ae0449602cad72e, type: 2}
-  - {fileID: 2100000, guid: 4fa0e7fe273f6ff4a8e1eb320ed0d357, type: 2}
   - {fileID: 2100000, guid: 37c189884fcfb194ab6d4c96f89e547f, type: 2}
-  - {fileID: 2100000, guid: f6e58d038ebe41d42b59ca4bbb3f5fe5, type: 2}
-  - {fileID: 2100000, guid: f724e056377d7ca4e989d6da668c7340, type: 2}
-  - {fileID: 2100000, guid: 46c216281727a9341a2fdd5208729d03, type: 2}
   - {fileID: 2100000, guid: ea0664f5fe016184c890683a8ddd2d59, type: 2}
-  - {fileID: 2100000, guid: 3c6012bc24aac7f4a921ea165f1cef22, type: 2}
+  - {fileID: 2100000, guid: 46c216281727a9341a2fdd5208729d03, type: 2}
   - {fileID: 2100000, guid: 7835a3aa7fcfcde4cb81d63b59d2c6c0, type: 2}
   - {fileID: 2100000, guid: a8369b958175ff74eafc4ab4ddd09a6b, type: 2}
-  - {fileID: 2100000, guid: 87294f02d9437b8479f6d772f8b00a8d, type: 2}
   - {fileID: 2100000, guid: 0174816599450f24d9e87af9d8bb7450, type: 2}
-  - {fileID: 2100000, guid: 139a8353f6b8f3d45a6cb49db3b5ae8e, type: 2}
+  - {fileID: 2100000, guid: 69559c351b3ca3347b89fc50c8e943f9, type: 2}
+  - {fileID: 2100000, guid: 62aac346aaa6c8f40b75001d35ca7682, type: 2}
+  - {fileID: 2100000, guid: 4fa0e7fe273f6ff4a8e1eb320ed0d357, type: 2}
+  - {fileID: 2100000, guid: f6e58d038ebe41d42b59ca4bbb3f5fe5, type: 2}
+  - {fileID: 2100000, guid: f724e056377d7ca4e989d6da668c7340, type: 2}
+  - {fileID: 2100000, guid: 2ac1acca552ff5246b77dd6823aec193, type: 2}
+  - {fileID: 2100000, guid: 87294f02d9437b8479f6d772f8b00a8d, type: 2}
+  - {fileID: 2100000, guid: b74155677e859114693305c0d3390fe8, type: 2}
   - {fileID: 2100000, guid: 05ba8ef7c88555744ac493b22787e4ee, type: 2}
   - {fileID: 2100000, guid: 87440f63aab3d884c8843f939cc5af01, type: 2}
-  - {fileID: 2100000, guid: c20e1d68ff90238488f45d827e9c778e, type: 2}
+  - {fileID: 2100000, guid: ad084e3f516578444a6dd27f5bbac651, type: 2}
   - {fileID: 2100000, guid: b4e17b586351c0141b746eff1088a6c3, type: 2}
   - {fileID: 2100000, guid: 73f15352496d2c3488a48c90aedf2234, type: 2}
   - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
@@ -5382,6 +5405,22 @@ MonoBehaviour:
     ID: 90
   - gameObject: {fileID: 2047187776}
     ID: 91
+  - gameObject: {fileID: 3514577}
+    ID: 92
+  - gameObject: {fileID: 44969916}
+    ID: 93
+  - gameObject: {fileID: 411404789}
+    ID: 94
+  - gameObject: {fileID: 222085647}
+    ID: 95
+  - gameObject: {fileID: 519822640}
+    ID: 96
+  - gameObject: {fileID: 971206108}
+    ID: 97
+  - gameObject: {fileID: 1303566070}
+    ID: 98
+  - gameObject: {fileID: 179547861}
+    ID: 99
   portraitCameraPositionOffset: {x: 0, y: 0, z: 0}
   portraitCameraRotationOffset: {x: 0, y: 1, z: 0, w: -0.00000004371139}
 --- !u!4 &367000747
@@ -6452,6 +6491,12 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 403731852}
   m_CullTransparentMesh: 0
+--- !u!1 &411404789 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2890608389210959649, guid: be8cbc708b9ecf74ebda4c903d3d578e,
+    type: 3}
+  m_PrefabInstance: {fileID: 278148140}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &421646797 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8931860765525450621, guid: a8266aab8a262f54d9595a6c92a69cdc,
@@ -8193,6 +8238,12 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 517728131}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &519822640 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1658269787961103113, guid: be8cbc708b9ecf74ebda4c903d3d578e,
+    type: 3}
+  m_PrefabInstance: {fileID: 278148140}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &529432116
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -12823,6 +12874,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9085046f02f69544eb97fd06b6048fe2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &971206108 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7799424274668332567, guid: be8cbc708b9ecf74ebda4c903d3d578e,
+    type: 3}
+  m_PrefabInstance: {fileID: 278148140}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1006297824
 GameObject:
   m_ObjectHideFlags: 0
@@ -16665,6 +16722,12 @@ Transform:
   - {fileID: 570559944}
   m_Father: {fileID: 1423725008}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1303566070 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8422898547930235107, guid: be8cbc708b9ecf74ebda4c903d3d578e,
+    type: 3}
+  m_PrefabInstance: {fileID: 278148140}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1310547539
 GameObject:
   m_ObjectHideFlags: 0
@@ -17170,7 +17233,7 @@ PrefabInstance:
     - target: {fileID: 2890608389210959649, guid: be8cbc708b9ecf74ebda4c903d3d578e,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3262583256041880071, guid: be8cbc708b9ecf74ebda4c903d3d578e,
         type: 3}
@@ -31225,7 +31288,7 @@ PrefabInstance:
     - target: {fileID: 2890608389210959649, guid: be8cbc708b9ecf74ebda4c903d3d578e,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2890608389210959651, guid: be8cbc708b9ecf74ebda4c903d3d578e,
         type: 3}
