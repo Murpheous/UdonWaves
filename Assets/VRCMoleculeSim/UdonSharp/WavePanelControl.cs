@@ -125,8 +125,7 @@ public class WavePanelControl : UdonSharpBehaviour
             { // Display mode and wave speed controls get handled by the CRT
                 matSimDisplay = matPanel;
                 matSimControl = simCRT.material;
-                if (iHaveCRT && iHaveSimControl)
-                    matSimControl.SetFloat("_OutputRaw", 1);
+                matSimControl.SetFloat("_OutputRaw", 1);
                 crtUpdateNeeded= true;
             }
             else
@@ -370,7 +369,7 @@ public class WavePanelControl : UdonSharpBehaviour
         }
     }
 
-    void UpdateWaves()
+    void UpdateSimulation()
     {
         if (displayMode >= 0)
             simCRT.Update(1);
@@ -379,8 +378,6 @@ public class WavePanelControl : UdonSharpBehaviour
 
     float waveTime = 0;
     float delta;
-    float phaseTime = 0;
-    float phaseRate = 0.3f;
 
     private void Update()
     {
@@ -395,14 +392,13 @@ public class WavePanelControl : UdonSharpBehaviour
                 if (waveTime < 0)
                 {
                     waveTime += dt;
-                    UpdateWaves();
+                    crtUpdateNeeded |= true;
                 }
             }
-
         }
         if (crtUpdateNeeded)
         {
-            UpdateWaves();
+           UpdateSimulation();
         }
     }
     void Start()

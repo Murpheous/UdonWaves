@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: RightWallCRT_MAT
-  m_Shader: {fileID: 4800000, guid: 10afa14e8319035469e7d527132bce9e, type: 3}
+  m_Shader: {fileID: 4800000, guid: fd5c36de8bef24e43866c5effe93d6d1, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -43,8 +43,12 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _MainTex:
+    - _IdleTex:
         m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 8600000, guid: 63963bc9bcd30994f8212de8a884bb04, type: 2}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -66,11 +70,11 @@ Material:
     - _DetailNormalMapScale: 1
     - _DisplayMode: 5
     - _DstBlend: 0
-    - _Frequency: 0
+    - _Frequency: 1
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _LambdaPx: 28.155483
+    - _LambdaPx: 30
     - _Metallic: 0
     - _Mode: 0
     - _NumSources: 17
@@ -78,8 +82,8 @@ Material:
     - _OutputRaw: 1
     - _Parallax: 0.02
     - _Phase: 0
-    - _Scale: 10
-    - _SlitPitchPx: 420.81543
+    - _Scale: 5.91
+    - _SlitPitchPx: 364.22433
     - _SlitWidePx: 5
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
@@ -92,4 +96,5 @@ Material:
     - _ColorNeg: {r: 0, g: 0.23137255, b: 0.34117648, a: 1}
     - _ColorVel: {r: 1, g: 0.44313726, b: 0, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _IdleColour: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   m_BuildTextureStacks: []
