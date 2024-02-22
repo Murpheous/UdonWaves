@@ -56,7 +56,7 @@ struct Input
     float2 uv_WaveTex;
 };
 
-float vSample(float2 coord )
+float samplePhaseVertex(float2 vCoord )
 {
     float hgt = 0;
     float vel = 0;
@@ -64,13 +64,13 @@ float vSample(float2 coord )
 
     if (_UseHeight > 0.5)
     {
-        hgt = tex2Dlod(_WaveTex, float4(coord, 0, 0)).r;
+        hgt = tex2Dlod(_WaveTex, float4(vCoord, 0, 0)).r;
         if (_UseSquare > 0.5)
             hgt *= hgt*.3;
     }
     if (_UseVelocity > 0.75)
     {
-        vel = tex2Dlod(_WaveTex, float4(coord, 0, 0)).g / _K;
+        vel = tex2Dlod(_WaveTex, float4(vCoord, 0, 0)).g / _K;
         if (_UseSquare > 0.5)
             vel *= vel*.3;
     }
@@ -78,7 +78,7 @@ float vSample(float2 coord )
 }
 
 
-float fSample(float2 coord, bool squared)
+float samplePhaseTex(float2 coord, bool squared)
 {
     float hgt = 0;
     float vel = 0;
@@ -104,20 +104,20 @@ float fSample(float2 coord, bool squared)
 
 float4 fQuadSample(float2 coord, float3 duv, bool squared)
 {
-    float r = fSample(coord - duv.xz, squared);
-    float l = fSample(coord + duv.xz, squared);
-    float u = fSample(coord - duv.zy, squared);
-    float d = fSample(coord + duv.zy, squared);
+    float r = samplePhaseTex(coord - duv.xz, squared);
+    float l = samplePhaseTex(coord + duv.xz, squared);
+    float u = samplePhaseTex(coord - duv.zy, squared);
+    float d = samplePhaseTex(coord + duv.zy, squared);
     return float4 (r,l,u,d);
 }
 
 float4 vQuadSample(float2 coord)
 {
     float3 duv = float3(_MeshSpacing.yz,0);
-    float r = vSample(coord - duv.xz);
-    float l = vSample(coord + duv.xz);
-    float u = vSample(coord - duv.zy);
-    float d = vSample(coord + duv.zy);
+    float r = samplePhaseVertex(coord - duv.xz);
+    float l = samplePhaseVertex(coord + duv.xz);
+    float u = samplePhaseVertex(coord - duv.zy);
+    float d = samplePhaseVertex(coord + duv.zy);
     return float4 (r,l,u,d);
 }
 
@@ -126,7 +126,7 @@ void vert(inout appdata_full v)
 
     if (_VertexNormals > 0.5)
     {
-        float h = vSample(v.texcoord.xy);
+        float h = samplePhaseVertex(v.texcoord.xy);
         float4 delta = vQuadSample(v.texcoord.xy);
         float d1 =  (delta.x - delta.y);
         float d2 = (delta.w - delta.z);
@@ -146,7 +146,7 @@ void surf(Input IN, inout SurfaceOutputStandard o)
     bool showVel = (_UseVelocity > 0.5);
 
     float3 duv = float3(_WaveTex_TexelSize.xy, 0);
-    float value = fSample(IN.uv_WaveTex, showSquared);
+    float value = samplePhaseTex(IN.uv_WaveTex, showSquared);
     fixed4 theColor = _Color;
     if (showAmp && showVel)
        theColor = _ColorFlow;
