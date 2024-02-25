@@ -4,7 +4,8 @@ using UnityEngine;
 using Random = UnityEngine.Random;
 using VRC.SDKBase;
 using VRC.Udon;
-[UdonBehaviourSyncMode(BehaviourSyncMode.None)] // No networking.
+
+[UdonBehaviourSyncMode(BehaviourSyncMode.None)]
 
 public class QuantumScatter : UdonSharpBehaviour
 {
