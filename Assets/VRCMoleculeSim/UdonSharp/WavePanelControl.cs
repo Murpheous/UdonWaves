@@ -5,7 +5,6 @@ using TMPro;
 using VRC.SDKBase;
 using VRC.Udon;
 using System;
-using static UnityEngine.Rendering.DebugUI;
 
 [UdonBehaviourSyncMode(BehaviourSyncMode.Manual)]
 
