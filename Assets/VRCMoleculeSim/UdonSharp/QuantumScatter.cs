@@ -110,7 +110,7 @@ public class QuantumScatter : UdonSharpBehaviour
     [SerializeField]
     int distributionRange;
     [SerializeField]
-    private float particleSpeedMin = 1;
+    private float lambdaMin = 1;
     [SerializeField]
     private float simulationTheta = 1;
    // [SerializeField]
@@ -120,14 +120,14 @@ public class QuantumScatter : UdonSharpBehaviour
 
     public float LambdaMin 
     { 
-        get => particleSpeedMin;
+        get => lambdaMin;
         set
         {
             if (value == 0)
                 return;
             value = Mathf.Abs(value);
-            settingsChanged |= (value != particleSpeedMin);
-            particleSpeedMin = value;
+            settingsChanged |= (value != lambdaMin);
+            lambdaMin = value;
         } 
     }
 
@@ -141,14 +141,14 @@ public class QuantumScatter : UdonSharpBehaviour
         }
     }
 
-    public bool SetGratingByPitch(int slitCount, float slitWidth, float slitPitch, float particleSpeedMin)
+    public bool SetGratingByPitch(int slitCount, float slitWidth, float slitPitch, float minLambda)
     {
-        Debug.Log(string.Format("{0} SetGratingByPitch: lmin={1} s={2} w={3} p={4}",gameObject.name, particleSpeedMin, slitCount,slitWidth,slitPitch));
+        Debug.Log(string.Format("{0} SetGratingByPitch: lmin={1} s={2} w={3} p={4}",gameObject.name, lambdaMin, slitCount,slitWidth,slitPitch));
  
         if ((slitCount <= 0) || (slitWidth <= 0))
             return false;
 
-        LambdaMin = particleSpeedMin;
+        LambdaMin = minLambda;
         NumApertures = slitCount;
         SlitWidth = slitWidth;
         SlitPitch = slitPitch;
@@ -190,23 +190,23 @@ public class QuantumScatter : UdonSharpBehaviour
             return;
         if (slitWidth <= 0)
             return;
-        if (particleSpeedMin <= 0)
+        if (lambdaMin <= 0)
             return;
         settingsChanged = false;
         // Calculte aperture parameters in terms of width per (min particleSpeed)
-        apertureLambda = slitWidth / particleSpeedMin;
-        pitchLamba = slitPitch / particleSpeedMin;
+        apertureLambda = slitWidth / lambdaMin;
+        pitchLamba = slitPitch / lambdaMin;
         Debug.Log(string.Format("{0} apertureLambda={1} pitchLambda={2}",gameObject.name,apertureLambda, pitchLamba));
         // Assume momentum spectrum is symmetrical so calculate from zero.
         float integralSum = 0f;
         float scaleTheta = Mathf.PI;
-        float singleSlitValue;
+        float singleSlitValueSq;
         float manySlitValue;
         float dSinqd;
         float dX;
         float thisValue;
         transformIntegral[0] = 0;
-        float thetaMaxSingle = Mathf.Asin((7.0f * particleSpeedMin/slitWidth));
+        float thetaMaxSingle = Mathf.Asin((7.0f * lambdaMin/slitWidth));
         if (thetaMaxSingle < Mathf.PI)
             scaleTheta = thetaMaxSingle;
 
@@ -215,11 +215,15 @@ public class QuantumScatter : UdonSharpBehaviour
 
         for (int nPoint = 0; nPoint < pointsWide; nPoint++)
         {
-            singleSlitValue = 1;
-            dX = (scaleTheta * nPoint) / pointsWide; 
+            singleSlitValueSq = 1;
+            dX = (scaleTheta * nPoint) / pointsWide;
             if (nPoint != 0)
-                singleSlitValue = Mathf.Sin(dX * apertureLambda) / (dX * apertureLambda);
-
+            {
+                float ssTheta = dX * apertureLambda;
+                singleSlitValueSq = Mathf.Sin(ssTheta) / ssTheta;
+                singleSlitValueSq *= singleSlitValueSq;
+            }
+            thisValue = singleSlitValueSq;
             if (numApertures > 1)
             {
                 dSinqd = Mathf.Sin(dX * pitchLamba);
@@ -227,11 +231,7 @@ public class QuantumScatter : UdonSharpBehaviour
                     manySlitValue = numApertures;
                 else
                     manySlitValue = Mathf.Sin(numApertures * dX * pitchLamba) / dSinqd; 
-                thisValue = (singleSlitValue * singleSlitValue) * (manySlitValue * manySlitValue);
-            }
-            else
-            {
-                thisValue = (singleSlitValue * singleSlitValue);
+                thisValue = singleSlitValueSq * (manySlitValue * manySlitValue);
             }
             integralSum += thisValue;
             gratingTransform[nPoint] = thisValue;
@@ -274,9 +274,10 @@ public class QuantumScatter : UdonSharpBehaviour
                 reverseLookup[i] = Mathf.Lerp(indexBelow,indexAbove,frac);
             }
         }
-        CreateTexture();
+        if (simMatIsValid) 
+            CreateTexture();
         settingsLoaded = true;
-        Debug.Log(gameObject.name + ": Recalc Done");
+        //Debug.Log(gameObject.name + ": Recalc Done");
     }
     float nextTick = 2;
 

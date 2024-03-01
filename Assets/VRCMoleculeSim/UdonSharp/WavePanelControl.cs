@@ -5,6 +5,7 @@ using TMPro;
 using VRC.SDKBase;
 using VRC.Udon;
 using System;
+using static UnityEngine.Rendering.DebugUI;
 
 [UdonBehaviourSyncMode(BehaviourSyncMode.Manual)]
 
@@ -145,7 +146,11 @@ public class WavePanelControl : UdonSharpBehaviour
         {
             if (!iHavePanelMaterial)
                 return true;
-            return !matPanel.HasProperty("_DisplayMode");
+            if (matPanel.HasProperty("_ShowCRT"))
+                return false; 
+            if (matPanel.HasProperty("_DisplayMode"))
+                return false;
+            return true;
         }
     }
 
@@ -225,14 +230,27 @@ public class WavePanelControl : UdonSharpBehaviour
         NumSources = numSources - 1;
     }
 
+    private void updateDisplayTxture(int displayMode)
+    {
+        if (!iHaveSimDisplay)
+            return;
+        if (matSimDisplay.HasProperty("_DisplayMode"))
+        { 
+            matSimDisplay.SetFloat("_DisplayMode", displayMode);
+            return;
+        }
+        matSimDisplay.SetFloat("_ShowCRT", displayMode >= 0 ? 1f : 0f);
+        matSimDisplay.SetFloat("_ShowReal", displayMode == 0 || displayMode == 1 || displayMode >= 4 ? 1f : 0f);
+        matSimDisplay.SetFloat("_ShowImaginary", displayMode == 2 || displayMode == 3 || displayMode >= 4 ? 1f : 0f);
+        matSimDisplay.SetFloat("_ShowSquare", displayMode == 1 || displayMode == 3 || displayMode == 5 ? 1f : 0f);
+    }
     private int DisplayMode
     {
         get => displayMode;
         set
         {
             displayMode = value;
-            if (iHaveSimDisplay)
-                matSimDisplay.SetFloat("_DisplayMode", value);
+            updateDisplayTxture(displayMode);
             crtUpdateNeeded |= iHaveCRT;
             switch (displayMode)
             {
@@ -443,7 +461,32 @@ public class WavePanelControl : UdonSharpBehaviour
         iHaveScaleControl = scaleSlider != null;
         iHavePitchControl = pitchSlider != null;
         if (iHaveSimDisplay)
-            DisplayMode = Mathf.RoundToInt(matSimDisplay.GetFloat("_DisplayMode"));
+        {
+            if (matSimDisplay.HasProperty("_DisplayMode"))
+                DisplayMode = Mathf.RoundToInt(matSimDisplay.GetFloat("_DisplayMode"));
+            else
+            {
+                int dMode = Mathf.RoundToInt(matSimDisplay.GetFloat("_ShowReal")) > 0 ? 1 : 0;
+                dMode += Mathf.RoundToInt(matSimDisplay.GetFloat("_ShowImaginary")) > 0 ? 2 : 0;
+
+                int nSq = Mathf.RoundToInt(matSimDisplay.GetFloat("_ShowSquare")) > 0 ? 1 : 0;
+                switch (dMode)
+                {
+                    case 1:
+                        DisplayMode = nSq;
+                        break;
+                    case 2: 
+                        DisplayMode = 2 + nSq;
+                        break;
+                    case 3:
+                        DisplayMode = 4 + nSq;
+                        break;
+                    default:
+                        DisplayMode = -1;
+                        break;
+                }
+            }
+        }
 
         ParticleSpeed = defaultLambda;
         WaveSpeed = defaultSpeed;
