@@ -43,11 +43,11 @@ public class WavePanelControl : UdonSharpBehaviour
     [SerializeField] Toggle togProbability;
     bool iHaveTogProb = false;
 
-    [SerializeField] UdonSlider lambdaSlider;
+    [SerializeField] UdonSlider particleSpeedSlider;
     private bool iHaveLambdaControl = false;
-    public bool lambdaPtr = false;
+    public bool particleSpeedPtr = false;
     [SerializeField, Range(1, 100)] float defaultLambda = 24;
-    [SerializeField, Range(1, 100),UdonSynced,FieldChangeCallback(nameof(Lambda))] public float lambda = 24;
+    [SerializeField, Range(1, 100),UdonSynced,FieldChangeCallback(nameof(ParticleSpeed))] public float particleSpeed = 24;
 
     [SerializeField]
     private UdonSlider pitchSlider;
@@ -152,7 +152,7 @@ public class WavePanelControl : UdonSharpBehaviour
     private void UpdateWaveSpeed()
     {
         if (iHaveSimDisplay)
-            matSimDisplay.SetFloat("_Frequency", playSim ? waveSpeed * defaultLambda / lambda : 0f);
+            matSimDisplay.SetFloat("_Frequency", playSim ? waveSpeed * defaultLambda / particleSpeed : 0f);
         crtUpdateNeeded |= iHaveCRT;
     }
 
@@ -276,17 +276,17 @@ public class WavePanelControl : UdonSharpBehaviour
             PlaySim = !playSim;
     }
 
-    public float Lambda
+    public float ParticleSpeed
     {
-        get => lambda;
+        get => particleSpeed;
         set
         {
-            lambda = value;
+            particleSpeed = value;
             if (iHaveSimControl)
-                matSimControl.SetFloat("_LambdaPx", lambda);
+                matSimControl.SetFloat("_LambdaPx", particleSpeed);
             crtUpdateNeeded |= iHaveCRT;
-            if (!lambdaPtr && iHaveLambdaControl)
-                    lambdaSlider.SetValue(value);
+            if (!particleSpeedPtr && iHaveLambdaControl)
+                    particleSpeedSlider.SetValue(value);
             UpdateWaveSpeed();
             RequestSerialization();
         }
@@ -439,13 +439,13 @@ public class WavePanelControl : UdonSharpBehaviour
 
         iHaveWidthControl = widthSlider != null;
         iHaveSpeedControl = speedSlider != null;
-        iHaveLambdaControl = lambdaSlider != null;
+        iHaveLambdaControl = particleSpeedSlider != null;
         iHaveScaleControl = scaleSlider != null;
         iHavePitchControl = pitchSlider != null;
         if (iHaveSimDisplay)
             DisplayMode = Mathf.RoundToInt(matSimDisplay.GetFloat("_DisplayMode"));
 
-        Lambda = defaultLambda;
+        ParticleSpeed = defaultLambda;
         WaveSpeed = defaultSpeed;
         SimScale = defaultScale;
         if (iHavePitchControl)

@@ -512,6 +512,28 @@ public class MoleculeExperiment : UdonSharpBehaviour
     [SerializeField] Toggle togQuantum;
     [SerializeField] Toggle togRandomSpeed;
     [SerializeField] Toggle togMonochrome;
+    [SerializeField] Toggle togPlay;
+    [SerializeField] Toggle togPause;
+    [SerializeField,UdonSynced,] bool playParticles = true;
+    public bool PlayParticles 
+    {  
+        get => playParticles;  
+        set 
+        {  
+            playParticles = value;
+            if (togPlay != null && togPlay.isOn != value)
+                togPlay.isOn = value;
+            if (hasSource)
+            {
+                if (value)
+                    particleEmitter.Play();
+                else
+                    particleEmitter.Pause();
+            }
+            RequestSerialization();
+        } 
+    }
+
     bool iamOwner = false;
     private VRC.Udon.Common.Interfaces.NetworkEventTarget toTheOwner = VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner;
 
@@ -659,6 +681,51 @@ public class MoleculeExperiment : UdonSharpBehaviour
             return;
         }
         UseGravity = true;
+    }
+
+    public void playTog()
+    {
+        if (togPlay != null) 
+        {
+            if (togPlay.isOn && !playParticles)
+                playSim();
+        }
+    }
+
+    public void pauseTog()
+    {
+        if (togPause != null)
+        {
+            if (togPause.isOn && playParticles)
+                pauseSim();
+        }
+    }
+
+    public void pauseSim()
+    {
+        if (iamOwner)
+            PlayParticles = false;
+        else
+            SendCustomNetworkEvent(toTheOwner,nameof(pauseSim));
+    }
+
+    public void playSim()
+    {
+        if (iamOwner) 
+            PlayParticles = true;
+        else
+            SendCustomNetworkEvent(toTheOwner,nameof (playSim));
+    }
+
+    public void resetSim()
+    {
+        if (hasSource)
+            particleEmitter.Clear(); // Restart.
+    }
+
+    public void btnReset()
+    {
+        SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, nameof(resetSim));
     }
 
     public void SetGravityOff()
@@ -1128,16 +1195,15 @@ public class MoleculeExperiment : UdonSharpBehaviour
         
         if (hasVerticalScatter && !vertReady)
         {
-            vertReady = verticalScatter.Started;
+            vertReady = verticalScatter.IsStarted;
             if (vertReady)
                 gratingVersion = -1;
             else
                 return;
-            //Debug.Log("Got Vert");
         }
         if (hasHorizontalScatter && !horizReady)
         {
-            horizReady = horizontalScatter.Started;
+            horizReady = horizontalScatter.IsStarted;
             if (horizReady)
                 gratingVersion = -1;
             else
