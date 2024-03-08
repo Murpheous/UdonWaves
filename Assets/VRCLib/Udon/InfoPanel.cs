@@ -85,7 +85,7 @@ public class InfoPanel : UdonSharpBehaviour
     {
         if (selectedToggle >= 0)
         {
-            panelClose();
+            SelectedToggle = -1;
         }
     }
     public void onToggle()
@@ -135,15 +135,7 @@ public class InfoPanel : UdonSharpBehaviour
         }
     }
     
-    
-    public void panelClose()
-    {
- //       if (iamOwner)
-            SelectedToggle = -1;
-  //      else
- //           SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner, nameof(panelClose));
-    }
-
+  
     private void UpdateOwnerShip()
     {
         iamOwner = Networking.IsOwner(this.gameObject);

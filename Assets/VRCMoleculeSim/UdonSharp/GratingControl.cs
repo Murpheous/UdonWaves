@@ -58,7 +58,8 @@ public class GratingControl : UdonSharpBehaviour
     }
 
     private bool iamOwner;
-    private VRC.Udon.Common.Interfaces.NetworkEventTarget toTheOwner = VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner;
+    //private VRC.Udon.Common.Interfaces.NetworkEventTarget toTheOwner = VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner;
+    private VRCPlayerApi player;
 
     [Header("Dimensions @ native 1:1 scale")]
     [Tooltip("Graphics Metres at Native Scaling 1/x"), SerializeField, UdonSynced, FieldChangeCallback(nameof(NativeGraphicsRatio))]
@@ -362,10 +363,7 @@ public class GratingControl : UdonSharpBehaviour
     public void OnBarsCollide()
     {
         if (!iamOwner)
-        {
-            SendCustomNetworkEvent(toTheOwner, nameof(OnBarsCollide));
-            return;
-        }
+            Networking.SetOwner(player, gameObject);
 
         if (togBarsCollide != null)
         {
@@ -379,28 +377,19 @@ public class GratingControl : UdonSharpBehaviour
     public void OnGratingScaleDown()
     {
         if (!iamOwner)
-        {
-            SendCustomNetworkEvent(toTheOwner, nameof(OnGratingScaleDown));
-            return;
-        }
+            Networking.SetOwner(player, gameObject);
         GratingScaleStep = gratingScaleStep - 1;
     }
     public void OnGratingScaleUp()
     {
         if (!iamOwner)
-        {
-            SendCustomNetworkEvent(toTheOwner, nameof(OnGratingScaleUp));
-            return;
-        }
+            Networking.SetOwner(player, gameObject);
         GratingScaleStep = gratingScaleStep + 1;
     }
     public void OnAperturesPlus()
     {
         if (!iamOwner)
-        {
-            SendCustomNetworkEvent(toTheOwner, nameof(OnAperturesPlus));
-            return;
-        }
+            Networking.SetOwner(player, gameObject);
         if ((ColumnCount < MAX_SLITS) && checkGratingWidth(HoleWidthNative, ColumnPitchNative, ColumnCount + 1))
             ColumnCount = columnCount + 1;
     }
@@ -408,10 +397,7 @@ public class GratingControl : UdonSharpBehaviour
     public void OnAperturesMinus()
     {
         if (!iamOwner)
-        {
-            SendCustomNetworkEvent(toTheOwner, nameof(OnAperturesMinus));
-            return;
-        }
+            Networking.SetOwner(player, gameObject);
         ColumnCount = columnCount - 1;
     }
     public void OnWidthPlus()
@@ -419,8 +405,7 @@ public class GratingControl : UdonSharpBehaviour
 
         if (!iamOwner)
         {
-            SendCustomNetworkEvent(toTheOwner, nameof(OnWidthPlus));
-            return;
+            Networking.SetOwner(player, gameObject);
         }
         float testVal = HoleWidthNative + sizeSteps.x;
         if (testVal >= ColumnPitchNative)
@@ -431,10 +416,7 @@ public class GratingControl : UdonSharpBehaviour
     public void OnWidthMinus()
     {
         if (!iamOwner)
-        {
-            SendCustomNetworkEvent(toTheOwner, nameof(OnWidthMinus));
-            return;
-        }
+            Networking.SetOwner(player, gameObject);
 
         float testVal = HoleWidthNative - sizeSteps.x;
         if (testVal <= sizeSteps.x)
@@ -445,10 +427,7 @@ public class GratingControl : UdonSharpBehaviour
     public void OnPitchPlus()
     {
         if (!iamOwner)
-        {
-            SendCustomNetworkEvent(toTheOwner, nameof(OnPitchPlus));
-            return;
-        }
+            Networking.SetOwner(player, gameObject);
         float testVal = ColumnPitchNative + pitchSteps.x;
         if (checkGratingWidth(HoleWidthNative, testVal, ColumnCount))
             ColumnPitchNative = testVal;
@@ -456,10 +435,7 @@ public class GratingControl : UdonSharpBehaviour
     public void OnPitchMinus()
     {
         if (!iamOwner)
-        {
-            SendCustomNetworkEvent(toTheOwner, nameof(OnPitchMinus));
-            return;
-        }
+            Networking.SetOwner(player, gameObject);
         float testVal = ColumnPitchNative - pitchSteps.x;
         if (testVal <= HoleWidthNative) 
             return;
@@ -470,10 +446,7 @@ public class GratingControl : UdonSharpBehaviour
     public void OnRowsPlus()
     {
         if (!iamOwner)
-        {
-            SendCustomNetworkEvent(toTheOwner, nameof(OnRowsPlus));
-            return;
-        }
+            Networking.SetOwner(player, gameObject);
         if ((RowCount < MAX_ROWS) && checkGratingHeight(HoleHeightNative, RowPitchNative, RowCount + 1))
             RowCount = rowCount + 1;
     }
@@ -481,19 +454,13 @@ public class GratingControl : UdonSharpBehaviour
     public void OnRowsMinus()
     {
         if (!iamOwner)
-        {
-            SendCustomNetworkEvent(toTheOwner, nameof(OnRowsMinus));
-            return;
-        }
+            Networking.SetOwner(player, gameObject);
         RowCount = rowCount - 1;
     }
     public void OnHeightPlus()
     {
         if (!iamOwner)
-        {
-            SendCustomNetworkEvent(toTheOwner, nameof(OnHeightPlus));
-            return;
-        }
+            Networking.SetOwner(player, gameObject);
         float testVal = HoleHeightNative + sizeSteps.y;
         if (testVal >= RowPitchNative) 
             return;
@@ -503,10 +470,7 @@ public class GratingControl : UdonSharpBehaviour
     public void OnHeightMinus()
     {
         if (!iamOwner)
-        {
-            SendCustomNetworkEvent(toTheOwner, nameof(OnHeightMinus));
-            return;
-        }
+            Networking.SetOwner(player, gameObject);
         float testVal = HoleHeightNative - sizeSteps.y;
         if (testVal <= sizeSteps.y)
             return;
@@ -516,10 +480,7 @@ public class GratingControl : UdonSharpBehaviour
     public void OnRowPitchPlus()
     {
         if (!iamOwner)
-        {
-            SendCustomNetworkEvent(toTheOwner, nameof(OnRowPitchPlus));
-            return;
-        }
+            Networking.SetOwner(player, gameObject);
 
         float testVal = RowPitchNative + pitchSteps.y;
         if (checkGratingHeight(HoleHeightNative, testVal, RowCount))
@@ -528,10 +489,7 @@ public class GratingControl : UdonSharpBehaviour
     public void OnRowPitchMinus()
     {
         if (!iamOwner)
-        {
-            SendCustomNetworkEvent(toTheOwner, nameof(OnRowPitchMinus));
-            return;
-        }
+            Networking.SetOwner(player, gameObject);
         float testVal = RowPitchNative - pitchSteps.y;
         if (testVal <= HoleHeightNative)
             return;
@@ -824,6 +782,8 @@ public class GratingControl : UdonSharpBehaviour
     {
         if (gratingXfrm == null)
             gratingXfrm = transform;
+        player = Networking.LocalPlayer;
+
         outerDimsMetres = nativeMaxDimensions / nativeGraphicsRatio;
         maxDimsReduced = outerDimsMetres * experimentScale;
         //MAX_SLITS = 15;

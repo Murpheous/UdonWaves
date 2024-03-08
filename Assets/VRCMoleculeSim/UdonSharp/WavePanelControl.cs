@@ -17,7 +17,6 @@ public class WavePanelControl : UdonSharpBehaviour
     public MeshRenderer thePanel;
 
     [SerializeField] UdonSlider speedSlider;
-    [SerializeField] public bool speedPtr = false;
     private bool iHaveSpeedControl = false;
     [SerializeField, UdonSynced, FieldChangeCallback(nameof(WaveSpeed))] public float waveSpeed;
     [SerializeField] float defaultSpeed = 1;
@@ -43,22 +42,18 @@ public class WavePanelControl : UdonSharpBehaviour
     [SerializeField] Toggle togProbability;
     bool iHaveTogProb = false;
 
-    [SerializeField] UdonSlider particleSpeedSlider;
+    [SerializeField] UdonSlider lambdaSlider;
     private bool iHaveLambdaControl = false;
-    public bool particleSpeedPtr = false;
     [SerializeField, Range(1, 100)] float defaultLambda = 24;
-    [SerializeField, Range(1, 100),UdonSynced,FieldChangeCallback(nameof(ParticleSpeed))] public float particleSpeed = 24;
+    [SerializeField, Range(1, 100),UdonSynced,FieldChangeCallback(nameof(Lambda))] public float lambda = 24;
 
     [SerializeField]
     private UdonSlider pitchSlider;
     private bool iHavePitchControl = false;
-    public bool pitchPtr = false;
 
     [SerializeField]
     private UdonSlider widthSlider;
     private bool iHaveWidthControl = false;
-    public bool widthPtr = false;
-
 
     [SerializeField, Range(20, 500), UdonSynced, FieldChangeCallback(nameof(SlitPitch))]
     float slitPitch = 250;
@@ -74,7 +69,6 @@ public class WavePanelControl : UdonSharpBehaviour
 
     [SerializeField] UdonSlider scaleSlider;
     private bool iHaveScaleControl = false;
-    public bool scalePtr = false;
     [SerializeField, Range(1, 10)] float defaultScale = 24;
     [SerializeField, Range(1, 10), UdonSynced, FieldChangeCallback(nameof(SimScale))] public float simScale = 24;
 
@@ -97,6 +91,24 @@ public class WavePanelControl : UdonSharpBehaviour
     private bool iHaveSimControl = false;
     [SerializeField]
     private bool CRTUpdatesMovement;
+    private VRCPlayerApi player;
+    private bool iamOwner = false;
+
+    private void ReviewOwnerShip()
+    {
+        iamOwner = Networking.IsOwner(this.gameObject);
+    }
+
+    public override void OnOwnershipTransferred(VRCPlayerApi player)
+    {
+        ReviewOwnerShip();
+    }
+
+    public void slidePtr()
+    {
+        if (!iamOwner)
+            Networking.SetOwner(player, gameObject);
+    }
 
     private void configureSimControl(bool vanillaDisplay)
     {
@@ -156,7 +168,7 @@ public class WavePanelControl : UdonSharpBehaviour
     private void UpdateWaveSpeed()
     {
         if (iHaveSimDisplay)
-            matSimDisplay.SetFloat("_Frequency", playSim ? waveSpeed * defaultLambda / particleSpeed : 0f);
+            matSimDisplay.SetFloat("_Frequency", playSim ? waveSpeed * defaultLambda / lambda : 0f);
         crtUpdateNeeded |= iHaveCRT;
     }
 
@@ -166,7 +178,7 @@ public class WavePanelControl : UdonSharpBehaviour
         set
         {
             waveSpeed = Mathf.Clamp(value,0,5);
-            if (!speedPtr && iHaveSpeedControl)
+            if (iHaveSpeedControl && !speedSlider.PointerDown)
                 speedSlider.SetValue(waveSpeed);
             UpdateWaveSpeed();
             RequestSerialization();
@@ -190,17 +202,17 @@ public class WavePanelControl : UdonSharpBehaviour
     {
         if (!iHaveSimControl)
             return;
-        matSimControl.SetFloat("_SlitPitchPx", slitPitch);
+        matSimControl.SetFloat("_SlitPitch", slitPitch);
         crtUpdateNeeded |= iHaveCRT;
         if (numSources > 1 && slitPitch <= slitWidth)
         {
             float gratingWidth = (numSources - 1) * slitPitch + slitWidth;
-            matSimControl.SetFloat("_NumSources", 1f);
-            matSimControl.SetFloat("_SlitWidePx", gratingWidth);
+            matSimControl.SetFloat("_SlitCount", 1f);
+            matSimControl.SetFloat("_SlitWidth", gratingWidth);
             return;
         }
-        matSimControl.SetFloat("_NumSources", numSources);
-        matSimControl.SetFloat("_SlitWidePx", slitWidth);
+        matSimControl.SetFloat("_SlitCount", numSources);
+        matSimControl.SetFloat("_SlitWidth", slitWidth);
     }
     public int NumSources
     {
@@ -221,11 +233,15 @@ public class WavePanelControl : UdonSharpBehaviour
     
     public void incSources()
     {
+        if (!iamOwner)
+            Networking.SetOwner(player, gameObject);
         NumSources = numSources + 1;
     }
 
     public void decSources()
     {
+        if (!iamOwner)
+            Networking.SetOwner(player, gameObject);
         NumSources = numSources - 1;
     }
 
@@ -293,17 +309,17 @@ public class WavePanelControl : UdonSharpBehaviour
             PlaySim = !playSim;
     }
 
-    public float ParticleSpeed
+    public float Lambda
     {
-        get => particleSpeed;
+        get => lambda;
         set
         {
-            particleSpeed = value;
+            lambda = value;
             if (iHaveSimControl)
-                matSimControl.SetFloat("_LambdaPx", particleSpeed);
+                matSimControl.SetFloat("_Lambda", lambda);
             crtUpdateNeeded |= iHaveCRT;
-            if (!particleSpeedPtr && iHaveLambdaControl)
-                    particleSpeedSlider.SetValue(value);
+            if (iHaveLambdaControl && !lambdaSlider.PointerDown)
+                    lambdaSlider.SetValue(value);
             UpdateWaveSpeed();
             RequestSerialization();
         }
@@ -317,7 +333,7 @@ public class WavePanelControl : UdonSharpBehaviour
         {
             slitPitch = value;
             updateGrating();
-            if (!pitchPtr && iHavePitchControl)
+            if (iHavePitchControl && !pitchSlider.PointerDown)
                 pitchSlider.SetValue(value);
             RequestSerialization();
         }
@@ -330,7 +346,7 @@ public class WavePanelControl : UdonSharpBehaviour
         {
             slitWidth = value;
             updateGrating() ;
-            if (!widthPtr && iHaveWidthControl)
+            if (iHaveWidthControl && !widthSlider.PointerDown)
                 widthSlider.SetValue(value);
             RequestSerialization();
         }
@@ -346,7 +362,7 @@ public class WavePanelControl : UdonSharpBehaviour
             if (iHaveSimControl)
                 matSimControl.SetFloat("_Scale", simScale);
             crtUpdateNeeded |= iHaveCRT;
-            if (!scalePtr && iHaveScaleControl)
+            if (iHaveScaleControl && !scaleSlider.PointerDown)
                 scaleSlider.SetValue(value);
             RequestSerialization();
         }
@@ -354,6 +370,8 @@ public class WavePanelControl : UdonSharpBehaviour
 
     public void onMode()
     {
+        if (!iamOwner)
+            Networking.SetOwner(player, gameObject);
         if (iHaveTogReal && togReal.isOn && displayMode != 0)
         {
             DisplayMode = 0;
@@ -420,6 +438,9 @@ public class WavePanelControl : UdonSharpBehaviour
     }
     void Start()
     {
+        player = Networking.LocalPlayer;
+        ReviewOwnerShip();
+
         iHaveTogReal = togReal != null;
         iHaveTogIm = togImaginary != null;
         iHaveTogRealPwr = togRealPwr != null;
@@ -439,11 +460,11 @@ public class WavePanelControl : UdonSharpBehaviour
         configureSimControl(PanelHasVanillaMaterial);
         if (iHaveSimControl)
         {
-            defaultWidth = matSimControl.GetFloat("_SlitWidePx");
-            defaultLambda = matSimControl.GetFloat("_LambdaPx");
+            defaultWidth = matSimControl.GetFloat("_SlitWidth");
+            defaultLambda = matSimControl.GetFloat("_Lambda");
             defaultScale = matSimControl.GetFloat("_Scale");
-            defaultPitch = matSimControl.GetFloat("_SlitPitchPx"); 
-            defaultSources = Mathf.RoundToInt(matSimControl.GetFloat("_NumSources"));
+            defaultPitch = matSimControl.GetFloat("_SlitPitch"); 
+            defaultSources = Mathf.RoundToInt(matSimControl.GetFloat("_SlitCount"));
         }
         defaultSpeed = waveSpeed;
         if (iHaveSimDisplay)
@@ -456,7 +477,7 @@ public class WavePanelControl : UdonSharpBehaviour
 
         iHaveWidthControl = widthSlider != null;
         iHaveSpeedControl = speedSlider != null;
-        iHaveLambdaControl = particleSpeedSlider != null;
+        iHaveLambdaControl = lambdaSlider != null;
         iHaveScaleControl = scaleSlider != null;
         iHavePitchControl = pitchSlider != null;
         if (iHaveSimDisplay)
@@ -487,7 +508,7 @@ public class WavePanelControl : UdonSharpBehaviour
             }
         }
 
-        ParticleSpeed = defaultLambda;
+        Lambda = defaultLambda;
         WaveSpeed = defaultSpeed;
         SimScale = defaultScale;
         if (iHavePitchControl)

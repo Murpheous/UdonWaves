@@ -15,7 +15,7 @@ public class QuantumScatter : UdonSharpBehaviour
     [SerializeField]
     private float slitWidth = 0.8f;
     [SerializeField]
-    private float apertureLambda;
+    private float widthDivLambdaMin;
     [SerializeField]
     Material matSim = null;
     [SerializeField]
@@ -78,7 +78,7 @@ public class QuantumScatter : UdonSharpBehaviour
 
     [SerializeField]
     private float slitPitch = 4.0f;
-    private float pitchLamba;
+    private float pitchDivLambdaMin;
     private float SlitPitch 
     { 
         set
@@ -194,15 +194,15 @@ public class QuantumScatter : UdonSharpBehaviour
             return;
         settingsChanged = false;
         // Calculte aperture parameters in terms of width per (min particleSpeed)
-        apertureLambda = slitWidth / lambdaMin;
-        pitchLamba = slitPitch / lambdaMin;
-        Debug.Log(string.Format("{0} apertureLambda={1} pitchLambda={2}",gameObject.name,apertureLambda, pitchLamba));
+        widthDivLambdaMin = slitWidth / lambdaMin;
+        pitchDivLambdaMin = slitPitch / lambdaMin;
+        Debug.Log(string.Format("{0} apertuere/LambdaMin={1} pitch/LambdaMin={2}",gameObject.name,widthDivLambdaMin, pitchDivLambdaMin));
         // Assume momentum spectrum is symmetrical so calculate from zero.
         float integralSum = 0f;
         float scaleTheta = Mathf.PI;
         float singleSlitValueSq;
         float manySlitValue;
-        float dSinqd;
+        float sinQd;
         float dX;
         float thisValue;
         transformIntegral[0] = 0;
@@ -219,18 +219,18 @@ public class QuantumScatter : UdonSharpBehaviour
             dX = (scaleTheta * nPoint) / pointsWide;
             if (nPoint != 0)
             {
-                float ssTheta = dX * apertureLambda;
+                float ssTheta = dX * widthDivLambdaMin;
                 singleSlitValueSq = Mathf.Sin(ssTheta) / ssTheta;
                 singleSlitValueSq *= singleSlitValueSq;
             }
             thisValue = singleSlitValueSq;
             if (numApertures > 1)
             {
-                dSinqd = Mathf.Sin(dX * pitchLamba);
-                if (dSinqd == 0)
+                sinQd = Mathf.Sin(dX * pitchDivLambdaMin);
+                if (sinQd == 0)
                     manySlitValue = numApertures;
                 else
-                    manySlitValue = Mathf.Sin(numApertures * dX * pitchLamba) / dSinqd; 
+                    manySlitValue = Mathf.Sin(numApertures * dX * pitchDivLambdaMin) / sinQd; 
                 thisValue = singleSlitValueSq * (manySlitValue * manySlitValue);
             }
             integralSum += thisValue;

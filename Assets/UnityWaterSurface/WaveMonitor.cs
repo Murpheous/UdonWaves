@@ -283,43 +283,14 @@ public class WaveMonitor : UdonSharpBehaviour
         }
     }
 
-    public void Tank0()
+    private void TankMode(int mode)
     {
-        if (iamOwner)
-            DisplayMode = 0;
-        else
-            SendCustomNetworkEvent(toTheOwner, nameof(Tank0));
+        if (DisplayMode == mode) 
+            return;
+        if (!iamOwner)
+            Networking.SetOwner(player, gameObject);
+        DisplayMode = mode;
     }
-
-    public void Tank1()
-    {
-        if (iamOwner)
-            DisplayMode = 1;
-        else
-            SendCustomNetworkEvent(toTheOwner, nameof(Tank1));
-    }
-    public void Tank2()
-    {
-        if (iamOwner)
-            DisplayMode = 2;
-        else
-            SendCustomNetworkEvent(toTheOwner, nameof(Tank2));
-    }
-    public void Tank3()
-    {
-        if (iamOwner)
-            DisplayMode = 3;
-        else
-            SendCustomNetworkEvent(toTheOwner, nameof(Tank3));
-    }
-    public void Tank4()
-    {
-        if (iamOwner)
-            DisplayMode = 4;
-        else
-            SendCustomNetworkEvent(toTheOwner, nameof(Tank4));
-    }
-
 
     //* Slider changed
     float frequencyQuenchTime = 0;
@@ -341,10 +312,9 @@ public class WaveMonitor : UdonSharpBehaviour
         {
             if (TogglePlay.isOn)
             {
-                if (iamOwner)
-                    AnimationPlay = true;
-                else
-                    SendCustomNetworkEvent(toTheOwner,nameof(PlayWaves));
+                if (!iamOwner)
+                    Networking.SetOwner(player, gameObject);
+                AnimationPlay = true;
             }
         }
     }
@@ -370,20 +340,15 @@ public class WaveMonitor : UdonSharpBehaviour
     }
 
 
-    public void PauseWaves()
-    {
-        AnimationPlay = false;
-    }
     public void PauseChanged()
     {
         if (TogglePause != null)
         {
             if (TogglePause.isOn)
             {
-                if (iamOwner)
-                    AnimationPlay = false;
-                else
-                    SendCustomNetworkEvent(toTheOwner,nameof(PauseWaves));
+                if (!iamOwner)
+                    Networking.SetOwner(player, gameObject);
+                AnimationPlay = false;
             }
         }
     }
@@ -400,31 +365,31 @@ public class WaveMonitor : UdonSharpBehaviour
     public void onTogHeight()
     {
         if (togViewHeight != null && togViewHeight.isOn)
-            Tank0();
+            TankMode(0);
     }
 
     public void onTogPE()
     {
         if (togViewPE != null && togViewPE.isOn)
-            Tank1();
+            TankMode(1);
     }
 
     public void onTogVel()
     {
         if (togViewVelocity != null && togViewVelocity.isOn)
-            Tank2();
+            TankMode(2);
     }
 
     public void onTogKE()
     {
         if (togViewKE != null && togViewKE.isOn)
-            Tank3();
+            TankMode(3);
     }
 
     public void onTogEnergy()
     {
         if (togViewEnergy != null && togViewEnergy.isOn)
-            Tank4();
+            TankMode(4);
     }
 
     void CalcParameters()

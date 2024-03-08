@@ -20,6 +20,7 @@ public class UdonTween : UdonSharpBehaviour
     [SerializeField]
     float damping = 0.1f;
 
+    private VRCPlayerApi player;
     bool iamOwner = false;
     private VRC.Udon.Common.Interfaces.NetworkEventTarget toTheOwner = VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner;
 
@@ -71,36 +72,16 @@ public class UdonTween : UdonSharpBehaviour
         iamOwner = Networking.IsOwner(this.gameObject);
     }
 
-    public void tweenSet()
-    {
-        if (!iamOwner)
-        {
-            SendCustomNetworkEvent(toTheOwner, nameof(tweenSet));
-            return;
-        }
-        CurrentState = true;
-    }
-
-    public void tweenClear() 
-    {
-        if (!iamOwner)
-        {
-            SendCustomNetworkEvent(toTheOwner, nameof(tweenClear));
-            return;
-        }
-        CurrentState = false;
-    }
     public void onToggleChanged()
     {
-        bool togVal = !CurrentState;
+        bool togVal = CurrentState;
         if (stateToggle != null)
             togVal = stateToggle.isOn;
         if (togVal != currentState)
         {
-            if (togVal)
-                tweenSet();
-            else
-                tweenClear();
+            if (!iamOwner)
+                Networking.SetOwner(player, gameObject);
+            CurrentState = togVal;
         }
     }
 
@@ -128,6 +109,8 @@ public class UdonTween : UdonSharpBehaviour
 */
     private void Start()
     {
+        player = Networking.LocalPlayer;
+
         ReviewOwnerShip();
         CurrentState = currentState;
     }

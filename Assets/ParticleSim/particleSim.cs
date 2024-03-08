@@ -45,7 +45,9 @@ public class particleSim : UdonSharpBehaviour
     private bool isStarted = false;
     private bool hasParticles = false;
     private bool iamOwner;
-    private VRC.Udon.Common.Interfaces.NetworkEventTarget toTheOwner = VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner;
+    private VRCPlayerApi player;
+
+    //private VRC.Udon.Common.Interfaces.NetworkEventTarget toTheOwner = VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner;
     private VRC.Udon.Common.Interfaces.NetworkEventTarget toAll = VRC.Udon.Common.Interfaces.NetworkEventTarget.All;
 
     public Color lerpColour(float frac)
@@ -175,41 +177,23 @@ public class particleSim : UdonSharpBehaviour
         }
     }
 
-    public void PlayParticles()
-    {
-        ParticlesPlaying = true;
-    }
-
-    public void PauseParticles()
-    {
-        ParticlesPlaying = false;
-    }
-
     public void PlayChanged()
     {
-        if (togglePlay != null)
+        if (togglePlay != null && togglePlay.isOn && !particlesPlaying)
         {
-            if (togglePlay.isOn)
-            {
-                if (iamOwner)
-                    PlayParticles();
-                else
-                    SendCustomNetworkEvent(toTheOwner,nameof(PlayParticles));
-            }
+            if (!iamOwner)
+                Networking.SetOwner(player, gameObject);
+            ParticlesPlaying = true;
         }
     }
 
     public void StopChanged()
     {
-        if (toggleStop != null)
-        {
-            if (toggleStop.isOn)
-            { 
-                if (iamOwner)
-                    PauseParticles();
-                else
-                    SendCustomNetworkEvent(toTheOwner,nameof(PauseParticles));
-            }
+        if (toggleStop != null && toggleStop.isOn && particlesPlaying)
+        { 
+            if (!iamOwner)
+                Networking.SetOwner(player,gameObject); 
+            ParticlesPlaying = false;
         }
     }
 
@@ -366,6 +350,7 @@ public class particleSim : UdonSharpBehaviour
     void Start()
     {
         iHaveQuantumDistribution = quantumDistribution != null;
+        player = Networking.LocalPlayer;
         UpdateOwnerShip();
         if (particleEmitter != null)
         {

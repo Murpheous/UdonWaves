@@ -2,7 +2,6 @@
 using TMPro;
 using UdonSharp;
 using UnityEngine;
-using UnityEngine.SocialPlatforms;
 using UnityEngine.UI;
 using VRC.SDKBase;
 using VRC.Udon;
@@ -51,6 +50,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
     private float pendingPointSize = 0f;
     private bool pointSizeIsPending = false;
     private VRCPlayerApi player;
+    private bool iamOwner = false;
 
 
     [SerializeField, FieldChangeCallback(nameof(BeamSizeState))]
@@ -60,7 +60,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
         get => beamSizeState;
         set
         {
-            Debug.Log("Beam Size Pointer" + value.ToString());
+            //Debug.Log("Beam Size Pointer" + value.ToString());
             beamSizeState = value;
             if (!iamOwner && value)
                 Networking.SetOwner(player, gameObject);
@@ -130,7 +130,6 @@ public class MoleculeExperiment : UdonSharpBehaviour
         get => markerSlideState;
         set
         {
-            Debug.Log("Marker Slide Pointer" + value.ToString());
             markerSlideState = value;
             if (!iamOwner && value)
                 Networking.SetOwner(player, gameObject);
@@ -290,7 +289,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
             {
                 if (scaleIsChanging)
                 {
-                    Debug.Log("Scale Changing");
+                    //Debug.Log("Scale Changing");
 
                     particleEmitter.Pause();
                     particleEmitter.Clear();
@@ -303,7 +302,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
                 }
                 else
                 {
-                    Debug.Log("Scale Stopped");
+                 //   Debug.Log("Scale Stopped");
                     gratingVersion = -1;
                     settingsChanged = true;
                     gravityChanged = true;
@@ -534,8 +533,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
         } 
     }
 
-    bool iamOwner = false;
-    private VRC.Udon.Common.Interfaces.NetworkEventTarget toTheOwner = VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner;
+    //private VRC.Udon.Common.Interfaces.NetworkEventTarget toTheOwner = VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner;
 
     [Header("Debug Stuff")]
     [SerializeField] TextMeshProUGUI debugTextField;
@@ -600,12 +598,6 @@ public class MoleculeExperiment : UdonSharpBehaviour
     {
         iamOwner = Networking.IsOwner(this.gameObject);
 
-        /*if (pointSizeSlider != null)
-            pointSizeSlider.IsInteractible = iamOwner;
-        if (speedSlider != null)
-            speedSlider.IsInteractible = iamOwner; 
-        if (particleSizeSlider != null)
-            particleSizeSlider.IsInteractible = iamOwner; */
         if (iamOwner)
         {
             if (pointSizeIsPending)
@@ -646,75 +638,51 @@ public class MoleculeExperiment : UdonSharpBehaviour
     }
     public void OnGravScaleDown()
     {
+        if (!iamOwner)
+            Networking.SetOwner(player, gameObject);
         GravityIndex = gravityIndex-1;
     }
     public void OnGravScaleUp()
     {
+        if (!iamOwner)
+            Networking.SetOwner(player, gameObject);
         GravityIndex = gravityIndex + 1;
     }
 
     public void OnPlanckScaleDown()
     {
         if (!iamOwner)
-        {
-            SendCustomNetworkEvent(toTheOwner, nameof(OnPlanckScaleDown));
-            return;
-        }
+            Networking.SetOwner(player, gameObject);
         PlanckIndex = planckIndex-1;
     }
 
     public void OnPlanckScaleUp()
     {
         if (!iamOwner)
-        {
-            SendCustomNetworkEvent(toTheOwner, nameof(OnPlanckScaleUp));
-            return;
-        }
+            Networking.SetOwner(player, gameObject);
         PlanckIndex =  planckIndex + 1;
-    }
-
-    public void SetGravityOn()
-    {
-        if (!iamOwner)
-        {
-            SendCustomNetworkEvent(toTheOwner, nameof(SetGravityOn));
-            return;
-        }
-        UseGravity = true;
     }
 
     public void playTog()
     {
+        if (!iamOwner)
+            Networking.SetOwner(player, gameObject);
         if (togPlay != null) 
         {
             if (togPlay.isOn && !playParticles)
-                playSim();
+                PlayParticles = true;
         }
     }
 
     public void pauseTog()
     {
+        if (!iamOwner)
+            Networking.SetOwner(player,gameObject);
         if (togPause != null)
         {
             if (togPause.isOn && playParticles)
-                pauseSim();
+                PlayParticles = false;
         }
-    }
-
-    public void pauseSim()
-    {
-        if (iamOwner)
-            PlayParticles = false;
-        else
-            SendCustomNetworkEvent(toTheOwner,nameof(pauseSim));
-    }
-
-    public void playSim()
-    {
-        if (iamOwner) 
-            PlayParticles = true;
-        else
-            SendCustomNetworkEvent(toTheOwner,nameof (playSim));
     }
 
     public void resetSim()
@@ -728,102 +696,33 @@ public class MoleculeExperiment : UdonSharpBehaviour
         SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, nameof(resetSim));
     }
 
-    public void SetGravityOff()
-    {
-        if (!iamOwner)
-        {
-            SendCustomNetworkEvent(toTheOwner, nameof(SetGravityOff));
-            return;
-        }
-        UseGravity = false;
-    }
     public void OnGravityToggle()
     {
         bool newGravity = !useGravity;
         if (togGravity != null)
             newGravity  = togGravity.isOn;
-        if (newGravity) 
-            SetGravityOn();
-        else
-            SetGravityOff();
+        if (!iamOwner) 
+            Networking.SetOwner(player, gameObject);
+        UseGravity = newGravity;
     }
 
-    public void SetQuantumOff()
-    {
-        if (!iamOwner)
-        {
-            SendCustomNetworkEvent(toTheOwner, nameof(SetQuantumOff));
-            return;
-        }
-        UseQuantumScatter = false;
-    }
-    public void SetQuantumOn()
-    {
-        if (!iamOwner)
-        {
-            SendCustomNetworkEvent(toTheOwner, nameof(SetQuantumOn));
-            return;
-        }
-        UseQuantumScatter = true;
-    }
     public void OnQuantumToggle()
     {
         bool newQuantum = !useQuantumScatter;
         if (togQuantum != null)
             newQuantum = togQuantum.isOn;
-        if (newQuantum) 
-            SetQuantumOn();
-        else
-            SetQuantumOff();
-    }
-    public void RandomSpeedOn()
-    {
         if (!iamOwner)
-        {
-            SendCustomNetworkEvent(toTheOwner, nameof(RandomSpeedOn));
-            return;
-        }
-        RandomizeSpeed = true;
-    }
-
-    public void RandomSpeedOff()
-    {
-        if (!iamOwner)
-        {
-            SendCustomNetworkEvent(toTheOwner, nameof(RandomSpeedOff));
-            return;
-        }
-        RandomizeSpeed = false;
+            Networking.SetOwner(player, gameObject);
+        UseQuantumScatter = newQuantum;
     }
     public void OnTogSpeed()
     {
         bool newRandom = !randomizeSpeed;
         if (togRandomSpeed != null)
             newRandom = togRandomSpeed.isOn;
-        if (newRandom)
-            RandomSpeedOn();
-        else
-            RandomSpeedOff();
-    }
-
-    public void SetColourOn()
-    {
         if (!iamOwner)
-        {
-            SendCustomNetworkEvent(toTheOwner,nameof(SetColourOn));
-            return;
-        }
-        UseMonochrome = true;
-    }
-
-    public void SetColourOff()
-    {
-        if (!iamOwner)
-        {
-            SendCustomNetworkEvent(toTheOwner, nameof(SetColourOff));
-            return;
-        }
-        UseMonochrome = false;
+            Networking.SetOwner(player, gameObject);
+        RandomizeSpeed = newRandom;
     }
 
     public void OnTogMonochrome()
@@ -831,10 +730,9 @@ public class MoleculeExperiment : UdonSharpBehaviour
         bool newMono = !useMonochrome;
         if (togMonochrome != null)
             newMono = togMonochrome.isOn;
-        if (newMono)
-            SetColourOn();
-        else 
-            SetColourOff();
+        if (!iamOwner)
+            Networking.SetOwner(player, gameObject);
+        UseMonochrome = newMono;
     }
 
     private void LateUpdate()
@@ -1053,7 +951,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
     {
         if (!hasSource || scaleIsChanging)
             return;
-        Debug.Log("Update Gravity!!!");
+       // Debug.Log("Update Gravity!!!");
         gravityChanged = false;
         gravitySim = useGravity ? GravityScale * gravityAcceleration * (slowScaled * slowScaled) / experimentScale : 0.0f;
         var fo = particleEmitter.forceOverLifetime;
@@ -1064,7 +962,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
         particleEmitter.Play();
         if (hasTrajectoryModule)
         {
-            Debug.Log("Has Trajectory Module");
+           // Debug.Log("Has Trajectory Module");
             trajectoryModule.GravitySim = gravitySim;
             trajectoryModule.UseGravity = useGravity;
         }
@@ -1093,7 +991,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
             targetDisplay.Dissolve();
         //if (hasGratingDecorator)
         //    gratingDecals.Dissolve();
-        Debug.Log("dissolveDisplays()");
+        //Debug.Log("dissolveDisplays()");
     }
     private void updateSettings()
     {
@@ -1232,7 +1130,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
             if (gcVersion != gratingVersion)
             {
                 GratingVersion = gcVersion;
-                Debug.Log($"Grating version: {gcVersion}");
+               // Debug.Log($"Grating version: {gcVersion}");
             }
         }
         if (updateUI)

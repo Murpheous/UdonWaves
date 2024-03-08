@@ -45,6 +45,8 @@ public class WaveSlitControls : UdonSharpBehaviour
     //private QuantumScatter particleScatter;
     private bool gratingValid;
     private bool iamOwner;
+    private VRCPlayerApi player;
+
     private VRC.Udon.Common.Interfaces.NetworkEventTarget toTheOwner = VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner;
 
     void setText(TextMeshProUGUI tmproLabel, string text)
@@ -114,69 +116,58 @@ public class WaveSlitControls : UdonSharpBehaviour
 
     public void OnAperturesPlus()
     {
-        if (!iamOwner)
-        {
-            SendCustomNetworkEvent(toTheOwner, nameof(OnAperturesPlus));
-            return;
-        }
         if ((ApertureCount < MAX_SLITS) && checkGratingWidth(ApertureWidth, AperturePitch, ApertureCount + 1))
         {
-                ApertureCount = apertureCount + 1; 
+            if (!iamOwner)
+                Networking.SetOwner(player, gameObject);
+            ApertureCount = apertureCount + 1; 
         }
     }
 
     public void OnAperturesMinus()
     {
-        if (!iamOwner)
+        if (apertureCount > 1)
         {
-            SendCustomNetworkEvent(toTheOwner, nameof(OnAperturesMinus));
-            return;
+            if (!iamOwner)
+                Networking.SetOwner(player, gameObject);
+            ApertureCount = apertureCount - 1;
         }
-        ApertureCount = apertureCount - 1;
     }
     public void OnWidthPlus()
     {
-        if (!iamOwner)
-        {
-            SendCustomNetworkEvent(toTheOwner, nameof(OnWidthPlus));
-            return;
-        }
         if (checkGratingWidth(ApertureWidth + 0.005f, AperturePitch, ApertureCount))
+        {
+            if (!iamOwner)
+                Networking.SetOwner(player, gameObject);
             ApertureWidth = apertureWidth + 0.005f;
+        }
     }
     public void OnWidthMinus()
     {
-        if (!iamOwner)
-        {
-            SendCustomNetworkEvent(toTheOwner, nameof(OnWidthMinus));
-            return;
-        }
         if (ApertureWidth <= 0.005f)
             return;
-        if (checkGratingWidth(ApertureWidth-0.005f, AperturePitch, ApertureCount))
+        if (checkGratingWidth(ApertureWidth - 0.005f, AperturePitch, ApertureCount))
+        {
+            if (!iamOwner)
+                Networking.SetOwner(player,gameObject);
             ApertureWidth = apertureWidth - 0.005f;
+        }
     }
     public void OnPitchPlus()
     {
-        if (!iamOwner)
+        if (checkGratingWidth(ApertureWidth, AperturePitch + 0.05f, ApertureCount))
         {
-            SendCustomNetworkEvent(toTheOwner, nameof(OnPitchPlus));
-            return;
-        }
-        if (checkGratingWidth(ApertureWidth,AperturePitch+0.05f, ApertureCount))
+            if (!iamOwner)
+                Networking.SetOwner(player, gameObject);
             AperturePitch = aperturePitch + 0.05f;
+        }
     }
     public void OnPitchMinus()
     {
-        if (!iamOwner)
-        {
-            SendCustomNetworkEvent(toTheOwner, nameof(OnPitchMinus));
-            return;
-        }
-
         if (aperturePitch <= 0.005f)
             return;
-        //if (checkGratingWidth(ApertureWidth, AperturePitch - 0.01f, ApertureCount))
+        if (!iamOwner)
+            Networking.SetOwner(player, gameObject);
         AperturePitch = aperturePitch - 0.005f;
     }
 
@@ -299,6 +290,7 @@ public class WaveSlitControls : UdonSharpBehaviour
 
     void Start()
     {
+        player = Networking.LocalPlayer;
         MAX_SLITS = 7;
         gratingValid= false;
         UpdateOwnerShip();
