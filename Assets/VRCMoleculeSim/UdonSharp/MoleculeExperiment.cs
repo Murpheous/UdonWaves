@@ -663,7 +663,8 @@ public class MoleculeExperiment : UdonSharpBehaviour
         PlanckIndex =  planckIndex + 1;
     }
 
-    public void playTog()
+    // play/pause reset particle events
+    public void playSim()
     {
         if (!iamOwner)
             Networking.SetOwner(player, gameObject);
@@ -674,7 +675,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
         }
     }
 
-    public void pauseTog()
+    public void pauseSim()
     {
         if (!iamOwner)
             Networking.SetOwner(player,gameObject);
@@ -737,6 +738,8 @@ public class MoleculeExperiment : UdonSharpBehaviour
 
     private void LateUpdate()
     {
+        if (!hasSource || !playParticles)
+            return;
         int nUpdated = 0;
         Vector3 launchVelocity;
         Vector3 launchPosition;
@@ -744,206 +747,202 @@ public class MoleculeExperiment : UdonSharpBehaviour
         Vector3 particleVelocity;
         float lifeRemaining;
         int particleStage;
-        if (hasSource)
-        {
-
-            numParticles = particleEmitter.particleCount;
-            particles = new ParticleSystem.Particle[numParticles];
-            numParticles = particleEmitter.GetParticles(particles);
+        numParticles = particleEmitter.particleCount;
+        particles = new ParticleSystem.Particle[numParticles];
+        numParticles = particleEmitter.GetParticles(particles);
             
-            float spreadHigh = UnityEngine.Random.Range(-startDimensions.y, startDimensions.y);
-            float spreadWide = UnityEngine.Random.Range(-startDimensions.x, startDimensions.x);
+        float spreadHigh = UnityEngine.Random.Range(-startDimensions.y, startDimensions.y);
+        float spreadWide = UnityEngine.Random.Range(-startDimensions.x, startDimensions.x);
 
-            for (int i = 0; i < numParticles; i++)
+        for (int i = 0; i < numParticles; i++)
+        {
+            var particle = particles[i];
+            particleStage = Mathf.RoundToInt(particle.startLifetime);
+            particlePos = particle.position;
+            particleVelocity = particle.velocity;
+            lifeRemaining = particle.remainingLifetime;
+            bool particleChanged = false;
+            // particleStage < 10 means newborn (unlaunched)
+            if (particleStage < 10)
             {
-                var particle = particles[i];
-                particleStage = Mathf.RoundToInt(particle.startLifetime);
-                particlePos = particle.position;
-                particleVelocity = particle.velocity;
-                lifeRemaining = particle.remainingLifetime;
-                bool particleChanged = false;
-                // particleStage < 10 means newborn (unlaunched)
-                if (particleStage < 10)
+                particleChanged = true;
+                particleStage = 250;
+                lifeRemaining = 100;
+                launchPosition = new Vector3(gratingThickness, spreadHigh, spreadWide);
+                particle.axisOfRotation = launchPosition;
+                launchPosition += sourceXfrm.position;
+                Color launchColour = defaultColour;
+                uint particleIndex = 0;
+                if (trajectoryValid)
                 {
-                    particleChanged = true;
-                    particleStage = 250;
-                    lifeRemaining = 100;
-                    launchPosition = new Vector3(gratingThickness, spreadHigh, spreadWide);
-                    particle.axisOfRotation = launchPosition;
-                    launchPosition += sourceXfrm.position;
-                    Color launchColour = defaultColour;
-                    uint particleIndex = 0;
-                    if (trajectoryValid)
-                    {
-                        float speedTrim = randomizeSpeed ? UnityEngine.Random.Range(0f, 1f) : userSpeedTrim;
-                        int velocityIndex = (int)Mathf.Lerp(0, trajectoryModule.LookupPoints, speedTrim);
-                        launchVelocity = trajectoryModule.lookupVelocity(velocityIndex);
-                        if (!useMonochrome)
-                            launchColour = trajectoryModule.lookupColour(velocityIndex);
-                    }
-                    else
-                    {
-                        float speedFraction = randomizeSpeed ? UnityEngine.Random.Range(-randomRange, randomRange) : userSpeedFraction;
-                        launchVelocity = new Vector3(avgSimulationSpeed * speedFraction + 1, 0, 0);
-                    }
-                    particleVelocity = launchVelocity;
-                    particlePos = launchPosition;
-                    launchVelocity.y = -launchVelocity.y;
-                    particle.rotation3D = launchVelocity;
-                    particle.startColor = launchColour;
-                    particle.randomSeed = particleIndex;
+                    float speedTrim = randomizeSpeed ? UnityEngine.Random.Range(0f, 1f) : userSpeedTrim;
+                    int velocityIndex = (int)Mathf.Lerp(0, trajectoryModule.LookupPoints, speedTrim);
+                    launchVelocity = trajectoryModule.lookupVelocity(velocityIndex);
+                    if (!useMonochrome)
+                        launchColour = trajectoryModule.lookupColour(velocityIndex);
                 }
-                else // not a newborn
+                else
                 {
-                    bool afterTarget = particlePos.x > (targetPosition.x+0.1f) && particleStage > 50;
-                    if (afterTarget) // Stray
+                    float speedFraction = randomizeSpeed ? UnityEngine.Random.Range(-randomRange, randomRange) : userSpeedFraction;
+                    launchVelocity = new Vector3(avgSimulationSpeed * speedFraction + 1, 0, 0);
+                }
+                particleVelocity = launchVelocity;
+                particlePos = launchPosition;
+                launchVelocity.y = -launchVelocity.y;
+                particle.rotation3D = launchVelocity;
+                particle.startColor = launchColour;
+                particle.randomSeed = particleIndex;
+            }
+            else // not a newborn
+            {
+                bool afterTarget = particlePos.x > (targetPosition.x+0.1f) && particleStage > 50;
+                if (afterTarget) // Stray
+                {
+                    //particleStage = fadeParticle(i);
+                    particleVelocity = Vector3.zero;
+                    lifeRemaining = 0.5f;
+                    particleStage = 43;
+                    // %%%
+                    particleChanged = true;
+                }
+                if (particleStage > 50)
+                {
+                    float particleGratingDelta = particlePos.x - gratingPosition.x;
+                    // Any Above 50 and stopped have collided with something and need to be handled
+                    float particleTargetDelta = particlePos.x - targetPosition.x;
+                    bool preGratingFilter = particleStage > 240;
+                    bool stopped = (particleVelocity.x < 0.01f);
+                    // Handle Stopped Particle
+                    if (stopped)
                     {
-                        //particleStage = fadeParticle(i);
-                        particleVelocity = Vector3.zero;
-                        lifeRemaining = 0.5f;
-                        particleStage = 43;
-                        // %%%
-                        particleChanged = true;
-                    }
-                    if (particleStage > 50)
-                    {
-                        float particleGratingDelta = particlePos.x - gratingPosition.x;
-                        // Any Above 50 and stopped have collided with something and need to be handled
-                        float particleTargetDelta = particlePos.x - targetPosition.x;
-                        bool preGratingFilter = particleStage > 240;
-                        bool stopped = (particleVelocity.x < 0.01f);
-                        // Handle Stopped Particle
-                        if (stopped)
-                        {
-                            Vector3 collideVelocity = particles[i].rotation3D;
-                            //
-                            // Process impact of particle stopping after initial launch
-                            if (preGratingFilter)
-                            { // Stopped and not processed for grating
-                              // Now test to see if stopped at grating
-                                if (Mathf.Abs(particleGratingDelta) <= 0.01f)
-                                { // Here if close to grating
-                                    Vector3 gratingHitPosition = particle.axisOfRotation;
-                                    if (hasGrating && (!gratingControl.checkLatticeCollision(gratingHitPosition)))
-                                    {
-                                        particlePos = gratingHitPosition;
-                                        particleVelocity = collideVelocity;
-                                        particleStage = 240;
-                                        particleChanged = true;
-                                    }
-                                    else
-                                    {
-                                        gratingHitPosition.x = particlePos.x;
-                                        if (hasGratingDecorator)
-                                        {
-                                            gratingDecals.FadeParticle(gratingHitPosition, particles[i].startColor, false, gratingMarkerSize, 0.5f);
-                                            //particleStage = killParticle(i);
-                                            particleStage = 42;
-                                            particle.velocity = Vector3.zero;
-                                            lifeRemaining = 0f;
-                                            particleChanged = true;
-                                            // %%%
-                                        }
-                                        else
-                                        {
-                                            //particleStage = fadeParticle(i);
-                                            particleStage = 43;
-                                            particlePos = gratingHitPosition;
-                                            particleVelocity = Vector3.zero;
-                                            particle.startSize = gratingMarkerSize;
-                                            lifeRemaining = 0.6f;
-                                            particleChanged = true;
-                                            // %%%
-                                        }
-                                    }
+                        Vector3 collideVelocity = particles[i].rotation3D;
+                        //
+                        // Process impact of particle stopping after initial launch
+                        if (preGratingFilter)
+                        { // Stopped and not processed for grating
+                            // Now test to see if stopped at grating
+                            if (Mathf.Abs(particleGratingDelta) <= 0.01f)
+                            { // Here if close to grating
+                                Vector3 gratingHitPosition = particle.axisOfRotation;
+                                if (hasGrating && (!gratingControl.checkLatticeCollision(gratingHitPosition)))
+                                {
+                                    particlePos = gratingHitPosition;
+                                    particleVelocity = collideVelocity;
+                                    particleStage = 240;
+                                    particleChanged = true;
                                 }
                                 else
                                 {
-                                    //particleStage = fadeParticle(i);
-                                    particleVelocity = Vector3.zero;
-                                    lifeRemaining = 0.5f;
-                                    particleStage = 43;
-                                    // %%%
-                                    particleChanged = true;
-                                }
-                            }
-                            else
-                            { // Stopped and after grating use particle for decal or erase
-                                bool atTarget = hasTarget && (particleTargetDelta >= -0.01f);
-                                bool atFloor = hasFloor && (!atTarget);
-                                nUpdated++;
-                                if (atTarget || atFloor)
-                                {
-                                    lifeRemaining = 0f;
-                                    if (hasTargetDecorator)
+                                    gratingHitPosition.x = particlePos.x;
+                                    if (hasGratingDecorator)
                                     {
-                                        targetDisplay.PlotParticle(particlePos, particles[i].startColor, atFloor);
+                                        gratingDecals.FadeParticle(gratingHitPosition, particles[i].startColor, false, gratingMarkerSize, 0.5f);
+                                        //particleStage = killParticle(i);
                                         particleStage = 42;
-                                        particleVelocity = Vector3.zero;
+                                        particle.velocity = Vector3.zero;
+                                        lifeRemaining = 0f;
+                                        particleChanged = true;
+                                        // %%%
                                     }
                                     else
                                     {
+                                        //particleStage = fadeParticle(i);
                                         particleStage = 43;
+                                        particlePos = gratingHitPosition;
                                         particleVelocity = Vector3.zero;
-                                        lifeRemaining = 0.5f;
+                                        particle.startSize = gratingMarkerSize;
+                                        lifeRemaining = 0.6f;
+                                        particleChanged = true;
+                                        // %%%
                                     }
-                                    particleChanged = true;
                                 }
-                                else // Anywhere else
+                            }
+                            else
+                            {
+                                //particleStage = fadeParticle(i);
+                                particleVelocity = Vector3.zero;
+                                lifeRemaining = 0.5f;
+                                particleStage = 43;
+                                // %%%
+                                particleChanged = true;
+                            }
+                        }
+                        else
+                        { // Stopped and after grating use particle for decal or erase
+                            bool atTarget = hasTarget && (particleTargetDelta >= -0.01f);
+                            bool atFloor = hasFloor && (!atTarget);
+                            nUpdated++;
+                            if (atTarget || atFloor)
+                            {
+                                lifeRemaining = 0f;
+                                if (hasTargetDecorator)
                                 {
-                                    //particleStage = fadeParticle(i);
+                                    targetDisplay.PlotParticle(particlePos, particles[i].startColor, atFloor);
+                                    particleStage = 42;
+                                    particleVelocity = Vector3.zero;
+                                }
+                                else
+                                {
+                                    particleStage = 43;
                                     particleVelocity = Vector3.zero;
                                     lifeRemaining = 0.5f;
-                                    particleStage = 43;
-                                    particleChanged = true;
                                 }
+                                particleChanged = true;
                             }
-                        } // Stopped
-                        if (particleStage == 240)
-                        {
-                            float speedFraction = particleVelocity.x / maxSimSpeed;
-                            float speedRestore = (maxSimSpeed * speedFraction);
-                            Vector3 unitVecScatter = Vector3.right;
-                            lifeRemaining = maxLifetimeAfterGrating;
-                            particleChanged = true;
-                            particleStage = 239;
-                            if (useQuantumScatter)
+                            else // Anywhere else
                             {
-                                float sY=0,sZ=0;
-                                if (hasHorizontalScatter)
-                                {
-                                    sZ = horizontalScatter.RandomImpulseFrac(speedFraction);
-                                    unitVecScatter.z = sZ;
-                                }
-
-                                if (hasVerticalScatter)
-                                {
-                                    sY = verticalScatter.RandomImpulseFrac(speedFraction);
-                                    unitVecScatter.y = sY;
-                                }
-                                unitVecScatter.x = Mathf.Sqrt(1 - Mathf.Clamp01(sY * sY + sZ * sZ));
-                                Vector3 updateV = unitVecScatter * speedRestore;
-                                updateV.y += particleVelocity.y;
-                                particleVelocity = updateV;
+                                //particleStage = fadeParticle(i);
+                                particleVelocity = Vector3.zero;
+                                lifeRemaining = 0.5f;
+                                particleStage = 43;
+                                particleChanged = true;
                             }
+                        }
+                    } // Stopped
+                    if (particleStage == 240)
+                    {
+                        float speedFraction = particleVelocity.x / maxSimSpeed;
+                        float speedRestore = (maxSimSpeed * speedFraction);
+                        Vector3 unitVecScatter = Vector3.right;
+                        lifeRemaining = maxLifetimeAfterGrating;
+                        particleChanged = true;
+                        particleStage = 239;
+                        if (useQuantumScatter)
+                        {
+                            float sY=0,sZ=0;
+                            if (hasHorizontalScatter)
+                            {
+                                sZ = horizontalScatter.RandomImpulseFrac(speedFraction);
+                                unitVecScatter.z = sZ;
+                            }
+
+                            if (hasVerticalScatter)
+                            {
+                                sY = verticalScatter.RandomImpulseFrac(speedFraction);
+                                unitVecScatter.y = sY;
+                            }
+                            unitVecScatter.x = Mathf.Sqrt(1 - Mathf.Clamp01(sY * sY + sZ * sZ));
+                            Vector3 updateV = unitVecScatter * speedRestore;
+                            updateV.y += particleVelocity.y;
+                            particleVelocity = updateV;
                         }
                     }
                 }
-                if (particleChanged)
-                {
-                    particle.startLifetime = particleStage;
-                    particle.velocity = particleVelocity;
-                    particle.position = particlePos;
-                    particle.remainingLifetime = lifeRemaining;
-                    nUpdated++;
-                    particles[i] = particle;
-                }
             }
-
-            if (nUpdated > 0)
+            if (particleChanged)
             {
-                particleEmitter.SetParticles(particles, numParticles);
+                particle.startLifetime = particleStage;
+                particle.velocity = particleVelocity;
+                particle.position = particlePos;
+                particle.remainingLifetime = lifeRemaining;
+                nUpdated++;
+                particles[i] = particle;
             }
+        }
+
+        if (nUpdated > 0)
+        {
+            particleEmitter.SetParticles(particles, numParticles);
         }
     }
 

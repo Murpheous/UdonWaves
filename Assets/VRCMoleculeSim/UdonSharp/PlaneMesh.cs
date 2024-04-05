@@ -161,12 +161,12 @@ public class PlaneMesh : UdonSharpBehaviour
         float xOffset = dimensions.x / 2;
         float yOffset = dimensions.y / 2;
         int nVertex = 0;
-        float xPos = 0;
-        float yPos = 0;
+        float xPos;
+        float yPos;
 
         for (int y = 0; y < res.y + 1; y++)
         {
-            yPos = y * xPitch;
+            yPos = y * yPitch;
             for (int x = 0; x < res.x + 1; x++)
             {
                 xPos = x * xPitch;

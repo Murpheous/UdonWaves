@@ -22,7 +22,6 @@ public class UdonTween : UdonSharpBehaviour
 
     private VRCPlayerApi player;
     bool iamOwner = false;
-    private VRC.Udon.Common.Interfaces.NetworkEventTarget toTheOwner = VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner;
 
     public float currentValue;
     private float reportedValue = 0.0f;
