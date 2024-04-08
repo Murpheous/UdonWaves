@@ -8,6 +8,7 @@ using VRC.Udon;
 public class particleSim : UdonSharpBehaviour
 {
     [SerializeField] private ParticleSystem particleEmitter;
+    bool iHaveParticleSystem = false;
     [SerializeField] private WaveSlitControls apertureControl;
     [SerializeField] private WaveMonitor waveControl;
     [SerializeField] private QuantumScatter quantumDistribution;
@@ -43,11 +44,9 @@ public class particleSim : UdonSharpBehaviour
     [SerializeField]
     private float particleSpeed = 1;
     private bool isStarted = false;
-    private bool hasParticles = false;
     private bool iamOwner;
     private VRCPlayerApi player;
 
-    //private VRC.Udon.Common.Interfaces.NetworkEventTarget toTheOwner = VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner;
     private VRC.Udon.Common.Interfaces.NetworkEventTarget toAll = VRC.Udon.Common.Interfaces.NetworkEventTarget.All;
 
     public Color lerpColour(float frac)
@@ -118,7 +117,7 @@ public class particleSim : UdonSharpBehaviour
         if (apertureControl.GratingWidth != currentGratingWidth)
         {
             currentGratingWidth = apertureControl.GratingWidth;
-            if (!hasParticles)
+            if (!iHaveParticleSystem)
                 return;
             var shapeModule = particleEmitter.shape;
             if (shapeModule.shapeType == ParticleSystemShapeType.Box)
@@ -142,7 +141,7 @@ public class particleSim : UdonSharpBehaviour
                 if (waveControl != null)
                 {
                     lmin = waveControl.LambdaMin;
-                    Debug.Log("Lmin=" + lambdaMin);
+                //    Debug.Log("Lmin=" + lambdaMin);
                 }
                 //generateSpeckleDistribution();
                 if (quantumDistribution.SetGratingByPitch(slitCount, slitWidth, slitPitch,lmin))
@@ -165,7 +164,7 @@ public class particleSim : UdonSharpBehaviour
             if ((!value) && (toggleStop != null) && (!toggleStop.isOn))
                 toggleStop.isOn = true;
             particlesPlaying = value;
-            if (hasParticles)
+            if (iHaveParticleSystem)
             {
                 if (particlesPlaying)
                     particleEmitter.Play();
@@ -204,7 +203,7 @@ public class particleSim : UdonSharpBehaviour
 
     public void ResetParticles()
     {
-        if (hasParticles)
+        if (iHaveParticleSystem)
             particleEmitter.Clear();
     }
 
@@ -224,7 +223,7 @@ public class particleSim : UdonSharpBehaviour
         timeRemaining += 0.1f;
         if ((apertureX <= 0) || !particlesPlaying)
             return;
-        if (!hasParticles)
+        if (!iHaveParticleSystem)
             return;
         var numParticles = particleEmitter.particleCount;
         var nUpdated = 0;
@@ -354,7 +353,7 @@ public class particleSim : UdonSharpBehaviour
         UpdateOwnerShip();
         if (particleEmitter != null)
         {
-            hasParticles = true;
+            iHaveParticleSystem = true;
             sourceXfrm = particleEmitter.transform;
             var main = particleEmitter.main;
             averageSpeed = main.startSpeed.constant;

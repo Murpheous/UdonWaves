@@ -34,7 +34,7 @@ public class UdonGrid2D : UdonSharpBehaviour
         {
             needsUpdate = gridSpacing.x != value.x || gridSpacing.y != value.y;
             gridSpacing = value;
-            Debug.Log("GridSpacing"+value.x+", "+value.y + "U:" + needsUpdate);
+            //Debug.Log("GridSpacing"+value.x+", "+value.y + "U:" + needsUpdate);
         }
     }
     public float RowSpacing { get => gridSpacing.y;}
@@ -59,7 +59,7 @@ public class UdonGrid2D : UdonSharpBehaviour
         Vector3 lineStart = Vector3.zero;
         Vector3 lineEnd = Vector3.zero;
         needsUpdate = false;
-        Debug.Log(string.Format("{0}->UpdateGrid->Spacing[{1:3},{2:3}", gameObject.name, gridSpacing.x, gridSpacing.y));
+        //Debug.Log(string.Format("{0}->UpdateGrid->Spacing[{1:3},{2:3}", gameObject.name, gridSpacing.x, gridSpacing.y));
         GameObject goLine;
         if (numRows > 0)
         {

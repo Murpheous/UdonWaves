@@ -41,7 +41,6 @@ public class WaveMonitor : UdonSharpBehaviour
     private float LambdaPixels { get => waveSpeedPixels / Mathf.Clamp(frequency, minFrequency, maxFrequency); }
     private bool iamOwner;
     private VRCPlayerApi player;
-    private VRC.Udon.Common.Interfaces.NetworkEventTarget toTheOwner = VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner;
     private VRC.Udon.Common.Interfaces.NetworkEventTarget toAll = VRC.Udon.Common.Interfaces.NetworkEventTarget.All;
 
     public float Frequency

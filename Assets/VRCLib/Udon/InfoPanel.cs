@@ -41,7 +41,7 @@ public class InfoPanel : UdonSharpBehaviour
         set
         {
             activeInfoPage = value;
-            Debug.Log("ActiveInfoPage=" + value);
+            //Debug.Log("ActiveInfoPage=" + value);
             if (hasTextField)
             {
                 if (value >= 0)
@@ -100,7 +100,7 @@ public class InfoPanel : UdonSharpBehaviour
                     toggleIdx = i;
             }
         }
-        Debug.Log("Toggle Changed: " + toggleIdx.ToString());
+        //Debug.Log("Toggle Changed: " + toggleIdx.ToString());
         SelectedToggle = toggleIdx;
     }
 
@@ -113,7 +113,7 @@ public class InfoPanel : UdonSharpBehaviour
         get => selectedToggle;
         set
         {
-            Debug.Log("Toggle Select: " +  value.ToString());
+            //Debug.Log("Toggle Select: " +  value.ToString());
             if (!iamOwner)
             {
                 togglePending = true;

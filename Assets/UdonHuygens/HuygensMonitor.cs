@@ -64,8 +64,6 @@ public class HuygensMonitor : UdonSharpBehaviour
     private Material matSimControl = null;
     [SerializeField]
     private Material matSimDisplay = null;
-    [SerializeField, Tooltip("Check to invoke CRT Update")]
-    private bool crtUpdateNeeded = false;
     [SerializeField]
     private bool iHaveCRT = false;
     [SerializeField]
@@ -396,8 +394,7 @@ public class HuygensMonitor : UdonSharpBehaviour
     float mmToPixels = 1;
     [SerializeField]
     bool iHaveSimMaterial = false;
-    float phaseTime = 0;
-    float phaseRate = 0.3f;
+    float phaseRate;
     void UpdateWaves()
     {   
         if(useCRT && displayMode >= 0)

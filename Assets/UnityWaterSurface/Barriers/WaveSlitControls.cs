@@ -9,6 +9,8 @@ using VRC.Udon;
 
 public class WaveSlitControls : UdonSharpBehaviour
 {
+    [SerializeField] UdonBehaviour particleSim;
+    bool ihaveParticleSim;
     public GameObject barPrefab;
     public Transform borderPrefab;
 
@@ -17,12 +19,12 @@ public class WaveSlitControls : UdonSharpBehaviour
     
     public float barThickness;
     [SerializeField,UdonSynced,FieldChangeCallback(nameof (ApertureCount))]
-    private int apertureCount;
+    private int slitCount;
 
     [SerializeField,UdonSynced, FieldChangeCallback(nameof(ApertureWidth))]
-    private float apertureWidth;
+    private float slitWidth;
     [SerializeField,UdonSynced, FieldChangeCallback(nameof(AperturePitch))]
-    private float aperturePitch;
+    private float slitPitch;
 
     private float gratingWidth;
     private float barWidth;
@@ -36,18 +38,14 @@ public class WaveSlitControls : UdonSharpBehaviour
     // dimensions
 
     [Header("UI Conponents")]
-    [SerializeField] GameObject UiPanel;
     [SerializeField] TextMeshProUGUI labelSlits;
     [SerializeField] TextMeshProUGUI labelSlitPitch;
     [SerializeField] TextMeshProUGUI labelSlitWidth;
     [Header("Constants"), SerializeField]
     private int MAX_SLITS = 7;
-    //private QuantumScatter particleScatter;
     private bool gratingValid;
     private bool iamOwner;
     private VRCPlayerApi player;
-
-    private VRC.Udon.Common.Interfaces.NetworkEventTarget toTheOwner = VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner;
 
     void setText(TextMeshProUGUI tmproLabel, string text)
     {
@@ -57,20 +55,20 @@ public class WaveSlitControls : UdonSharpBehaviour
 
     private void UpdateLabels()
     {
-        setText(labelSlits, "Gaps\n" + apertureCount.ToString());
-        setText(labelSlitPitch, "Spacing\n" + Units.ToEngineeringNotation(aperturePitch) + "m");
-        setText(labelSlitWidth, "Gap Width\n" + Units.ToEngineeringNotation(apertureWidth) + "m");
+        setText(labelSlits, "Gaps\n" + slitCount.ToString());
+        setText(labelSlitPitch, "Spacing\n" + Units.ToEngineeringNotation(slitPitch) + "m");
+        setText(labelSlitWidth, "Gap Width\n" + Units.ToEngineeringNotation(slitWidth) + "m");
     }
     public float AperturePitch
     {
-        get => aperturePitch;
+        get => slitPitch;
         private set
         {
-            if (checkGratingWidth(apertureWidth, value, ApertureCount))
+            if (checkGratingWidth(slitWidth, value, ApertureCount))
             {
-                if (value != aperturePitch)
+                if (value != slitPitch)
                 {
-                    aperturePitch = value;
+                    slitPitch = value;
                     gratingValid = false;
                 }
             }
@@ -80,14 +78,14 @@ public class WaveSlitControls : UdonSharpBehaviour
 
     public float ApertureWidth
     {
-        get => apertureWidth;
+        get => slitWidth;
         private set
         {
-            if (checkGratingWidth(value,aperturePitch,apertureCount) && value > 0.01f)
+            if (checkGratingWidth(value,slitPitch,slitCount) && value > 0.01f)
             {
-                if (value != apertureWidth)
+                if (value != slitWidth)
                 {
-                    apertureWidth = value;
+                    slitWidth = value;
                     gratingValid = false;
                 }
             }
@@ -98,16 +96,16 @@ public class WaveSlitControls : UdonSharpBehaviour
 
     public int ApertureCount
     {
-        get => apertureCount;
+        get => slitCount;
         set
         {
             if (value < 1)
                 value = 1;
             else if (value > MAX_SLITS)
                 value = MAX_SLITS;
-            if (value != apertureCount)
+            if (value != slitCount)
             {
-                apertureCount = value;
+                slitCount = value;
                 gratingValid = false;
             }
             RequestSerialization();
@@ -120,17 +118,17 @@ public class WaveSlitControls : UdonSharpBehaviour
         {
             if (!iamOwner)
                 Networking.SetOwner(player, gameObject);
-            ApertureCount = apertureCount + 1; 
+            ApertureCount = slitCount + 1; 
         }
     }
 
     public void OnAperturesMinus()
     {
-        if (apertureCount > 1)
+        if (slitCount > 1)
         {
             if (!iamOwner)
                 Networking.SetOwner(player, gameObject);
-            ApertureCount = apertureCount - 1;
+            ApertureCount = slitCount - 1;
         }
     }
     public void OnWidthPlus()
@@ -139,7 +137,7 @@ public class WaveSlitControls : UdonSharpBehaviour
         {
             if (!iamOwner)
                 Networking.SetOwner(player, gameObject);
-            ApertureWidth = apertureWidth + 0.005f;
+            ApertureWidth = slitWidth + 0.005f;
         }
     }
     public void OnWidthMinus()
@@ -150,7 +148,7 @@ public class WaveSlitControls : UdonSharpBehaviour
         {
             if (!iamOwner)
                 Networking.SetOwner(player,gameObject);
-            ApertureWidth = apertureWidth - 0.005f;
+            ApertureWidth = slitWidth - 0.005f;
         }
     }
     public void OnPitchPlus()
@@ -159,16 +157,16 @@ public class WaveSlitControls : UdonSharpBehaviour
         {
             if (!iamOwner)
                 Networking.SetOwner(player, gameObject);
-            AperturePitch = aperturePitch + 0.05f;
+            AperturePitch = slitPitch + 0.05f;
         }
     }
     public void OnPitchMinus()
     {
-        if (aperturePitch <= 0.005f)
+        if (slitPitch <= 0.005f)
             return;
         if (!iamOwner)
             Networking.SetOwner(player, gameObject);
-        AperturePitch = aperturePitch - 0.005f;
+        AperturePitch = slitPitch - 0.005f;
     }
 
 
@@ -207,21 +205,27 @@ public class WaveSlitControls : UdonSharpBehaviour
         bar.gameObject.SetActive(isVisible);
     }
 
-    bool checkGratingWidth(float apertureWidth, float aperturePitch, int numGaps)
+    bool checkGratingWidth(float slitWidth, float slitPitch, int numGaps)
     {
         if (numGaps <= 0)
             return true;
         if (numGaps == 1)
-            return apertureWidth <= tankWidth;
-        return tankWidth >= (((numGaps - 1) * aperturePitch) + apertureWidth);
+            return slitWidth <= tankWidth;
+        return tankWidth >= (((numGaps - 1) * slitPitch) + slitWidth);
     }
 
     
     void setupLattice()
     {
+        if (ihaveParticleSim)
+        {
+            particleSim.SetProgramVariable<int>("slitCount", slitCount);
+            particleSim.SetProgramVariable<float>("slitWidth", slitWidth);
+            particleSim.SetProgramVariable<float>("slitPitch", slitPitch);
+        }
         // Set dimensons for the construction of the lattice;
-        barWidth = aperturePitch - apertureWidth;
-        gratingWidth = apertureCount < 1 ? 0 : (aperturePitch * (apertureCount - 1)) + apertureWidth;
+        barWidth = slitPitch - slitWidth;
+        gratingWidth = slitCount < 1 ? 0 : (slitPitch * (slitCount - 1)) + slitWidth;
         sideBarWidth = (tankWidth - gratingWidth) / 2.0f;
         //if (sideBarWidth < 0)
         //    sideBarWidth = gratingWidth / 4.0f;
@@ -232,7 +236,7 @@ public class WaveSlitControls : UdonSharpBehaviour
 
         // Set up lattice parameters
         float gratingHalfWidth = (gratingWidth / 2.0f);
-        float slitDelta = apertureWidth + barWidth;
+        float slitDelta = slitWidth + barWidth;
 
         // Calculate positions of side and top panels
         float sidePanelPos = gratingHalfWidth + (sideBarWidth / 2.0f);
@@ -244,10 +248,10 @@ public class WaveSlitControls : UdonSharpBehaviour
             SetBarSizeAndPosition(panelRight.transform, sideBarWidth, -sidePanelPos, true);
 
             // Set scale and then position of the first spacer
-            float StudOffset = gratingHalfWidth - (apertureWidth + (barWidth / 2.0F));
+            float StudOffset = gratingHalfWidth - (slitWidth + (barWidth / 2.0F));
             for (int nSlit = 0; nSlit < theBars.Length; nSlit++)
             {
-                bool visible = (nSlit + 1) < apertureCount;
+                bool visible = (nSlit + 1) < slitCount;
                 SetBarSizeAndPosition(theBars[nSlit].transform, barWidth, StudOffset, visible);
                 if (visible)
                     StudOffset -= slitDelta;
@@ -290,6 +294,7 @@ public class WaveSlitControls : UdonSharpBehaviour
 
     void Start()
     {
+        ihaveParticleSim = particleSim != null;
         player = Networking.LocalPlayer;
         MAX_SLITS = 7;
         gratingValid= false;
@@ -299,9 +304,9 @@ public class WaveSlitControls : UdonSharpBehaviour
         if (tankWidth <= 0) tankWidth = 1.0f;
         if (tankLength <= 0) tankLength = 2.0f;
         if (barThickness <= 0) barThickness = 0.01f;
-        if (apertureCount < 0) apertureCount = 2;
-        if (apertureWidth <= 0) apertureWidth = 0.04f;
-        if (aperturePitch <= 0) aperturePitch = 0.015f;
+        if (slitCount < 0) slitCount = 2;
+        if (slitWidth <= 0) slitWidth = 0.04f;
+        if (slitPitch <= 0) slitPitch = 0.015f;
         //vectorDisplay = transform.parent.GetComponentInChildren<DisplayWaveVectors>() as IMenuClick;
         populateBars();
         //setBorders();
@@ -316,7 +321,7 @@ public class WaveSlitControls : UdonSharpBehaviour
             setupLattice();
             UpdateLabels();
             // if (particleScatter != null)
-            //    particleScatter.SetGratingByPitch(apertureCount, apertureWidth, aperturePitch);
+            //    particleScatter.SetGratingByPitch(slitCount, slitWidth, slitPitch);
         }
     }
 
