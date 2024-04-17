@@ -181,6 +181,7 @@ public class WaveSlitControls : UdonSharpBehaviour
         set { TankDims.x = value; }
     }
     
+    private float gratingOffset { get => (tankLength / 2) - transform.localPosition.x + barThickness*.5f; }
     GameObject LocalFromPrefab(GameObject prototype, string name, Transform xfrm)
     {
         GameObject result = Instantiate(prototype);
@@ -222,6 +223,7 @@ public class WaveSlitControls : UdonSharpBehaviour
             particleSim.SetProgramVariable<int>("slitCount", slitCount);
             particleSim.SetProgramVariable<float>("slitWidth", slitWidth);
             particleSim.SetProgramVariable<float>("slitPitch", slitPitch);
+            particleSim.SetProgramVariable<float>("gratingOffset",gratingOffset);
         }
         // Set dimensons for the construction of the lattice;
         barWidth = slitPitch - slitWidth;

@@ -170,7 +170,7 @@ public class PlaneMesh : UdonSharpBehaviour
             for (int x = 0; x < res.x + 1; x++)
             {
                 xPos = x * xPitch;
-                vertices[nVertex] = new Vector3(xPos - xOffset, 0, yOffset - yPos);
+                vertices[nVertex] = new Vector3(xPos - xOffset, 0, yPos - yOffset);
                 uvs[nVertex] = new Vector2(xPos / dimensions.x, yPos / dimensions.y);
                 nVertex++;
             }

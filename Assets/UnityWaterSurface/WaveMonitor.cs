@@ -33,7 +33,8 @@ public class WaveMonitor : UdonSharpBehaviour
     public SyncedSlider frequencyControl;
     [SerializeField, FieldChangeCallback(nameof(FreqPointerIsDown))]
     private bool freqPointerIsDown = false;
-
+    [SerializeField]
+    private UdonBehaviour particleSim;
     private float minFrequency = 1;
     private float maxFrequency = 3;
     private bool isStarted = false;
@@ -98,9 +99,18 @@ public class WaveMonitor : UdonSharpBehaviour
     public float MaxFrequency { get => maxFrequency; }
     public float MinFrequency { get => minFrequency; private set => minFrequency = value; }
 
+    public float lambdaMin;
     public float LambdaMin
     {
-        get => WaveSpeed / maxFrequency;
+        get => lambdaMin;
+        set
+        {
+            lambdaMin = Mathf.Max(value, 0.0001f);
+            if (particleSim != null)
+            {
+                particleSim.SetProgramVariable<float>("maxParticleK", 1 / lambdaMin);
+            }
+        }
     }
     [Header("Wave parameters")]
     [SerializeField] private float waveSpeedPixels = 40; // Speed
@@ -113,7 +123,18 @@ public class WaveMonitor : UdonSharpBehaviour
     [SerializeField] private float dt; // Time step
     [SerializeField] private float angularWaveNumber = 40; // Speed
     [SerializeField] private float lambdaEffect = 1;
+    [SerializeField] public float lambda;
 
+    public float Lambda
+    {
+        get => lambda;
+        set
+        {
+            lambda= Mathf.Max(value,0.0001f);
+            if (particleSim != null)
+                particleSim.SetProgramVariable<float>("particleK", 1/lambda);
+        }
+    }
     // Wave properties
     public float WaveSpeed
     {
@@ -174,14 +195,18 @@ public class WaveMonitor : UdonSharpBehaviour
         get => animationPlay;
         set
         {
-            if (value && (TogglePlay != null) && (!TogglePlay.isOn))
-                TogglePlay.isOn = true;
-            if ((!value) && (TogglePause != null) && (!TogglePause.isOn))
-                TogglePause.isOn = true;
+            if (!iamOwner)
+            {
+                if (value && (TogglePlay != null) && (!TogglePlay.isOn))
+                    TogglePlay.isOn = true;
+                if ((!value) && (TogglePause != null) && (!TogglePause.isOn))
+                    TogglePause.isOn = true;
+            }
             animationPlay = value;
             RequestSerialization();
         }
     }
+
     private void UpdateToggles()
     {
         switch (displayMode)
@@ -307,16 +332,27 @@ public class WaveMonitor : UdonSharpBehaviour
 
     public void PlayChanged()
     {
-        if (TogglePlay != null)
+        if (TogglePlay == null) return;
+        if (TogglePlay.isOn)
         {
-            if (TogglePlay.isOn)
-            {
-                if (!iamOwner)
-                    Networking.SetOwner(player, gameObject);
-                AnimationPlay = true;
-            }
+            if (!iamOwner)
+                Networking.SetOwner(player, gameObject);
+            AnimationPlay = true;
         }
     }
+
+    public void PauseChanged()
+    {
+        if (TogglePause == null)
+            return;
+        if (TogglePause.isOn)
+        {
+            if (!iamOwner)
+                Networking.SetOwner(player, gameObject);
+            AnimationPlay = false;
+        }
+    }
+
 
     bool pointerDown = false;
     public void OnFreqPointerDown()
@@ -338,19 +374,6 @@ public class WaveMonitor : UdonSharpBehaviour
         FreqPointerIsDown = false;
     }
 
-
-    public void PauseChanged()
-    {
-        if (TogglePause != null)
-        {
-            if (TogglePause.isOn)
-            {
-                if (!iamOwner)
-                    Networking.SetOwner(player, gameObject);
-                AnimationPlay = false;
-            }
-        }
-    }
 
     public void ResetWaves()
     {
@@ -393,6 +416,8 @@ public class WaveMonitor : UdonSharpBehaviour
 
     void CalcParameters()
     {
+        LambdaMin = WaveSpeed / maxFrequency;
+        Lambda = WaveSpeed / frequency;
         CFLSq = CFL * CFL;
         absorbFactor = (CFL - 1) / (1 + CFL);
         effectPeriod = 1/frequency;

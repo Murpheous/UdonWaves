@@ -71,6 +71,8 @@ public class HuygensMonitor : UdonSharpBehaviour
     [SerializeField]
     private bool iHaveSimDisplay = false;
     [SerializeField]
+    private bool iHaveSimMaterial = false;
+    [SerializeField]
     private bool iHaveSimControl = false;
     [SerializeField]
     private bool CRTUpdatesMovement;
@@ -184,16 +186,16 @@ public class HuygensMonitor : UdonSharpBehaviour
     {
         if (!iHaveSimMaterial)
             return;
-        matSimControl.SetFloat("_SlitPitchPx", slitPitch * mmToPixels);
+        matSimControl.SetFloat("_SlitPitch", slitPitch * mmToPixels);
         if (numSources > 1 && slitPitch <= slitWidth)
         {
             float gratingWidth = (numSources - 1) * slitPitch + slitWidth;
-            matSimControl.SetFloat("_NumSources", 1f);
-            matSimControl.SetFloat("_SlitWidePx", gratingWidth * mmToPixels);
+            matSimControl.SetFloat("_SlitCount", 1f);
+            matSimControl.SetFloat("_SlitWidth", gratingWidth * mmToPixels);
             return;
         }
-        matSimControl.SetFloat("_NumSources", numSources);
-        matSimControl.SetFloat("_SlitWidePx", slitWidth * mmToPixels);
+        matSimControl.SetFloat("_SlitCount", numSources);
+        matSimControl.SetFloat("_SlitWidth", slitWidth * mmToPixels);
         updateNeeded = true;
     }
 
@@ -283,11 +285,11 @@ public class HuygensMonitor : UdonSharpBehaviour
         set
         {
             lambda = value;
-            phaseRate = 35f/value;
+            //phaseRate = 35f/value;
             if (vectorDrawing != null)
                 vectorDrawing.SetProgramVariable<float>("lambda", lambda);
             if (iHaveSimMaterial)
-                matSimControl.SetFloat("_LambdaPx", lambda * mmToPixels);
+                matSimControl.SetFloat("_Lambda", lambda * mmToPixels);
             if (iHaveLambdaControl)
             {
                 if ((!isStarted || lambdaSlider.CurrentValue != value) && !lambdaPtr)
@@ -361,8 +363,8 @@ public class HuygensMonitor : UdonSharpBehaviour
     float delta;
     private void UpdateWaveSpeed()
     {
-        if (iHaveSimControl)
-            matSimControl.SetFloat("_Frequency", playSim ? waveSpeed * defaultLambda/lambda : 0);
+        if (iHaveSimDisplay)
+            matSimDisplay.SetFloat("_Frequency", playSim ? waveSpeed * defaultLambda/lambda : 0);
     }
 
     float WaveSpeed
@@ -392,9 +394,6 @@ public class HuygensMonitor : UdonSharpBehaviour
     bool updateNeeded = false;
     [SerializeField]
     float mmToPixels = 1;
-    [SerializeField]
-    bool iHaveSimMaterial = false;
-    float phaseRate;
     void UpdateWaves()
     {   
         if(useCRT && displayMode >= 0)
@@ -472,7 +471,7 @@ public class HuygensMonitor : UdonSharpBehaviour
         if (iHaveWidthControl)
             widthSlider.SetValues(slitWidth, 1, 30);
         if (iHaveSimMaterial)
-            defaultWidth = matSimControl.GetFloat("_SlitWidePx") / mmToPixels;
+            defaultWidth = matSimControl.GetFloat("_SlitWidth") / mmToPixels;
         Lambda = lambda;
         SlitPitch = slitPitch;
         SlitWidth = slitWidth;

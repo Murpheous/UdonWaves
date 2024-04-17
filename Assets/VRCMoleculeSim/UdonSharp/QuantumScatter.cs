@@ -64,7 +64,7 @@ public class QuantumScatter : UdonSharpBehaviour
         tex.wrapMode = TextureWrapMode.Clamp;
         tex.Apply();
         matSim.SetTexture(texName, tex);
-        Debug.Log(" Created Texture: [" + texName +"]");
+       // Debug.Log(" Created Texture: [" + texName +"]");
         return true;
     }
     private float SlitWidth
@@ -141,7 +141,7 @@ public class QuantumScatter : UdonSharpBehaviour
 
     public bool SetGratingByPitch(int slitCount, float slitWidth, float slitPitch, float minLambda)
     {
-        Debug.Log(string.Format("{0} SetGratingByPitch: lmin={1} s={2} w={3} p={4}",gameObject.name, lambdaMin, slitCount,slitWidth,slitPitch));
+        //Debug.Log(string.Format("{0} SetGratingByPitch: lmin={1} s={2} w={3} p={4}",gameObject.name, lambdaMin, slitCount,slitWidth,slitPitch));
  
         if ((slitCount <= 0) || (slitWidth <= 0))
             return false;
@@ -182,7 +182,7 @@ public class QuantumScatter : UdonSharpBehaviour
 
     private void Recalc()
     {
-        Debug.Log(gameObject.name + "Recalc");
+        //Debug.Log(gameObject.name + "Recalc");
         if (!gotSettings)
             return;
         if (slitWidth <= 0)
@@ -193,7 +193,7 @@ public class QuantumScatter : UdonSharpBehaviour
         // Calculte aperture parameters in terms of width per (min particleSpeed)
         widthDivLambdaMin = slitWidth / lambdaMin;
         pitchDivLambdaMin = slitPitch / lambdaMin;
-        Debug.Log(string.Format("{0} apertuere/LambdaMin={1} pitch/LambdaMin={2}",gameObject.name,widthDivLambdaMin, pitchDivLambdaMin));
+        //Debug.Log(string.Format("{0} apertuere/LambdaMin={1} pitch/LambdaMin={2}",gameObject.name,widthDivLambdaMin, pitchDivLambdaMin));
         // Assume momentum spectrum is symmetrical so calculate from zero.
         float probIntegralSum = 0f;
         float scaleTheta = Mathf.PI;

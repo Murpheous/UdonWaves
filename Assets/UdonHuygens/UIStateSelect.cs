@@ -25,6 +25,7 @@ public class UIStateSelect : UdonSharpBehaviour
 
     [SerializeField, UdonSynced,FieldChangeCallback(nameof (PlaySim))] bool playSim = true;
     [SerializeField] Toggle togPlay = null;
+    [SerializeField] Toggle togPause = null;
 
     [SerializeField] Button btnIncSources = null;
     [SerializeField] Button btnDecSources = null;
@@ -123,8 +124,13 @@ public class UIStateSelect : UdonSharpBehaviour
             playSim = value;
             if (iHaveClientVar)
                 clientModule.SetProgramVariable<bool>("playSim",value);
-            if (togPlay != null && togPlay.isOn != value)
-                togPlay.isOn = value;
+            if (!iAmOwner)
+            {
+                if (togPlay != null && !togPlay.isOn && value)
+                    togPlay.isOn = true;
+                if (togPause != null && !togPause.isOn && !value)
+                    togPause.isOn = true;
+            }
             RequestSerialization();
         }
     }
@@ -184,22 +190,6 @@ public class UIStateSelect : UdonSharpBehaviour
             SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner, nameof(selClose));
     }
 
-    public void simPlay()
-    {
-        if (iAmOwner)
-            PlaySim = true;
-        else
-            SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner, nameof(simPlay));
-    }
-
-    public void simStop()
-    {
-        if (iAmOwner)
-            PlaySim = false;
-        else
-            SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner, nameof(simStop));
-    }
-
     public void onMode()
     {
         if (iHaveTogReal && togReal.isOn)
@@ -236,16 +226,27 @@ public class UIStateSelect : UdonSharpBehaviour
             selClose();
     }
 
-    public void onPlayState()
+    public void onPlaySim()
     {
         if (togPlay ==  null)
             return;
-        if (togPlay.isOn != playSim)
+        if (togPlay.isOn && !playSim)
         {
-            if (togPlay.isOn)
-                simPlay();
-            else
-                simStop();
+            if (!iAmOwner)
+                Networking.SetOwner(player, gameObject);
+            PlaySim = true;
+        }
+    }
+
+    public void onPauseSim()
+    {
+        if (togPause == null)
+            return;
+        if (togPause.isOn && playSim)
+        {
+            if (!iAmOwner)
+                Networking.SetOwner(player,gameObject);
+            PlaySim = false;
         }
     }
     // UdonSync stuff
@@ -272,7 +273,6 @@ public class UIStateSelect : UdonSharpBehaviour
         iHaveToImPwr = togImPwr != null;
         iHaveTogProb = togProbability != null;
         iHaveTogAmp = togAmplitude != null;
-
         UpdateOwnerShip();
         iHaveClientVar = (clientModule != null) && (!string.IsNullOrEmpty(clientVariableName));
         updateClientState();

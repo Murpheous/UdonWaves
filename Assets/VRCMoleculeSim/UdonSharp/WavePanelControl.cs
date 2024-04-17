@@ -23,6 +23,7 @@ public class WavePanelControl : UdonSharpBehaviour
     [SerializeField, Tooltip("CRT Update Cadence"), Range(0.01f, 0.5f)] float dt = 0.3f;
 
     [SerializeField] Toggle togPlay;
+    [SerializeField] Toggle togPause;
     [SerializeField,UdonSynced, FieldChangeCallback(nameof(PlaySim))] bool playSim;
 
     [Header("Display Mode")]
@@ -191,8 +192,13 @@ public class WavePanelControl : UdonSharpBehaviour
         set
         {
             playSim = value;
-            if (togPlay != null && togPlay.isOn != value)
-                togPlay.isOn = value;
+            if (!iamOwner)
+            {
+                if (togPlay != null && value && !togPlay.isOn)
+                    togPlay.isOn = true;
+                if (togPause != null && !value && !togPause.isOn)
+                    togPause.isOn = true;
+            }
             UpdateWaveSpeed();
             RequestSerialization();
         }
@@ -298,15 +304,28 @@ public class WavePanelControl : UdonSharpBehaviour
         }
     }
 
-    public void onPlayState()
+    public void onPlaySim()
     {
-        if (togPlay == null)
-        {
-            PlaySim = !playSim;
+        if (togPlay == null) 
             return;
+        if (togPlay.isOn && !playSim)
+        {
+            if (!iamOwner)
+                Networking.SetOwner(player, gameObject);
+            PlaySim = true;
         }
-        if (playSim != togPlay.isOn)
-            PlaySim = !playSim;
+    }
+
+    public void onPauseSim()
+    {
+        if (togPause == null)
+            return;
+        if (togPause.isOn && playSim)
+        {
+            if (!iamOwner)
+                Networking.SetOwner(player, gameObject);
+            PlaySim = false;
+        }
     }
 
     public float Lambda
