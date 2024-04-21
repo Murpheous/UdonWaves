@@ -4,6 +4,7 @@ using UnityEngine;
 using VRC.SDKBase;
 using VRC.Udon;
 using UnityEngine.UI;
+using VRC.SDK3.Editor;
 
 public class WaveMonitor : UdonSharpBehaviour
 {
@@ -27,12 +28,16 @@ public class WaveMonitor : UdonSharpBehaviour
     //[SerializeField]
     private Vector4 driveSettings;
     private float driverAmplitude;
-    [Range(1f, 3f), SerializeField, UdonSynced, FieldChangeCallback(nameof(Frequency))]
-    float frequency = 1f;
+
+    [SerializeField]
+    private float frequency = 1f;
+    [SerializeField, Range(1f,3f),UdonSynced,FieldChangeCallback(nameof(RequestHz))]
+    private float requestHz = 2.4f;
+
     //public Slider frequencySlider;
-    public SyncedSlider frequencyControl;
-    [SerializeField, FieldChangeCallback(nameof(FreqPointerIsDown))]
-    private bool freqPointerIsDown = false;
+    public UdonSlider hzControl;
+    [SerializeField, UdonSynced, FieldChangeCallback(nameof(HzPtr))]
+    private bool hzPtr = false;
     [SerializeField]
     private UdonBehaviour particleSim;
     private float minFrequency = 1;
@@ -46,37 +51,33 @@ public class WaveMonitor : UdonSharpBehaviour
 
     public float Frequency
     {
-        get
-        {
-            if (freqPointerIsDown)
-                return requestedFrequency;
-            return frequency;
-        }
+        get => frequency;
         set
         {
-            if (value != requestedFrequency)
-            {
-                if (frequencyControl != null)
-                {
-                    if (frequencyControl.CurrentValue != value)
-                        frequencyControl.CurrentValue = value;
-                }
-                requestedFrequency = value;
-                if (frequencyQuenchTime <= 0)
-                    CalcParameters();
-            }
+            bool isNew = frequency != value;
+        }
+    }
+
+    public float RequestHz
+    {
+        get => requestHz;
+        set
+        {
+            requestHz = value;
+            if (hzControl != null && !hzPtr)
+                hzControl.SetValue(requestHz);
             RequestSerialization();
         }
     }
 
-    public bool FreqPointerIsDown
+    public bool HzPtr
     {
-        get => FreqPointerIsDown;
+        get => HzPtr;
         set
         {
-            if (freqPointerIsDown != value)
+            if (hzPtr != value)
             {
-                freqPointerIsDown = value;
+                hzPtr = value;
                 if (value)
                 {
                     if (frequencyQuenchTime <= 0)
@@ -92,14 +93,41 @@ public class WaveMonitor : UdonSharpBehaviour
                         ResetEffect();
                 }
             }
+            RequestSerialization();
         }
+    }
+
+    public void hzPtrDn()
+    {
+        if (!iamOwner)
+            Networking.SetOwner(player,gameObject);
+        HzPtr = true;
+    }
+
+    public void hzPtrUp()
+    {
+            HzPtr = false;
     }
 
 
     public float MaxFrequency { get => maxFrequency; }
     public float MinFrequency { get => minFrequency; private set => minFrequency = value; }
 
-    public float lambdaMin;
+    public float lambdaMax;
+    private float LambdaMax
+    {
+        get => lambdaMax;
+        set
+        {
+            lambdaMax = value;
+            if (particleSim != null)
+            {
+                particleSim.SetProgramVariable<float>("minParticleK", 1 / lambdaMax);
+            }
+        }
+    }
+
+    private float lambdaMin;
     public float LambdaMin
     {
         get => lambdaMin;
@@ -321,7 +349,6 @@ public class WaveMonitor : UdonSharpBehaviour
     float frequencyQuenchDuration = 0;
     float frequencyQuenchStartValue = 0;
     float effectRampDuration = 5;
-    float requestedFrequency;
 
     //* UI Toggle Handlers
 
@@ -352,28 +379,6 @@ public class WaveMonitor : UdonSharpBehaviour
             AnimationPlay = false;
         }
     }
-
-
-    bool pointerDown = false;
-    public void OnFreqPointerDown()
-    {
-        pointerDown = true;
-        if (iamOwner)
-        {
-            FreqPointerIsDown = true;
-        }
-        else
-        {
-            Networking.SetOwner(player, gameObject);
-        }
-    }
-
-    public void OnFreqPointerUp()
-    {
-        pointerDown = false;
-        FreqPointerIsDown = false;
-    }
-
 
     public void ResetWaves()
     {
@@ -417,6 +422,7 @@ public class WaveMonitor : UdonSharpBehaviour
     void CalcParameters()
     {
         LambdaMin = WaveSpeed / maxFrequency;
+        LambdaMax = WaveSpeed / minFrequency;
         Lambda = WaveSpeed / frequency;
         CFLSq = CFL * CFL;
         absorbFactor = (CFL - 1) / (1 + CFL);
@@ -430,7 +436,6 @@ public class WaveMonitor : UdonSharpBehaviour
         // c is pixels per sec and dx=dy=1 (1 pixel)
         // dt = CFL/(c/1+c/1);
         // dt = CFL/(c);
-        requestedFrequency = frequency;
         if (simulationMaterial != null)
         {
             simulationMaterial.SetFloat("_CdTdX^2", CFLSq);
@@ -448,8 +453,6 @@ public class WaveMonitor : UdonSharpBehaviour
     private void UpdateOwnerShip()
     {
         iamOwner = Networking.IsOwner(this.gameObject);
-        if (iamOwner && pointerDown)
-            FreqPointerIsDown = true;
     }
 
     public override void OnOwnershipTransferred(VRCPlayerApi player)
@@ -461,10 +464,11 @@ public class WaveMonitor : UdonSharpBehaviour
     void Start()
     {
         player = Networking.LocalPlayer;
-        if (frequencyControl != null)
+        if (hzControl != null)
         {
-            requestedFrequency = frequency;
-            frequencyControl.SetValues(frequency,minFrequency,maxFrequency);
+            requestHz = frequency;
+            hzControl.SetLimits(minFrequency, maxFrequency);
+            hzControl.SetValue(requestHz);
         }
         CalcParameters();
         UpdateToggles();
@@ -506,7 +510,7 @@ public class WaveMonitor : UdonSharpBehaviour
     float updateTime = 0;
     void ResetEffect()
     {
-        frequency = requestedFrequency;
+        frequency = requestHz;
         CalcParameters();
         waveTime = 0;
         updateTime = 0;
@@ -557,12 +561,11 @@ public class WaveMonitor : UdonSharpBehaviour
                     simulationMaterial.SetFloat("_DriveAmplitude", driverAmplitude);
                 if (frequencyQuenchTime <= 0)
                 {
-                    frequency = requestedFrequency;
-                    RequestSerialization();
-                    CalcParameters();
-                    UpdateViewControl();
-                    if (!freqPointerIsDown)
+                    Frequency = requestHz;
+                    if (!hzPtr)
                         ResetEffect();
+                    RequestSerialization();
+                    UpdateViewControl();
                 }
             }
 

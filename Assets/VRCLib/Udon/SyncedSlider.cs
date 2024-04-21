@@ -4,7 +4,6 @@ using UnityEngine;
 using TMPro;
 using VRC.SDKBase;
 using VRC.Udon;
-using VRC.Udon.Serialization.OdinSerializer.Utilities;
 using System;
 
 [UdonBehaviourSyncMode(BehaviourSyncMode.Manual)] // Keeps performance up
@@ -79,10 +78,17 @@ public class SyncedSlider : UdonSharpBehaviour
         {
             slider.minValue= minValue/sliderScale;
             slider.maxValue= maxValue/sliderScale;
-            slider.value = value / sliderScale;
+            slider.SetValueWithoutNotify(value / sliderScale);
         }
         currentValue = value;
     }
+
+    public void SetValue(float value)
+    {
+        reportedValue = value;
+        currentValue = value;
+    }
+
     public string TitleText
     {
         get 
@@ -114,7 +120,7 @@ public class SyncedSlider : UdonSharpBehaviour
             {
                 float sliderValue = currentValue / sliderScale;
                 if (slider.value != sliderValue)
-                    slider.value = sliderValue;
+                    slider.SetValueWithoutNotify(sliderValue);
                 if (sliderLabel != null)
                 {
 
@@ -183,13 +189,17 @@ public class SyncedSlider : UdonSharpBehaviour
         }
     }
 
+    private bool pointerIsDown = false;
+    public bool PointerIsDown { get => pointerIsDown; }
     public void OnPointerDown()
     {
+        pointerIsDown=true;
         if (iHaveClientPtr)
             SliderClient.SetProgramVariable<bool>(clientPointerStateVar, true);
     }
     public void OnPointerUp()
     {
+        pointerIsDown = false;
         if (iHaveClientPtr)
             SliderClient.SetProgramVariable<bool>(clientPointerStateVar, false);
     }
