@@ -498,6 +498,11 @@ public class WavePanelControl : UdonSharpBehaviour
         iHaveSpeedControl = speedSlider != null;
         iHaveLambdaControl = lambdaSlider != null;
         iHaveScaleControl = scaleSlider != null;
+        if (iHaveScaleControl)
+        {
+            scaleSlider.SetLimits(1, 10);
+            scaleSlider.SetValue(simScale);
+        }
         iHavePitchControl = pitchSlider != null;
         if (iHaveSimDisplay)
         {

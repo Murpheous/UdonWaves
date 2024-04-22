@@ -4,7 +4,6 @@ using UnityEngine;
 using VRC.SDKBase;
 using VRC.Udon;
 using UnityEngine.UI;
-using VRC.SDK3.Editor;
 
 public class WaveMonitor : UdonSharpBehaviour
 {
@@ -64,7 +63,7 @@ public class WaveMonitor : UdonSharpBehaviour
         set
         {
             requestHz = value;
-            if (hzControl != null && !hzPtr)
+            if (hzControl != null && !hzControl.PointerDown)
                 hzControl.SetValue(requestHz);
             RequestSerialization();
         }
@@ -464,15 +463,14 @@ public class WaveMonitor : UdonSharpBehaviour
     void Start()
     {
         player = Networking.LocalPlayer;
+        UpdateOwnerShip();
         if (hzControl != null)
         {
-            requestHz = frequency;
             hzControl.SetLimits(minFrequency, maxFrequency);
-            hzControl.SetValue(requestHz);
+            RequestHz = frequency;
         }
         CalcParameters();
         UpdateToggles();
-        UpdateOwnerShip();
 
         if (customRenderTex != null)
         {
@@ -556,7 +554,7 @@ public class WaveMonitor : UdonSharpBehaviour
             if (frequencyQuenchTime > 0)
             {
                 frequencyQuenchTime -= Time.deltaTime;
-                driverAmplitude = effectAmplitude *  Mathf.Lerp(0, frequencyQuenchStartValue, frequencyQuenchTime / frequencyQuenchDuration);
+                driverAmplitude = Mathf.Lerp(0, frequencyQuenchStartValue, (frequencyQuenchTime / frequencyQuenchDuration));
                 if (simulationMaterial != null)
                     simulationMaterial.SetFloat("_DriveAmplitude", driverAmplitude);
                 if (frequencyQuenchTime <= 0)
@@ -568,14 +566,15 @@ public class WaveMonitor : UdonSharpBehaviour
                     UpdateViewControl();
                 }
             }
-
-            if (waveTime <= effectRampDuration)
+            else
             {
-                driverAmplitude = effectAmplitude * Mathf.Lerp(0, 1, waveTime / effectRampDuration);
-                if (simulationMaterial != null)
-                    simulationMaterial.SetFloat("_DriveAmplitude", driverAmplitude);
+                if (waveTime <= effectRampDuration)
+                {
+                    driverAmplitude = effectAmplitude * Mathf.Lerp(0, 1, waveTime / effectRampDuration);
+                    if (simulationMaterial != null)
+                        simulationMaterial.SetFloat("_DriveAmplitude", driverAmplitude);
+                }
             }
-            
             while (updateTime < waveTime)
             {
                 updateTime += dt;
