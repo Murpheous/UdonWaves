@@ -76,17 +76,16 @@ public class SyncedSlider : UdonSharpBehaviour
         reportedValue = value;
         if (slider != null)
         {
-            slider.minValue= minValue/sliderScale;
-            slider.maxValue= maxValue/sliderScale;
-            slider.SetValueWithoutNotify(value / sliderScale);
+            slider.minValue = minValue / sliderScale;
+            slider.maxValue = maxValue / sliderScale;
         }
-        currentValue = value;
+        CurrentValue = value;
     }
 
     public void SetValue(float value)
     {
         reportedValue = value;
-        currentValue = value;
+        CurrentValue = value;
     }
 
     public string TitleText
@@ -116,28 +115,27 @@ public class SyncedSlider : UdonSharpBehaviour
         set
         {
             currentValue = value;
+            float sliderValue = currentValue / sliderScale;
             if (slider != null)
             {
-                float sliderValue = currentValue / sliderScale;
-                if (slider.value != sliderValue)
+                if (slider.value != sliderValue && !pointerIsDown)
                     slider.SetValueWithoutNotify(sliderValue);
-                if (sliderLabel != null)
+            }
+            if (sliderLabel != null)
+            {
+                if (!hideLabel)
                 {
-
-                    if (!hideLabel)
-                    {
-                        float displayValue = currentValue * unitDisplayScale;
-                        if (displayInteger)
-                            displayValue = Mathf.RoundToInt(displayValue);
-                        if (unitsInteger || displayInteger)
-                            sliderLabel.text = string.Format("{0}{1}", (int)displayValue, sliderUnit);
-                        else
-                            sliderLabel.text = string.Format("{0:0.0}{1}", displayValue, sliderUnit);
-                    }
+                    float displayValue = currentValue * unitDisplayScale;
+                    if (displayInteger)
+                        displayValue = Mathf.RoundToInt(displayValue);
+                    if (unitsInteger || displayInteger)
+                        sliderLabel.text = string.Format("{0}{1}", (int)displayValue, sliderUnit);
                     else
-                    {
-                        sliderLabel.text = "";
-                    }
+                        sliderLabel.text = string.Format("{0:0.0}{1}", displayValue, sliderUnit);
+                }
+                else
+                {
+                    sliderLabel.text = "";
                 }
             }
             if (reportedValue != currentValue)

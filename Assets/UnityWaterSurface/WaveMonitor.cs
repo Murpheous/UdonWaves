@@ -65,6 +65,7 @@ public class WaveMonitor : UdonSharpBehaviour
             requestHz = value;
             if (hzControl != null && !hzControl.PointerDown)
                 hzControl.SetValue(requestHz);
+            Lambda = WaveSpeed/requestHz;
             RequestSerialization();
         }
     }
@@ -420,8 +421,6 @@ public class WaveMonitor : UdonSharpBehaviour
 
     void CalcParameters()
     {
-        LambdaMin = WaveSpeed / maxFrequency;
-        LambdaMax = WaveSpeed / minFrequency;
         Lambda = WaveSpeed / frequency;
         CFLSq = CFL * CFL;
         absorbFactor = (CFL - 1) / (1 + CFL);
@@ -464,6 +463,9 @@ public class WaveMonitor : UdonSharpBehaviour
     {
         player = Networking.LocalPlayer;
         UpdateOwnerShip();
+        LambdaMin = WaveSpeed / maxFrequency;
+        LambdaMax = WaveSpeed / minFrequency;
+
         if (hzControl != null)
         {
             hzControl.SetLimits(minFrequency, maxFrequency);

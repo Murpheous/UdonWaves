@@ -6494,7 +6494,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Particles
+  m_text: Particle Stream
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -9288,7 +9288,7 @@ PrefabInstance:
     - target: {fileID: 5264127328321770170, guid: 360236e3a72eee440a320d04ab222157,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.966
+      value: 0.969
       objectReference: {fileID: 0}
     - target: {fileID: 5264127328321770170, guid: 360236e3a72eee440a320d04ab222157,
         type: 3}
@@ -11705,6 +11705,16 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1945401910}
     m_Modifications:
+    - target: {fileID: 469481845871911722, guid: 62089fe512597f74f805f3743b8333a5,
+        type: 3}
+      propertyPath: m_fontSize
+      value: 21
+      objectReference: {fileID: 0}
+    - target: {fileID: 469481845871911722, guid: 62089fe512597f74f805f3743b8333a5,
+        type: 3}
+      propertyPath: m_fontSizeBase
+      value: 21
+      objectReference: {fileID: 0}
     - target: {fileID: 685609078402008540, guid: 62089fe512597f74f805f3743b8333a5,
         type: 3}
       propertyPath: m_Sprite
@@ -11789,10 +11799,7 @@ PrefabInstance:
     - target: {fileID: 759059608446944014, guid: 62089fe512597f74f805f3743b8333a5,
         type: 3}
       propertyPath: defaultText
-      value: '<align=center><b>Welcome<sup>*</sup></b>
-
-        <size=50%>*Don''t
-        panic</size>'
+      value: <align=center><b>Welcome</b>
       objectReference: {fileID: 0}
     - target: {fileID: 759059608446944014, guid: 62089fe512597f74f805f3743b8333a5,
         type: 3}
@@ -11816,6 +11823,16 @@ PrefabInstance:
       objectReference: {fileID: 3438419577031359607}
     - target: {fileID: 759059608446944014, guid: 62089fe512597f74f805f3743b8333a5,
         type: 3}
+      propertyPath: pages.Array.size
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 759059608446944014, guid: 62089fe512597f74f805f3743b8333a5,
+        type: 3}
+      propertyPath: toggles.Array.size
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 759059608446944014, guid: 62089fe512597f74f805f3743b8333a5,
+        type: 3}
       propertyPath: pages.Array.data[0]
       value: 
       objectReference: {fileID: 1753403010}
@@ -11837,6 +11854,11 @@ PrefabInstance:
     - target: {fileID: 759059608446944014, guid: 62089fe512597f74f805f3743b8333a5,
         type: 3}
       propertyPath: pages.Array.data[4]
+      value: 
+      objectReference: {fileID: 2072689575}
+    - target: {fileID: 759059608446944014, guid: 62089fe512597f74f805f3743b8333a5,
+        type: 3}
+      propertyPath: pages.Array.data[5]
       value: 
       objectReference: {fileID: 1717023917}
     - target: {fileID: 759059608446944014, guid: 62089fe512597f74f805f3743b8333a5,
@@ -11867,6 +11889,11 @@ PrefabInstance:
     - target: {fileID: 759059608446944014, guid: 62089fe512597f74f805f3743b8333a5,
         type: 3}
       propertyPath: toggles.Array.data[4]
+      value: 
+      objectReference: {fileID: 2072689576}
+    - target: {fileID: 759059608446944014, guid: 62089fe512597f74f805f3743b8333a5,
+        type: 3}
+      propertyPath: toggles.Array.data[5]
       value: 
       objectReference: {fileID: 1717023915}
     - target: {fileID: 759059608446944014, guid: 62089fe512597f74f805f3743b8333a5,
@@ -11913,7 +11940,7 @@ PrefabInstance:
     - target: {fileID: 1391353353332897860, guid: 62089fe512597f74f805f3743b8333a5,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 525
+      value: 550
       objectReference: {fileID: 0}
     - target: {fileID: 1391353353332897860, guid: 62089fe512597f74f805f3743b8333a5,
         type: 3}
@@ -11973,7 +12000,7 @@ PrefabInstance:
     - target: {fileID: 1391353353332897860, guid: 62089fe512597f74f805f3743b8333a5,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0.4125
+      value: 0.429
       objectReference: {fileID: 0}
     - target: {fileID: 1391353353332897860, guid: 62089fe512597f74f805f3743b8333a5,
         type: 3}
@@ -11993,14 +12020,22 @@ PrefabInstance:
     - target: {fileID: 1949190569399080650, guid: 62089fe512597f74f805f3743b8333a5,
         type: 3}
       propertyPath: pageBodies.Array.data[0]
-      value: This demonstration was built to show how the matching patterns produced
-        by wave energy transport and particle dispersion is underpinned by the conservation
-        of momentum, rather than some mysterious interference process.
+      value: "This demonstration contrasts two types of momentum diffusion.\r\n\r\n<b>Wave
+        momentum diffusion:</b>\r\n<indent=3%>To illustrate the transport and distribution
+        of wave energy by diffusion, a real-time numeric model of a physical wave
+        surface is paired with display options to highlight the underlying wave amplitude
+        and energy transport components.</indent>\r\n\r\n<b>Ballistic diffusion of
+        particles:</b>\r\n<indent=3%>Ballistc diffusion is the term for a process
+        where an ensemble of non-interacting particles spreads out after an interaction.
+        \r\n\r\nIn this simulation, the particle diffusion is driven by a \u201Cone
+        and done\u201D momentum exchange process according to a quantum model of
+        particle scattering suggested by William Duane in 1923-1926 then derived
+        from quantum theory by Carolyne Van Vliet in 1967 & 2010. \r\n"
       objectReference: {fileID: 0}
     - target: {fileID: 1949190569399080650, guid: 62089fe512597f74f805f3743b8333a5,
         type: 3}
       propertyPath: pageTitles.Array.data[0]
-      value: Life, the Universe and Everything...
+      value: Probability without a wavefunction
       objectReference: {fileID: 0}
     - target: {fileID: 1949190569399080650, guid: 62089fe512597f74f805f3743b8333a5,
         type: 3}
@@ -12013,6 +12048,11 @@ PrefabInstance:
       propertyPath: m_Material
       value: 
       objectReference: {fileID: 2100000, guid: 35630e38b4e5ffb40b44ec5348b4333f, type: 2}
+    - target: {fileID: 3438419577815233409, guid: 62089fe512597f74f805f3743b8333a5,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 550
+      objectReference: {fileID: 0}
     - target: {fileID: 3864229162464420550, guid: 62089fe512597f74f805f3743b8333a5,
         type: 3}
       propertyPath: _syncMethod
@@ -14258,7 +14298,12 @@ PrefabInstance:
     - target: {fileID: 8684122271458016216, guid: 724c8d0c7367580468c8a70f70f9199e,
         type: 3}
       propertyPath: m_LocalScale.x
-      value: 2.4
+      value: 2.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8684122271458016216, guid: 724c8d0c7367580468c8a70f70f9199e,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1.6
       objectReference: {fileID: 0}
     - target: {fileID: 8684122272748571683, guid: 724c8d0c7367580468c8a70f70f9199e,
         type: 3}
@@ -16225,20 +16270,23 @@ PrefabInstance:
     - target: {fileID: 7618224890888347476, guid: 55364beb7ba2a8947a1432fca720b16d,
         type: 3}
       propertyPath: pageBodies.Array.data[0]
-      value: "<b>For the wave simulation:</b> \r\n<indent=5%>The barrier layout constrains
-        the mesh of data points in the base wave simulation. Reflection is damped
-        using a Murs absorbing boundary.</indent>\r\n<b>For the particle simulation:</b>\r\n<indent=5%>Interpretations
-        aside, quantum theory shows that the probability distribution for the possible
-        crosswise momentum for a particle (or photon) transiting through an aperture
-        pattern is the magnitude of the Fourier transform of that pattern multiplied
-        by Planck\u2019s constant.\r\n\r\nFor this simulation, the quantum distribution
-        is scaled to match the parameters of the wave simulation and applied randomly
-        to particles transiting the apertures.</indent> \r\n"
+      value: "<b>Wave simulation:</b> \r\n<indent=4%>A map of the tank\u2019s barrier
+        layout is input to the wave simulation to mask the wave boundary. The simulation
+        is a numerical wave model, and wall reflections are imperfectly damped using
+        a Murs absorbing boundary.</indent>\r\n<b>Particle simulation:</b>\r\n<indent=4%>Applying
+        quantum theory to the wave barrier, rather than the incident particle, yields
+        a probability distribution (expectation function) for the momentum impulses
+        the barrier can exchange with any particle transiting the apertures.\r\n\r\nAs
+        per Duane's (1923-26) and Van Vliet\u2019s (2010) analyses, the expectation
+        function is the square of the Fourier transform of the aperture pattern multiplied
+        by Planck\u2019s constant. In this simulation, Planck\u2019s constant=1,
+        and the particle momentum is set to be the wave momentum (K) vector (i.e.
+        1/wavelength). \r\n"
       objectReference: {fileID: 0}
     - target: {fileID: 7618224890888347476, guid: 55364beb7ba2a8947a1432fca720b16d,
         type: 3}
       propertyPath: pageTitles.Array.data[0]
-      value: Wave Barrier
+      value: Wave Apertures
       objectReference: {fileID: 0}
     - target: {fileID: 7618224890888347476, guid: 55364beb7ba2a8947a1432fca720b16d,
         type: 3}
@@ -18819,20 +18867,20 @@ PrefabInstance:
     - target: {fileID: 7618224890888347476, guid: 55364beb7ba2a8947a1432fca720b16d,
         type: 3}
       propertyPath: pageBodies.Array.data[0]
-      value: "Van Vliet\u2019s analysis of Duane\u2019s model explains how quantized
-        momentum transfer and conservation of momentum, not downstream wave interference,
-        can account for the formation and evolution of particle probability patterns.\r\n\r\nInterestingly,
-        even with classical waves, the conservation of momentum explains the wavefront
-        structure and development without considering downstream interference.\r\n\r\nTo
-        see how wave amplitudes relate to momentum, select:\r\n<indent=5%><b>Height:&
-        Vertical Velocity:</b> Amplitude components..\r\n<b>Potential & Kinetic Energy:</b>
-        Surface energy components (squared amplitudes).\r\n<b>Energy Flux:</b> Total
-        energy transport/momentum.</indent>\r\n"
+      value: "Although the effect is often described in terms of \"interference,\"
+        wave diffraction is fundamentally a diffusion process that arises from the
+        conservation of momentum in linear media.\r\n\r\nWhen a wave passes through
+        a set of apertures, it breaks into segments. These segments result in wave
+        components that travel across the wavefront perpendicularly to its primary
+        direction of travel. \r\n\r\nThe effect is to gradually partition the wavefront
+        energy as the crosswise components share momentum with the wavefront. As
+        a result, a radial pattern is created, which develops into a distribution
+        that is an image of the frequency spectrum of the wavefront at the aperture(s).\r\n"
       objectReference: {fileID: 0}
     - target: {fileID: 7618224890888347476, guid: 55364beb7ba2a8947a1432fca720b16d,
         type: 3}
       propertyPath: pageTitles.Array.data[0]
-      value: Wave Surface Energy Transport and Momentum
+      value: Wave Momentum and Diffusion
       objectReference: {fileID: 0}
     - target: {fileID: 7618224890888347476, guid: 55364beb7ba2a8947a1432fca720b16d,
         type: 3}
@@ -21052,7 +21100,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 0, y: -35}
-  m_SizeDelta: {x: 200, y: 50}
+  m_SizeDelta: {x: 220, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1582903726
 MonoBehaviour:
@@ -21074,7 +21122,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Wave Barrier
+  m_text: Wave Apertures
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ddbcc27b0346e4644a45316aaf00c441, type: 2}
   m_sharedMaterial: {fileID: 4410821715232426517, guid: ddbcc27b0346e4644a45316aaf00c441,
@@ -22759,15 +22807,14 @@ PrefabInstance:
     - target: {fileID: 7618224890888347476, guid: 55364beb7ba2a8947a1432fca720b16d,
         type: 3}
       propertyPath: pageBodies.Array.data[0]
-      value: "The wave-table simulation has two core modules:\r\n\r\n<b>A background
+      value: "The wave-table simulation has two core modules:\r\n\r\n<b>Background
         numerical wave model:</b>\r\n<indent=5%>The model iterates over a 2048x1024
         data mesh where each point stores the surface\u2019s vertical displacement
-        and velocity.\r\n\r\nAt each iteration, the surface curvature around each
-        point determines a restoring force that is applied to modify the surface
-        velocity and height of the mesh point.</indent>\r\n\r\n<b>A surface display
-        module:</b>\r\n<indent=5%>Generates the selected table surface display by
-        sampling the underlying grid simulation according to the selected display
-        mode.\r\n</indent>\r\n"
+        and velocity.\r\n\r\nAt each iteration, the surface curvature at each point
+        determines a restoring force that is applied to modify the surface velocity
+        and height of the mesh point.</indent>\r\n\r\n<b>Surface display module:</b>\r\n<indent=5%>Renders
+        the wave by sampling the underlying grid simulation according to the selected
+        display mode.\r\n</indent>\r\n"
       objectReference: {fileID: 0}
     - target: {fileID: 7618224890888347476, guid: 55364beb7ba2a8947a1432fca720b16d,
         type: 3}
@@ -24175,6 +24222,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1791901998}
     m_Modifications:
+    - target: {fileID: 623030935723082017, guid: 0a8574ca471973d49b4df7b18bc76976,
+        type: 3}
+      propertyPath: m_text
+      value: Density Contrast
+      objectReference: {fileID: 0}
+    - target: {fileID: 623030935723082017, guid: 0a8574ca471973d49b4df7b18bc76976,
+        type: 3}
+      propertyPath: m_fontSize
+      value: 18
+      objectReference: {fileID: 0}
+    - target: {fileID: 623030935723082017, guid: 0a8574ca471973d49b4df7b18bc76976,
+        type: 3}
+      propertyPath: m_fontSizeBase
+      value: 18
+      objectReference: {fileID: 0}
     - target: {fileID: 1903917538826915937, guid: 0a8574ca471973d49b4df7b18bc76976,
         type: 3}
       propertyPath: SliderClient
@@ -26892,6 +26954,30 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2072524643}
   m_CullTransparentMesh: 0
+--- !u!114 &2072689575 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8569938170143093959, guid: f8e04f8f7f9eb1d4b93f3bd6272cff51,
+    type: 3}
+  m_PrefabInstance: {fileID: 2127747548}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36a0125298b98834fadb6477d8360741, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &2072689576 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7233246032953493988, guid: f8e04f8f7f9eb1d4b93f3bd6272cff51,
+    type: 3}
+  m_PrefabInstance: {fileID: 2127747548}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9085046f02f69544eb97fd06b6048fe2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &2077287898 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8878407416592638583, guid: 55364beb7ba2a8947a1432fca720b16d,
@@ -27149,21 +27235,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: togShowDensity
       objectReference: {fileID: 0}
-    - target: {fileID: 1228705634286738754, guid: f8e04f8f7f9eb1d4b93f3bd6272cff51,
-        type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 260
-      objectReference: {fileID: 0}
-    - target: {fileID: 1228705634286738754, guid: f8e04f8f7f9eb1d4b93f3bd6272cff51,
-        type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 50
-      objectReference: {fileID: 0}
-    - target: {fileID: 1228705634286738754, guid: f8e04f8f7f9eb1d4b93f3bd6272cff51,
-        type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 55
-      objectReference: {fileID: 0}
     - target: {fileID: 1795927857915284112, guid: f8e04f8f7f9eb1d4b93f3bd6272cff51,
         type: 3}
       propertyPath: m_Pivot.x
@@ -27277,7 +27348,9 @@ PrefabInstance:
     - target: {fileID: 2886551084423076388, guid: f8e04f8f7f9eb1d4b93f3bd6272cff51,
         type: 3}
       propertyPath: m_text
-      value: Probability Density
+      value: 'Particle Probability
+
+        Density'
       objectReference: {fileID: 0}
     - target: {fileID: 4519013420394035601, guid: f8e04f8f7f9eb1d4b93f3bd6272cff51,
         type: 3}
@@ -27289,6 +27362,66 @@ PrefabInstance:
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: SendCustomEvent
       objectReference: {fileID: 0}
+    - target: {fileID: 6359677311088312523, guid: f8e04f8f7f9eb1d4b93f3bd6272cff51,
+        type: 3}
+      propertyPath: _syncMethod
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6359677311088312523, guid: f8e04f8f7f9eb1d4b93f3bd6272cff51,
+        type: 3}
+      propertyPath: serializedProgramAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: 0c4ebdb0d0e747c42af886ac0649096d,
+        type: 2}
+    - target: {fileID: 7233246032953493988, guid: f8e04f8f7f9eb1d4b93f3bd6272cff51,
+        type: 3}
+      propertyPath: m_Group
+      value: 
+      objectReference: {fileID: 4193235093222767920}
+    - target: {fileID: 7233246032953493988, guid: f8e04f8f7f9eb1d4b93f3bd6272cff51,
+        type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 4926412167909524833}
+    - target: {fileID: 7233246033601823189, guid: f8e04f8f7f9eb1d4b93f3bd6272cff51,
+        type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 2100000, guid: 35630e38b4e5ffb40b44ec5348b4333f, type: 2}
+    - target: {fileID: 7233246034276460497, guid: f8e04f8f7f9eb1d4b93f3bd6272cff51,
+        type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 2100000, guid: 35630e38b4e5ffb40b44ec5348b4333f, type: 2}
+    - target: {fileID: 8569938170143093959, guid: f8e04f8f7f9eb1d4b93f3bd6272cff51,
+        type: 3}
+      propertyPath: pageBodies.Array.data[0]
+      value: "Duane\u2019s later (1926) model of quantum scattering:\r\n<indent=3%>1)
+        Involved a discrete exchange of momentum taking place between the body of
+        a lattice/grating and incident particle/photon with momentum and energy being
+        conserved.\r\n2) The probability density of the lattice\u2019s linear reactions
+        in momentum space is the Fourier transform of the distribution of the lattice\u2019s
+        electron density scaled by Planck\u2019s constant.</indent>\r\nPost-Interaction
+        Probability Distribution:\r\n<indent=3%>The standard method of assigning
+        a wavefunction to an incident particle yields a continuous probability map
+        of where the particle could exist in space and time, but doesn't allow attribution
+        of outcomes to specific events. However the time evolution of this wavefunction-derived
+        probability mimics the process of ballistic diffusion in which particles
+        diffuse without interacting with each other. Therefore, Duane's model, coupled
+        with ballistic diffusion, could offer a physical explanation for how quantum
+        probability densities arise and evolve.\r"
+      objectReference: {fileID: 0}
+    - target: {fileID: 8569938170143093959, guid: f8e04f8f7f9eb1d4b93f3bd6272cff51,
+        type: 3}
+      propertyPath: pageTitles.Array.data[0]
+      value: Particle Probability Density from Ballisitc Model
+      objectReference: {fileID: 0}
+    - target: {fileID: 8569938170143093959, guid: f8e04f8f7f9eb1d4b93f3bd6272cff51,
+        type: 3}
+      propertyPath: serializationData.Prefab
+      value: 
+      objectReference: {fileID: 8569938170143093959, guid: f8e04f8f7f9eb1d4b93f3bd6272cff51,
+        type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -27869,6 +28002,38 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: 0c4ebdb0d0e747c42af886ac0649096d,
         type: 2}
+    - target: {fileID: 7618224890888347476, guid: 55364beb7ba2a8947a1432fca720b16d,
+        type: 3}
+      propertyPath: pageBodies.Array.data[0]
+      value: '<b>Particle Simulations</b>
+
+        <indent=4%>A probability distribution
+        for interaction momentum, called the momentum expectation function, is calculated
+        by squaring the Fourier transform of the aperture pattern. This forms the
+        basis for the particle probability density map and the particle scattering
+        simulation and is updated each time the aperture pattern is modified.</indent>
+
+        <b>Particle
+        Probability Density</b>
+
+        <indent=4%>Generates a continuous map representing
+        the probability of a particle being at each point, based on the sum of particle
+        tracks traversing each point.</indent>
+
+        <b>Particle Stream</b>
+
+        <indent=4%>When
+        a particle passes through an aperture the interaction momentum expectation
+        function is randomly sampled to obtain a deflection angle for the particle
+        track, otherwise all particles travel in straight lines.</indent>
+
+'
+      objectReference: {fileID: 0}
+    - target: {fileID: 7618224890888347476, guid: 55364beb7ba2a8947a1432fca720b16d,
+        type: 3}
+      propertyPath: pageTitles.Array.data[0]
+      value: Ballistic Simulations
+      objectReference: {fileID: 0}
     - target: {fileID: 7618224890888347476, guid: 55364beb7ba2a8947a1432fca720b16d,
         type: 3}
       propertyPath: serializationData.Prefab
@@ -29927,7 +30092,7 @@ Transform:
   m_GameObject: {fileID: 5239915332397845298}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.96, z: 0}
+  m_LocalPosition: {x: 0, y: 0.965, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
