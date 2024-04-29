@@ -237,7 +237,7 @@ MonoBehaviour:
   onValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 5122222944705522520}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: VRC.Udon.UdonBehaviour, VRC.Udon
         m_MethodName: SendCustomEvent
         m_Mode: 5
@@ -273,19 +273,19 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 5122222944705522520}
   pageTitles:
-  - Title
+  - Barrier Interactions
   pageBodies:
-  - "The main simulation here illustrates William Duane's 1923 quantum hypothesis
-    for particle diffraction by crystals:\r\n<align=center><i>\"a theory of the reflection
-    of X-rays by crystals, based on quantum\r\nideas without reference to interference
-    laws.\"</i> <size=60%>(PNAS V9 192304 p158)</size></align><margin=2%>\r\nAlthough
-    initially dismissed by renowned theorists such as Niels Bohr, Max Born, and David
-    Bohm, Carolyne Van Vliet's research in 1967 and 2010 re-establishes the relevance
-    of Duane\u2019s approach by deriving it through formal quantum theory.\r\n\r\n<b>Central
-    Simulation:</b> couples the interaction dynamics across physical and momentum
-    spaces.\r\n<indent=4%><b>Left:</b> Particles scattering from a lattice to form
-    Laue patterns .\r\n<b>Right:</b> Displays the quantized lattice reactions in
-    reciprocal/momentum space\r\n"
+  - "<b>Wave simulation:</b> \r\n<indent=4%>A numerical wave model is employed for
+    the simulation, with the tank's barrier layout included in the wave boundary.
+    A Mur absorbing boundary damps the wall/obstacle reflections.</indent>\r\n<b>Particle
+    simulation:</b>\r\n<indent=4%>Through applying quantum theory to the wave barrier
+    structure, Duane (1923-26) and Van Vliet (2010) show that there is a static distribution
+    for the momentum impulses that the barrier can exchange with any particle passing
+    through the apertures. This aperture momentum expectation function is the square
+    of the Fourier transform of the aperture pattern multiplied by Planck\u2019s
+    constant. \r\n\r\nNote: The particle simulation is scaled such that Planck's
+    constant equals 1. As a result, particle momentum is equivalent to the tank simulation\u2019s
+    wave vector K = 1/wavelength.\r"
   languageIndex: 0
 --- !u!114 &5122222944705522520
 MonoBehaviour:
@@ -306,8 +306,8 @@ MonoBehaviour:
   SynchronizePosition: 0
   AllowCollisionOwnershipTransfer: 0
   Reliable: 0
-  _syncMethod: 2
-  serializedProgramAsset: {fileID: 11400000, guid: 48d0ef6c8a3caab4db724c6856f48412,
+  _syncMethod: 1
+  serializedProgramAsset: {fileID: 11400000, guid: 0c4ebdb0d0e747c42af886ac0649096d,
     type: 2}
   programSource: {fileID: 11400000, guid: 530112de8551329498e25f888f6d27e6, type: 2}
   serializedPublicVariablesBytesString: Ai8AAAAAATIAAABWAFIAQwAuAFUAZABvAG4ALgBDAG8AbQBtAG8AbgAuAFUAZABvAG4AVgBhAHIAaQBhAGIAbABlAFQAYQBiAGwAZQAsACAAVgBSAEMALgBVAGQAbwBuAC4AQwBvAG0AbQBvAG4AAAAAAAYBAAAAAAAAACcBBAAAAHQAeQBwAGUAAWgAAABTAHkAcwB0AGUAbQAuAEMAbwBsAGwAZQBjAHQAaQBvAG4AcwAuAEcAZQBuAGUAcgBpAGMALgBMAGkAcwB0AGAAMQBbAFsAVgBSAEMALgBVAGQAbwBuAC4AQwBvAG0AbQBvAG4ALgBJAG4AdABlAHIAZgBhAGMAZQBzAC4ASQBVAGQAbwBuAFYAYQByAGkAYQBiAGwAZQAsACAAVgBSAEMALgBVAGQAbwBuAC4AQwBvAG0AbQBvAG4AXQBdACwAIABtAHMAYwBvAHIAbABpAGIAAQEJAAAAVgBhAHIAaQBhAGIAbABlAHMALwEAAAABaAAAAFMAeQBzAHQAZQBtAC4AQwBvAGwAbABlAGMAdABpAG8AbgBzAC4ARwBlAG4AZQByAGkAYwAuAEwAaQBzAHQAYAAxAFsAWwBWAFIAQwAuAFUAZABvAG4ALgBDAG8AbQBtAG8AbgAuAEkAbgB0AGUAcgBmAGEAYwBlAHMALgBJAFUAZABvAG4AVgBhAHIAaQBhAGIAbABlACwAIABWAFIAQwAuAFUAZABvAG4ALgBDAG8AbQBtAG8AbgBdAF0ALAAgAG0AcwBjAG8AcgBsAGkAYgABAAAABgEAAAAAAAAAAi8CAAAAAUkAAABWAFIAQwAuAFUAZABvAG4ALgBDAG8AbQBtAG8AbgAuAFUAZABvAG4AVgBhAHIAaQBhAGIAbABlAGAAMQBbAFsAUwB5AHMAdABlAG0ALgBJAG4AdAAzADIALAAgAG0AcwBjAG8AcgBsAGkAYgBdAF0ALAAgAFYAUgBDAC4AVQBkAG8AbgAuAEMAbwBtAG0AbwBuAAIAAAAGAgAAAAAAAAAnAQQAAAB0AHkAcABlAAEXAAAAUwB5AHMAdABlAG0ALgBTAHQAcgBpAG4AZwAsACAAbQBzAGMAbwByAGwAaQBiACcBCgAAAFMAeQBtAGIAbwBsAE4AYQBtAGUAAR8AAABfAF8AXwBVAGQAbwBuAFMAaABhAHIAcABCAGUAaABhAHYAaQBvAHUAcgBWAGUAcgBzAGkAbwBuAF8AXwBfACcBBAAAAHQAeQBwAGUAARYAAABTAHkAcwB0AGUAbQAuAEkAbgB0ADMAMgAsACAAbQBzAGMAbwByAGwAaQBiABcBBQAAAFYAYQBsAHUAZQACAAAABwUHBQcF
