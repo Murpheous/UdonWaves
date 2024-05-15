@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using VRC.SDKBase;
 using VRC.Udon;
+using static UnityEngine.Rendering.VolumeComponent;
 [UdonBehaviourSyncMode(BehaviourSyncMode.Manual)]
 public class MoleculeExperiment : UdonSharpBehaviour
 {
@@ -38,6 +39,8 @@ public class MoleculeExperiment : UdonSharpBehaviour
 
     public float molecularWeight = 514.5389f;
     public string moleculeName = "Pthalocyanine";
+    [SerializeField] private TextMeshProUGUI moleculeText;
+
     [Header("Operating Settings-------")]
     [Tooltip("Default Particle Size"), SerializeField, UdonSynced, FieldChangeCallback(nameof(ParticleStartSize))] private float particleStartSize = 0.001f;
     [SerializeField, Range(0.1f, 5f), UdonSynced, FieldChangeCallback(nameof(MarkerPointSize))] float markerPointSize = 2;
@@ -1003,6 +1006,10 @@ public class MoleculeExperiment : UdonSharpBehaviour
         minSimSpeed = avgSimulationSpeed * (1 - randomRange);
         maxLifetimeAfterGrating = 1.25f * gratingToTargetSim / minSimSpeed;
         minDeBroglieWL = (h * PlanckScale) / (AMU_ToKg * molecularWeight * avgMoleculeSpeed*(1+randomRange));
+        if (moleculeText != null)
+        {
+            moleculeText.text = string.Format("Particles:<b>\n<indent=15%>{0}</b></indent>\nMolecular Weight:\n<b><indent=15%>{1:#.##}</b></indent>", moleculeName, molecularWeight);
+        }
         if (hasTrajectoryModule)
         {
             trajectoryModule.loadSettings(maxSimSpeed, minSimSpeed, gravitySim, useGravity, emitToGratingSim);
@@ -1010,7 +1017,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
         }
         else
             trajectoryValid = false;
-        logDebug(string.Format("U: Has Traj {0}, Traj Valid {1}", hasTrajectoryModule, trajectoryValid));
+        //logDebug(string.Format("U: Has Traj {0}, Traj Valid {1}", hasTrajectoryModule, trajectoryValid));
 
         trajectoryChanged = false;
         Vector3 newPosition;

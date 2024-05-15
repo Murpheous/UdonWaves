@@ -263,7 +263,7 @@ public class GratingControl : UdonSharpBehaviour
         setText(labelRows, "Rows\n" + rowCount.ToString());
         setText(labelRowPitch, "Row Spacing\n" + Units.ToEngineeringNotation(RowPitchMetres    ) + "m");
         setText(labelRowHeight, "Row Height\n" + Units.ToEngineeringNotation(ApertureHeightMetres) + "m");
-        setText(labelGratingScale,"Scale\n1:" +scaleDownFactor.ToString());
+        setText(labelGratingScale,"Grating\nScale\n1:" +scaleDownFactor.ToString());
     }
     public float ColumnPitchNative
     {
