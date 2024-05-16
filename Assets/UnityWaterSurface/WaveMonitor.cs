@@ -30,7 +30,7 @@ public class WaveMonitor : UdonSharpBehaviour
 
     [SerializeField]
     private float frequency = 1f;
-    [SerializeField, Range(1f,3f),UdonSynced,FieldChangeCallback(nameof(RequestHz))]
+    [SerializeField, Range(1f,3f),FieldChangeCallback(nameof(RequestHz))]
     private float requestHz = 2.4f;
 
     //public Slider frequencySlider;
@@ -63,10 +63,9 @@ public class WaveMonitor : UdonSharpBehaviour
         set
         {
             requestHz = value;
-            if (hzControl != null && !hzControl.PointerDown)
+            if (hzControl != null && !hzControl.PointerIsDown)
                 hzControl.SetValue(requestHz);
             Lambda = WaveSpeed/requestHz;
-            RequestSerialization();
         }
     }
 

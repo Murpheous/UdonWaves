@@ -374,8 +374,6 @@ public class HuygensMonitor : UdonSharpBehaviour
             pitchSlider.SetValues(slitPitch, 50, 500);
         if (iHaveWidthControl)
             widthSlider.SetValues(slitWidth, 1, 30);
-        if (iHaveScaleControl)
-            scaleSlider.SetValues(simScale, 1, 10);
        // if (iHaveSimMaterial)
        //     defaultWidth = matSimControl.GetFloat("_SlitWidth") / mmToPixels;
         Lambda = lambda;
@@ -383,7 +381,9 @@ public class HuygensMonitor : UdonSharpBehaviour
         SlitWidth = slitWidth;
         DisplayMode = displayMode;
         SimScale = simScale;
-        
+        if (iHaveScaleControl)
+            scaleSlider.SetValues(simScale, 1, 10);
+
         isStarted = true;
     }
 }

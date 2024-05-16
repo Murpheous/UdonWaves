@@ -181,12 +181,9 @@ public class SyncedSlider : UdonSharpBehaviour
         get => maxValue;
         set 
         { 
-            if (maxValue != value) 
-            { 
-                maxValue = value;
-                if (slider != null)
-                    slider.maxValue= maxValue/sliderScale;
-            }
+            maxValue = value;
+            if (slider != null)
+                slider.maxValue= maxValue/sliderScale;
         }
     }
 
@@ -195,12 +192,9 @@ public class SyncedSlider : UdonSharpBehaviour
         get => minValue;
         set
         {
-            if (minValue != value)
-            {
-                minValue = value;
-                if (slider != null)
-                    slider.minValue = minValue/sliderScale;
-            }
+            minValue = value;
+            if (slider != null)
+                slider.minValue = minValue/sliderScale;
         }
     }
 
@@ -211,6 +205,7 @@ public class SyncedSlider : UdonSharpBehaviour
             PointerValue = slider.value;
         }
     }
+
     [SerializeField]
     private bool pointerIsDown = false;
     public bool PointerIsDown { get => pointerIsDown; }

@@ -18,7 +18,7 @@ public class WavePanelControl : UdonSharpBehaviour
 
     [SerializeField] UdonSlider speedSlider;
     private bool iHaveSpeedControl = false;
-    [SerializeField, UdonSynced, FieldChangeCallback(nameof(WaveSpeed))] public float waveSpeed;
+    [SerializeField, FieldChangeCallback(nameof(WaveSpeed))] public float waveSpeed;
     [SerializeField] float defaultSpeed = 1;
     [SerializeField, Tooltip("CRT Update Cadence"), Range(0.01f, 0.5f)] float dt = 0.3f;
 
@@ -46,7 +46,7 @@ public class WavePanelControl : UdonSharpBehaviour
     [SerializeField] UdonSlider lambdaSlider;
     private bool iHaveLambdaControl = false;
     [SerializeField, Range(1, 100)] float defaultLambda = 24;
-    [SerializeField, Range(1, 100),UdonSynced,FieldChangeCallback(nameof(Lambda))] public float lambda = 24;
+    [SerializeField, Range(1, 100), FieldChangeCallback(nameof(Lambda))] public float lambda = 24;
 
     [SerializeField]
     private UdonSlider pitchSlider;
@@ -56,11 +56,11 @@ public class WavePanelControl : UdonSharpBehaviour
     private UdonSlider widthSlider;
     private bool iHaveWidthControl = false;
 
-    [SerializeField, Range(20, 500), UdonSynced, FieldChangeCallback(nameof(SlitPitch))]
+    [SerializeField, Range(20, 500), FieldChangeCallback(nameof(SlitPitch))]
     float slitPitch = 250;
     float defaultPitch = 250;
 
-    [SerializeField, Range(20, 500), UdonSynced, FieldChangeCallback(nameof(SlitWidth))]
+    [SerializeField, Range(20, 500), FieldChangeCallback(nameof(SlitWidth))]
     float slitWidth = 10;
     float defaultWidth = 10;
 
@@ -71,7 +71,7 @@ public class WavePanelControl : UdonSharpBehaviour
     [SerializeField] UdonSlider scaleSlider;
     private bool iHaveScaleControl = false;
     [SerializeField, Range(1, 10)] float defaultScale = 24;
-    [SerializeField, Range(1, 10), UdonSynced, FieldChangeCallback(nameof(SimScale))] public float simScale = 24;
+    [SerializeField, Range(1, 10), FieldChangeCallback(nameof(SimScale))] public float simScale = 24;
 
     [Header("Serialized for monitoring in Editor")]
     [SerializeField]
@@ -179,10 +179,7 @@ public class WavePanelControl : UdonSharpBehaviour
         set
         {
             waveSpeed = Mathf.Clamp(value,0,5);
-            if (iHaveSpeedControl && !speedSlider.PointerDown)
-                speedSlider.SetValue(waveSpeed);
             UpdateWaveSpeed();
-            RequestSerialization();
         }
     }
 
@@ -337,10 +334,7 @@ public class WavePanelControl : UdonSharpBehaviour
             if (iHaveSimControl)
                 matSimControl.SetFloat("_Lambda", lambda);
             crtUpdateNeeded |= iHaveCRT;
-            if (iHaveLambdaControl && !lambdaSlider.PointerDown)
-                    lambdaSlider.SetValue(value);
             UpdateWaveSpeed();
-            RequestSerialization();
         }
     }
 
@@ -352,9 +346,6 @@ public class WavePanelControl : UdonSharpBehaviour
         {
             slitPitch = value;
             updateGrating();
-            if (iHavePitchControl && !pitchSlider.PointerDown)
-                pitchSlider.SetValue(value);
-            RequestSerialization();
         }
     }
 
@@ -365,9 +356,6 @@ public class WavePanelControl : UdonSharpBehaviour
         {
             slitWidth = value;
             updateGrating() ;
-            if (iHaveWidthControl && !widthSlider.PointerDown)
-                widthSlider.SetValue(value);
-            RequestSerialization();
         }
     }
 
@@ -381,9 +369,6 @@ public class WavePanelControl : UdonSharpBehaviour
             if (iHaveSimControl)
                 matSimControl.SetFloat("_Scale", simScale);
             crtUpdateNeeded |= iHaveCRT;
-            if (iHaveScaleControl && !scaleSlider.PointerDown)
-                scaleSlider.SetValue(value);
-            RequestSerialization();
         }
     }
 
@@ -534,15 +519,20 @@ public class WavePanelControl : UdonSharpBehaviour
 
         Lambda = defaultLambda;
         WaveSpeed = defaultSpeed;
+        speedSlider.SetValue(defaultSpeed);
         SimScale = defaultScale;
+        scaleSlider.SetValue(defaultScale);
+        SlitPitch = defaultPitch;
         if (iHavePitchControl)
         {
             pitchSlider.MaxValue = 500;
             pitchSlider.MinValue = 20;
+            pitchSlider.SetValue(defaultPitch);
         }
         NumSources = defaultSources;
-        SlitPitch = defaultPitch;
         SlitWidth = defaultWidth;
+        if (iHaveWidthControl) 
+            widthSlider.SetValue(defaultWidth);
         crtUpdateNeeded |= iHaveCRT;
     }
 }

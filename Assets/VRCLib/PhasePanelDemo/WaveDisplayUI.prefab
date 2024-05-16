@@ -911,6 +911,7 @@ MonoBehaviour:
   m_Script: {fileID: -1533785930, guid: 661092b4961be7145bfbe56e1e62337b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  AllowFocusView: 1
 --- !u!1 &1643144408541002936
 GameObject:
   m_ObjectHideFlags: 0
@@ -3718,6 +3719,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1800714333880337000, guid: 6effcb81c33351d4a8c7cde8d491550b,
         type: 3}
+      propertyPath: dampingTime
+      value: 0.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 1800714333880337000, guid: 6effcb81c33351d4a8c7cde8d491550b,
+        type: 3}
       propertyPath: SliderClient
       value: 
       objectReference: {fileID: 4683153376964916738}
@@ -3941,7 +3947,7 @@ PrefabInstance:
     - target: {fileID: 8350140193177366238, guid: 6effcb81c33351d4a8c7cde8d491550b,
         type: 3}
       propertyPath: _syncMethod
-      value: 1
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 8350140193177366238, guid: 6effcb81c33351d4a8c7cde8d491550b,
         type: 3}
@@ -4401,6 +4407,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1800714333880337000, guid: 51d25fdc17a58f9418ea473222346b10,
         type: 3}
+      propertyPath: dampingTime
+      value: 0.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 1800714333880337000, guid: 51d25fdc17a58f9418ea473222346b10,
+        type: 3}
       propertyPath: SliderClient
       value: 
       objectReference: {fileID: 4683153376964916738}
@@ -4593,7 +4604,7 @@ PrefabInstance:
     - target: {fileID: 8350140193177366238, guid: 51d25fdc17a58f9418ea473222346b10,
         type: 3}
       propertyPath: _syncMethod
-      value: 1
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 8350140193177366238, guid: 51d25fdc17a58f9418ea473222346b10,
         type: 3}
@@ -4828,7 +4839,7 @@ PrefabInstance:
     - target: {fileID: 7740272733482202267, guid: 8c0dafc6d0a135b468ad68c3591c0155,
         type: 3}
       propertyPath: _syncMethod
-      value: 1
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 7740272733482202267, guid: 8c0dafc6d0a135b468ad68c3591c0155,
         type: 3}
@@ -4845,6 +4856,11 @@ PrefabInstance:
         type: 3}
       propertyPath: minValue
       value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 7937552624383831536, guid: 8c0dafc6d0a135b468ad68c3591c0155,
+        type: 3}
+      propertyPath: dampingTime
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 7937552624383831536, guid: 8c0dafc6d0a135b468ad68c3591c0155,
         type: 3}
@@ -5119,7 +5135,7 @@ PrefabInstance:
     - target: {fileID: 7740272733482202267, guid: 8c0dafc6d0a135b468ad68c3591c0155,
         type: 3}
       propertyPath: _syncMethod
-      value: 1
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 7740272733482202267, guid: 8c0dafc6d0a135b468ad68c3591c0155,
         type: 3}
@@ -5131,6 +5147,11 @@ PrefabInstance:
         type: 3}
       propertyPath: sliderUnit
       value: ' : 1'
+      objectReference: {fileID: 0}
+    - target: {fileID: 7937552624383831536, guid: 8c0dafc6d0a135b468ad68c3591c0155,
+        type: 3}
+      propertyPath: dampingTime
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 7937552624383831536, guid: 8c0dafc6d0a135b468ad68c3591c0155,
         type: 3}
