@@ -20,18 +20,16 @@ public class HuygensMonitor : UdonSharpBehaviour
     [SerializeField] float sourceOffset;
     [SerializeField,UdonSynced,FieldChangeCallback(nameof(NumSources))] int numSources = 2;
     [SerializeField] TextMeshProUGUI lblSourceCount;
-    [SerializeField, Range(20,500),UdonSynced, FieldChangeCallback(nameof(SlitPitch))] 
-    float slitPitch = 447f;
+    [SerializeField, Range(20,500), FieldChangeCallback(nameof(SlitPitch))] 
+    private float slitPitch = 447f;
 
-    [SerializeField, Range(20, 500), UdonSynced, FieldChangeCallback(nameof(SlitWidth))]
-    float slitWidth = 10;
+    [SerializeField, Range(20, 500), FieldChangeCallback(nameof(SlitWidth))]
+    private float slitWidth = 10;
 
     [Header("Controls")]
-    [SerializeField, UdonSynced, FieldChangeCallback(nameof(WaveSpeed))] public float waveSpeed;
+    [SerializeField, FieldChangeCallback(nameof(WaveSpeed))] public float waveSpeed;
 
     [SerializeField] UdonSlider speedSlider;
-    [SerializeField] public bool speedPtr = false;
-    private bool iHaveSpeedControl = false;
 
     [SerializeField]
     private SyncedSlider lambdaSlider;
@@ -47,12 +45,12 @@ public class HuygensMonitor : UdonSharpBehaviour
     [SerializeField]
     private SyncedSlider widthSlider;
     private bool iHaveWidthControl = false;
-    public bool widthPtr = false;
 
     [SerializeField,Range(30,80), FieldChangeCallback(nameof(Lambda))]
-    public float lambda = 1f;
+    private float lambda = 1f;
 
-    [SerializeField,Range(1,10),UdonSynced,FieldChangeCallback(nameof(SimScale))] float simScale = 1f;
+    [SerializeField,Range(1,10),FieldChangeCallback(nameof(SimScale))] 
+    private float simScale = 1f;
     [SerializeField] private UdonBehaviour vectorDrawing;
 
     [Header("Serialized for monitoring in Editor")]
@@ -199,13 +197,7 @@ public class HuygensMonitor : UdonSharpBehaviour
             slitWidth = value;
             if (vectorDrawing != null)
                 vectorDrawing.SetProgramVariable<float>("slitWidth", slitWidth);
-            if (iHaveWidthControl)
-            {
-                if ((!isStarted || widthSlider.CurrentValue != value) && !widthPtr)
-                    widthSlider.CurrentValue = value;
-            }
             updateGrating();
-            RequestSerialization();
         }
     }
     public float SlitPitch
@@ -217,7 +209,6 @@ public class HuygensMonitor : UdonSharpBehaviour
             if (vectorDrawing != null)
                 vectorDrawing.SetProgramVariable<float>("slitPitch", slitPitch);
             updateGrating();
-            RequestSerialization();
         }
     }
 
@@ -258,7 +249,6 @@ public class HuygensMonitor : UdonSharpBehaviour
             if (iHaveSimMaterial)
                 matSimControl.SetFloat("_Scale", simScale);
             updateNeeded = true;
-            RequestSerialization();
         }
     }
 
@@ -290,10 +280,7 @@ public class HuygensMonitor : UdonSharpBehaviour
         set
         {
             waveSpeed = Mathf.Clamp(value, 0, 5);
-            if (!speedPtr && iHaveSpeedControl)
-                speedSlider.SetValue(waveSpeed);
             UpdateWaveSpeed();
-            RequestSerialization();
         }
     }
 
@@ -333,7 +320,6 @@ public class HuygensMonitor : UdonSharpBehaviour
         iHaveWidthControl = widthSlider != null;
         iHaveLambdaControl = lambdaSlider != null;
         iHaveScaleControl = scaleSlider != null;
-        iHaveSpeedControl = speedSlider != null;
         if (thePanel != null)
             matPanel = thePanel.material;
         iHavePanelMaterial = matPanel != null;
@@ -346,9 +332,6 @@ public class HuygensMonitor : UdonSharpBehaviour
         configureSimControl(PanelHasVanillaMaterial);
 
         defaultLambda = lambda;
-        Lambda = lambda;
-        if (iHaveLambdaControl)
-            lambdaSlider.SetValue(lambda);
         defaultPitch = slitPitch;
         defaultScale = simScale;
 
@@ -368,10 +351,13 @@ public class HuygensMonitor : UdonSharpBehaviour
             matSimControl = thePanel.material;
         }
         iHaveSimMaterial = matSimControl != null;
+        Lambda = lambda;
         if (iHaveLambdaControl)
             lambdaSlider.SetValues(lambda, 30, 80);
+        SlitPitch = slitPitch;
         if (iHavePitchControl)
             pitchSlider.SetValues(slitPitch, 50, 500);
+        SlitWidth = slitWidth;
         if (iHaveWidthControl)
             widthSlider.SetValues(slitWidth, 1, 30);
        // if (iHaveSimMaterial)

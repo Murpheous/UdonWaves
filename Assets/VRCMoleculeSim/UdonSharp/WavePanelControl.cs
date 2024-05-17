@@ -519,9 +519,11 @@ public class WavePanelControl : UdonSharpBehaviour
 
         Lambda = defaultLambda;
         WaveSpeed = defaultSpeed;
-        speedSlider.SetValue(defaultSpeed);
+        if (iHaveSpeedControl)
+            speedSlider.SetValue(defaultSpeed);
         SimScale = defaultScale;
-        scaleSlider.SetValue(defaultScale);
+        if (iHaveScaleControl)
+            scaleSlider.SetValue(defaultScale);
         SlitPitch = defaultPitch;
         if (iHavePitchControl)
         {

@@ -204,7 +204,7 @@ MonoBehaviour:
             m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
             m_IntArgument: 0
             m_FloatArgument: 0
-            m_StringArgument: onPtrDn
+            m_StringArgument: ptrDn
             m_BoolArgument: 0
           m_CallState: 2
   - eventID: 3
@@ -220,7 +220,7 @@ MonoBehaviour:
             m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
             m_IntArgument: 0
             m_FloatArgument: 0
-            m_StringArgument: onPtrUp
+            m_StringArgument: ptrUp
             m_BoolArgument: 0
           m_CallState: 2
 --- !u!1 &1143197884230504672
@@ -578,11 +578,13 @@ MonoBehaviour:
   sliderScale: 1
   SliderClient: {fileID: 0}
   clientVariableName: lambda
-  clientPointerStateVar: lambdaPtr
+  clientPointerState: 
   currentValue: 20
   pointerValue: 0
+  targetValue: 0
   maxValue: 60
   minValue: 10
+  pointerIsDown: 0
 --- !u!114 &1143197885194155145
 MonoBehaviour:
   m_ObjectHideFlags: 0

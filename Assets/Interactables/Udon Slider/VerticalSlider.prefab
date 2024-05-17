@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3105796665011201240}
   - component: {fileID: 3105796665011201242}
   - component: {fileID: 3105796665011201243}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Background
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -57,8 +57,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Material: {fileID: 2100000, guid: 35630e38b4e5ffb40b44ec5348b4333f, type: 2}
+  m_Color: {r: 0.6320754, g: 0.6320754, b: 0.6320754, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -86,7 +86,7 @@ GameObject:
   - component: {fileID: 3105796665125844891}
   - component: {fileID: 3105796665125844900}
   - component: {fileID: 3105796665125844901}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: VerticalSlider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -139,20 +139,22 @@ MonoBehaviour:
   slider: {fileID: 3105796665146326910}
   sliderLabel: {fileID: 4505843057065009857}
   sliderTitle: {fileID: 3420343729169173828}
-  smoothTime: 0
+  smoothTime: 0.05
   hideLabel: 0
   unitsInteger: 0
-  displayInteger: 0
-  sliderUnit: "\xB0"
+  displayInteger: 1
+  sliderUnit: <br>mm
   unitDisplayScale: 1
   sliderScale: 0.5
   SliderClient: {fileID: 0}
-  clientVariableName: emitterElevation
-  clientPointerStateVar: PointerStateVar
+  clientVariableName: slitPitch
+  clientPointerState: 
   currentValue: 0
   pointerValue: 0
+  targetValue: 0
   maxValue: 1
   minValue: 0
+  pointerIsDown: 0
 --- !u!114 &3105796665125844901
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -173,7 +175,7 @@ MonoBehaviour:
   AllowCollisionOwnershipTransfer: 0
   Reliable: 0
   _syncMethod: 3
-  serializedProgramAsset: {fileID: 11400000, guid: 35eb31a5fc587e7429c0821ac97b1a8a,
+  serializedProgramAsset: {fileID: 11400000, guid: 462ede64c0aacb5419c12db689bdec85,
     type: 2}
   programSource: {fileID: 11400000, guid: 703b21918739038438cbdf5288de721c, type: 2}
   serializedPublicVariablesBytesString: Ai8AAAAAATIAAABWAFIAQwAuAFUAZABvAG4ALgBDAG8AbQBtAG8AbgAuAFUAZABvAG4AVgBhAHIAaQBhAGIAbABlAFQAYQBiAGwAZQAsACAAVgBSAEMALgBVAGQAbwBuAC4AQwBvAG0AbQBvAG4AAAAAAAYBAAAAAAAAACcBBAAAAHQAeQBwAGUAAWgAAABTAHkAcwB0AGUAbQAuAEMAbwBsAGwAZQBjAHQAaQBvAG4AcwAuAEcAZQBuAGUAcgBpAGMALgBMAGkAcwB0AGAAMQBbAFsAVgBSAEMALgBVAGQAbwBuAC4AQwBvAG0AbQBvAG4ALgBJAG4AdABlAHIAZgBhAGMAZQBzAC4ASQBVAGQAbwBuAFYAYQByAGkAYQBiAGwAZQAsACAAVgBSAEMALgBVAGQAbwBuAC4AQwBvAG0AbQBvAG4AXQBdACwAIABtAHMAYwBvAHIAbABpAGIAAQEJAAAAVgBhAHIAaQBhAGIAbABlAHMALwEAAAABaAAAAFMAeQBzAHQAZQBtAC4AQwBvAGwAbABlAGMAdABpAG8AbgBzAC4ARwBlAG4AZQByAGkAYwAuAEwAaQBzAHQAYAAxAFsAWwBWAFIAQwAuAFUAZABvAG4ALgBDAG8AbQBtAG8AbgAuAEkAbgB0AGUAcgBmAGEAYwBlAHMALgBJAFUAZABvAG4AVgBhAHIAaQBhAGIAbABlACwAIABWAFIAQwAuAFUAZABvAG4ALgBDAG8AbQBtAG8AbgBdAF0ALAAgAG0AcwBjAG8AcgBsAGkAYgABAAAABgEAAAAAAAAAAi8CAAAAAUkAAABWAFIAQwAuAFUAZABvAG4ALgBDAG8AbQBtAG8AbgAuAFUAZABvAG4AVgBhAHIAaQBhAGIAbABlAGAAMQBbAFsAUwB5AHMAdABlAG0ALgBJAG4AdAAzADIALAAgAG0AcwBjAG8AcgBsAGkAYgBdAF0ALAAgAFYAUgBDAC4AVQBkAG8AbgAuAEMAbwBtAG0AbwBuAAIAAAAGAgAAAAAAAAAnAQQAAAB0AHkAcABlAAEXAAAAUwB5AHMAdABlAG0ALgBTAHQAcgBpAG4AZwAsACAAbQBzAGMAbwByAGwAaQBiACcBCgAAAFMAeQBtAGIAbwBsAE4AYQBtAGUAAR8AAABfAF8AXwBVAGQAbwBuAFMAaABhAHIAcABCAGUAaABhAHYAaQBvAHUAcgBWAGUAcgBzAGkAbwBuAF8AXwBfACcBBAAAAHQAeQBwAGUAARYAAABTAHkAcwB0AGUAbQAuAEkAbgB0ADMAMgAsACAAbQBzAGMAbwByAGwAaQBiABcBBQAAAFYAYQBsAHUAZQACAAAABwUHBQcF
@@ -190,7 +192,7 @@ GameObject:
   - component: {fileID: 3105796665146326911}
   - component: {fileID: 3105796665146326910}
   - component: {fileID: 7390868882133898040}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Slider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -217,7 +219,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 30, y: 280}
+  m_SizeDelta: {x: 30, y: 230}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &3105796665146326910
 MonoBehaviour:
@@ -240,11 +242,11 @@ MonoBehaviour:
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
   m_Colors:
-    m_NormalColor: {r: 0, g: 0.8784314, b: 1, a: 1}
-    m_HighlightedColor: {r: 1, g: 0.94509804, b: 0, a: 1}
-    m_PressedColor: {r: 1, g: 0.39215687, b: 0.39215687, a: 1}
-    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_NormalColor: {r: 0, g: 0.82411754, b: 0.8490566, a: 1}
+    m_HighlightedColor: {r: 1, g: 0.73333335, b: 0, a: 1}
+    m_PressedColor: {r: 1, g: 0.570091, b: 0, a: 1}
+    m_SelectedColor: {r: 0, g: 1, b: 1, a: 1}
+    m_DisabledColor: {r: 0.41509432, g: 0.40530434, b: 0.40530434, a: 0.4745098}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -308,7 +310,7 @@ MonoBehaviour:
             m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
             m_IntArgument: 0
             m_FloatArgument: 0
-            m_StringArgument: onPtrDn
+            m_StringArgument: ptrDn
             m_BoolArgument: 0
           m_CallState: 2
   - eventID: 3
@@ -324,7 +326,7 @@ MonoBehaviour:
             m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
             m_IntArgument: 0
             m_FloatArgument: 0
-            m_StringArgument: onPtrUp
+            m_StringArgument: ptrUp
             m_BoolArgument: 0
           m_CallState: 2
 --- !u!1 &3105796665335820011
@@ -385,7 +387,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 2100000, guid: 35630e38b4e5ffb40b44ec5348b4333f, type: 2}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
@@ -595,7 +597,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 2100000, guid: 35630e38b4e5ffb40b44ec5348b4333f, type: 2}
   m_Color: {r: 0.90588236, g: 0.78431374, b: 0, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
@@ -622,7 +624,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3105796665498527202}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Handle Slide Area
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -658,7 +660,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3105796665553894165}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Fill Area
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -696,8 +698,8 @@ GameObject:
   - component: {fileID: 6919716917842732834}
   - component: {fileID: 792762492706134717}
   - component: {fileID: 3420343729169173828}
-  m_Layer: 0
-  m_Name: Text (TMP)
+  m_Layer: 17
+  m_Name: Title
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -717,10 +719,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 3105796665125844891}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 149.3}
-  m_SizeDelta: {x: 200, y: 50}
+  m_AnchorMin: {x: 0.5, y: 1}
+  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: 0, y: 24}
+  m_SizeDelta: {x: 100, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &792762492706134717
 CanvasRenderer:
@@ -750,9 +752,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Beam
-
-    Elevation'
+  m_text: Spacing
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ddbcc27b0346e4644a45316aaf00c441, type: 2}
   m_sharedMaterial: {fileID: 4410821715232426517, guid: ddbcc27b0346e4644a45316aaf00c441,
@@ -762,8 +762,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+    rgba: 4294959104
+  m_fontColor: {r: 0, g: 0.8784314, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -780,15 +780,15 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
-  m_fontSizeBase: 24
+  m_fontSize: 20
+  m_fontSizeBase: 20
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 1
   m_HorizontalAlignment: 2
-  m_VerticalAlignment: 512
+  m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
