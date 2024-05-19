@@ -518,6 +518,8 @@ public class WavePanelControl : UdonSharpBehaviour
         }
 
         Lambda = defaultLambda;
+        if (iHaveLambdaControl)
+            lambdaSlider.SetValue(defaultLambda);
         WaveSpeed = defaultSpeed;
         if (iHaveSpeedControl)
             speedSlider.SetValue(defaultSpeed);

@@ -305,15 +305,12 @@ public class HuygensMonitor : UdonSharpBehaviour
         updateNeeded = false;
     }
 
-    float lambdaVel = 0;
-    float smoothTime = 0.1f;
     private void Update()
     {
         if (!useCRT) return;
         if (updateNeeded)
             UpdateWaves();
     }
-    bool isStarted = false;
     void Start()
     {
         iHavePitchControl = pitchSlider != null;
@@ -369,7 +366,5 @@ public class HuygensMonitor : UdonSharpBehaviour
         SimScale = simScale;
         if (iHaveScaleControl)
             scaleSlider.SetValues(simScale, 1, 10);
-
-        isStarted = true;
     }
 }
