@@ -1,9 +1,7 @@
-﻿
-using UdonSharp;
+﻿using UdonSharp;
 using UnityEngine;
 using VRC.SDKBase;
 using VRC.Udon;
-using Unity.Collections;
 
 [UdonBehaviourSyncMode(BehaviourSyncMode.Manual)]
 public class VectorDiagram : UdonSharpBehaviour

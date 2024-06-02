@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using VRC.SDKBase;
 using VRC.Udon;
-using VRC.Udon.Serialization.OdinSerializer.Utilities;
 
 public class SyncedToggle : UdonSharpBehaviour
 {
@@ -17,8 +16,6 @@ public class SyncedToggle : UdonSharpBehaviour
     private bool currentState = false;
     [SerializeField]
     private bool reportedState = false;
-    [SerializeField]
-    private bool hasToggle = false;
     [SerializeField]
     private bool hasClient = false;
 
@@ -46,7 +43,7 @@ public class SyncedToggle : UdonSharpBehaviour
     {
         currentState = state;
         reportedState = state;
-        if (hasToggle)
+        if (toggle != null)
         {
             if (toggle.isOn != state)
             {
@@ -54,17 +51,14 @@ public class SyncedToggle : UdonSharpBehaviour
             }
         }
     }
-    public void onToggleChanged()
+    public void onToggle()
     {
-        if (!hasToggle)
-            return;
         CurrentState = toggle.isOn;
     }
     void Start()
     {
         if (toggle == null)
             toggle = GetComponent<Toggle>();
-        hasToggle = toggle != null;
         hasClient = toggleClient != null;
         setState();
     }

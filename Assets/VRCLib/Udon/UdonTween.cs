@@ -1,11 +1,9 @@
-﻿
-using System;
+﻿using System;
 using UdonSharp;
 using UnityEngine;
 using UnityEngine.UI;
 using VRC.SDKBase;
 using VRC.Udon;
-[UdonBehaviourSyncMode(BehaviourSyncMode.Manual)]
 
 public class UdonTween : UdonSharpBehaviour
 {
@@ -20,97 +18,50 @@ public class UdonTween : UdonSharpBehaviour
     [SerializeField]
     float damping = 0.1f;
 
-    private VRCPlayerApi player;
-    bool iamOwner = false;
-
-    public float currentValue;
-    private float reportedValue = 0.0f;
-    [SerializeField, UdonSynced, FieldChangeCallback(nameof(CurrentState))]
+    [SerializeField, FieldChangeCallback(nameof(CurrentState))]
     public bool currentState = false;
+    private bool isPlaying = false;
 
     private bool CurrentState
     {
         get => currentState;
         set
         {
-            if (value != currentState)
-            {
-                currentState = value;
-                if (value)
-                    animationTime = Mathf.Clamp(currentValue, 0, 1);
-                else
-                    animationTime = Mathf.Clamp(1 - currentValue, 0, 1);
-            }
-            if (stateToggle != null)
-            {
-                if (stateToggle.isOn != currentState)
-                    stateToggle.isOn = currentState;
-            }
-            RequestSerialization();
+            isPlaying |= currentState != value;
+            currentState = value;
         }
     }
-
+    [SerializeField]
     float animationTime = 0;
-    public float CurrentValue
+    private void sendValue(float value)
     {
-        get => currentValue;
-        set
-        {
-            currentValue = value;
-            if (reportedValue != currentValue)
-            {
-                reportedValue = currentValue;
-                if ((TweenClient != null) && (!string.IsNullOrEmpty(clientVariableName)))
-                    TweenClient.SetProgramVariable<Single>(clientVariableName, currentValue);
-            }
-        }
+        if ((TweenClient != null) && (!string.IsNullOrEmpty(clientVariableName)))
+            TweenClient.SetProgramVariable<Single>(clientVariableName, value);
     }
 
-    private void ReviewOwnerShip()
-    {
-        iamOwner = Networking.IsOwner(this.gameObject);
-    }
-
-    public void onToggleChanged()
+    public void onToggle()
     {
         bool togVal = CurrentState;
         if (stateToggle != null)
             togVal = stateToggle.isOn;
         if (togVal != currentState)
-        {
-            if (!iamOwner)
-                Networking.SetOwner(player, gameObject);
             CurrentState = togVal;
-        }
     }
 
     private void Update()
     {
-        if (animationTime < 1)
-            animationTime += Time.deltaTime * damping;
-        if (currentState)
-        {
-            if (currentValue < 1)
-                CurrentValue = Mathf.Lerp(0, 1, m_moveCurve.Evaluate(animationTime));
-        }
-        else
-        {
-            if (currentValue > 0)
-                CurrentValue = Mathf.Lerp(1, 0, m_moveCurve.Evaluate(animationTime));
-        }
+        if (!isPlaying)
+            return;
+        animationTime = Mathf.Clamp01(animationTime + (Time.deltaTime * (currentState ? damping : -damping)));
+        isPlaying = animationTime > 0 && animationTime < 1;
+        sendValue(m_moveCurve.Evaluate(animationTime));
     }
-/*
-    public void SetValues(float value, float min, float max)
-    {
-        currentValue = value;
-        reportedValue = value;
-    }
-*/
+
     private void Start()
     {
-        player = Networking.LocalPlayer;
-
-        ReviewOwnerShip();
-        CurrentState = currentState;
+        if (stateToggle != null)
+            currentState = stateToggle.isOn;
+        animationTime = currentState ? 0.9999f : 0.0001f;
+        isPlaying = true;
     }
 }

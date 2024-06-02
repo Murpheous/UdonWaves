@@ -11,19 +11,24 @@ public class HuygensMonitor : UdonSharpBehaviour
     [SerializeField, Tooltip("Use Render texture mode")] bool useCRT = false;
 
     [Tooltip("DisplayPanel")] public MeshRenderer thePanel;
-    [SerializeField,FieldChangeCallback(nameof(DisplayMode))]
+    [SerializeField, FieldChangeCallback(nameof(DisplayMode))]
     public int displayMode = 1;
-    [SerializeField] Vector2Int simResolution = new Vector2Int(2048,1280);
-    [Tooltip("Panel Width (mm)"),SerializeField] float panelWidth = 2.048f;
+    [SerializeField] Vector2Int simResolution = new Vector2Int(2048, 1280);
+    [Tooltip("Panel Width (mm)"), SerializeField] float panelWidth = 2.048f;
     [SerializeField] Vector2 displayRect = new Vector2(1.99f, 1.33f);
-    [SerializeField] Vector2 defaultDisplayRect = new Vector2(1.95f,0.95f);
+    [SerializeField] Vector2 defaultDisplayRect = new Vector2(1.95f, 0.95f);
     [SerializeField] float sourceOffset;
-    [SerializeField,UdonSynced,FieldChangeCallback(nameof(NumSources))] int numSources = 2;
-    [SerializeField] TextMeshProUGUI lblSourceCount;
-    [SerializeField, Range(20,500), FieldChangeCallback(nameof(SlitPitch))] 
-    private float slitPitch = 447f;
 
-    [SerializeField, Range(20, 500), FieldChangeCallback(nameof(SlitWidth))]
+    [Header("Source Settings")]
+    [SerializeField, Tooltip("Scales control settings in mm to lengths in metres")]
+    private float mmToMetres = 0.001f;
+    [SerializeField, UdonSynced, FieldChangeCallback(nameof(SlitCount))] 
+    private int slitCount = 2;
+    [SerializeField] private TextMeshProUGUI lblSourceCount;
+    [SerializeField, Range(50, 600), FieldChangeCallback(nameof(SlitPitch))]
+    private float slitPitch = 564f;
+
+    [SerializeField, Range(5, 60), FieldChangeCallback(nameof(SlitWidth))]
     private float slitWidth = 10;
 
     [Header("Controls")]
@@ -32,26 +37,54 @@ public class HuygensMonitor : UdonSharpBehaviour
     [SerializeField] UdonSlider speedSlider;
 
     [SerializeField]
-    private SyncedSlider lambdaSlider;
+    private UdonSlider lambdaSlider;
     private bool iHaveLambdaControl = false;
     [SerializeField]
-    private SyncedSlider pitchSlider;
+    private UdonSlider pitchSlider;
     private bool iHavePitchControl = false;
 
     [SerializeField]
-    private SyncedSlider scaleSlider;
+    private UdonSlider scaleSlider;
     private bool iHaveScaleControl = false;
 
     [SerializeField]
-    private SyncedSlider widthSlider;
+    private UdonSlider widthSlider;
     private bool iHaveWidthControl = false;
 
-    [SerializeField,Range(30,80), FieldChangeCallback(nameof(Lambda))]
+    [SerializeField]
+    private float momentum;
+    [SerializeField]
+    private TextMeshProUGUI lblMomentum;
+
+    [SerializeField]
+    private float minLambda = 30;
+    [SerializeField]
+    private float maxLambda = 80;
+
+    [SerializeField, Range(30, 80), FieldChangeCallback(nameof(Lambda))]
     private float lambda = 1f;
 
-    [SerializeField,Range(1,10),FieldChangeCallback(nameof(SimScale))] 
+    [SerializeField, Range(1, 10), FieldChangeCallback(nameof(SimScale))]
     private float simScale = 1f;
-    [SerializeField] private UdonBehaviour vectorDrawing;
+    [SerializeField] 
+    private UdonBehaviour vectorDrawing;
+    private bool iHaveVectorDiag = false;
+    [SerializeField]
+    private UdonBehaviour particleSim;
+    private bool iHaveParticleSim;
+
+    private bool iamOwner;
+    private VRCPlayerApi player;
+
+    private void UpdateOwnerShip()
+    {
+        iamOwner = Networking.IsOwner(this.gameObject);
+    }
+
+    public override void OnOwnershipTransferred(VRCPlayerApi player)
+    {
+        UpdateOwnerShip();
+    }
 
     [Header("Serialized for monitoring in Editor")]
     [SerializeField]
@@ -67,13 +100,17 @@ public class HuygensMonitor : UdonSharpBehaviour
     [SerializeField]
     private bool iHaveSimDisplay = false;
     [SerializeField]
-    private bool iHaveSimMaterial = false;
+    private bool iHaveWaveCRT = false;
     [SerializeField]
     private bool iHaveSimControl = false;
-
-    private float defaultLambda;
-    private float defaultPitch;
-    private float defaultScale;
+    [SerializeField]
+    private float defaultLambda = 50;
+    [SerializeField]
+    private float defaultPitch = 564;
+    [SerializeField]
+    private float defaultWidth = 10;
+    [SerializeField]
+    private float defaultScale = 1;
 
     private void configureSimControl(bool vanillaDisplay)
     {
@@ -90,7 +127,6 @@ public class HuygensMonitor : UdonSharpBehaviour
                 // No CRT and not a compatible display
                 matSimDisplay = null;
                 matSimControl = null;
-
                 Debug.Log("Warning:configureSimControl() no Interference control/display material");
             }
         }
@@ -150,20 +186,33 @@ public class HuygensMonitor : UdonSharpBehaviour
             }
             else
             {
+                SlitPitch = defaultPitch;
                 if (iHavePitchControl)
+                {
+                    pitchSlider.SetValue(defaultPitch);
                     pitchSlider.Interactable = false;
+                }
+                SlitWidth = defaultWidth;
                 if (iHaveWidthControl)
+                {
+                    widthSlider.SetValue(defaultWidth);
                     widthSlider.Interactable = false;
+                }
+                Lambda = defaultLambda;
                 if (iHaveLambdaControl)
+                {
+                    lambdaSlider.SetValue(defaultLambda);
                     lambdaSlider.Interactable = false;
+                }
+                SimScale = defaultScale;
                 if (iHaveScaleControl)
+                {
+                    scaleSlider.SetValue(defaultScale);
                     scaleSlider.Interactable = false;
+                }
                 if (useCRT)
                     simCRT.Initialize();
-                SlitPitch = defaultPitch;
-                Lambda = defaultLambda;
-                NumSources = 2;
-                SimScale = defaultScale;
+                SlitCount = 2;
                 if (vectorDrawing != null)
                     vectorDrawing.SetProgramVariable<Vector2>("displayRect", defaultDisplayRect);
             }
@@ -174,17 +223,24 @@ public class HuygensMonitor : UdonSharpBehaviour
 
     private void updateGrating()
     {
-        if (!iHaveSimMaterial)
+        if (iHaveParticleSim)
+        {
+            particleSim.SetProgramVariable<int>("slitCount", slitCount);
+            particleSim.SetProgramVariable<float>("slitWidth", slitWidth * mmToMetres);
+            particleSim.SetProgramVariable<float>("slitPitch", slitPitch * mmToMetres);
+            //particleSim.SetProgramVariable<float>("gratingOffset", gratingOffset);
+        }
+        if (!iHaveWaveCRT)
             return;
         matSimControl.SetFloat("_SlitPitch", slitPitch * mmToPixels);
-        if (numSources > 1 && slitPitch <= slitWidth)
+        if (slitCount > 1 && slitPitch <= slitWidth)
         {
-            float gratingWidth = (numSources - 1) * slitPitch + slitWidth;
+            float gratingWidth = (slitCount - 1) * slitPitch + slitWidth;
             matSimControl.SetFloat("_SlitCount", 1f);
             matSimControl.SetFloat("_SlitWidth", gratingWidth * mmToPixels);
             return;
         }
-        matSimControl.SetFloat("_SlitCount", numSources);
+        matSimControl.SetFloat("_SlitCount", slitCount);
         matSimControl.SetFloat("_SlitWidth", slitWidth * mmToPixels);
         updateNeeded = true;
     }
@@ -195,8 +251,10 @@ public class HuygensMonitor : UdonSharpBehaviour
         set
         {
             slitWidth = value;
-            if (vectorDrawing != null)
+            if (iHaveVectorDiag)
                 vectorDrawing.SetProgramVariable<float>("slitWidth", slitWidth);
+            if (iHaveParticleSim)
+                particleSim.SetProgramVariable<float>("slitWidth", slitWidth*mmToMetres);
             updateGrating();
         }
     }
@@ -208,36 +266,44 @@ public class HuygensMonitor : UdonSharpBehaviour
             slitPitch = value;
             if (vectorDrawing != null)
                 vectorDrawing.SetProgramVariable<float>("slitPitch", slitPitch);
+            if (iHaveParticleSim)
+                particleSim.SetProgramVariable<float>("slitPitch", slitPitch * mmToMetres);
             updateGrating();
         }
     }
 
-    public int NumSources
+    public int SlitCount
     {
-        get => numSources;
+        get => slitCount;
         set
         {
             if (value < 1)
                 value = 1;
             if (value > 7) 
                 value = 7;
-            numSources = value;
+            slitCount = value;
             updateGrating();
             if (lblSourceCount != null)
-                lblSourceCount.text = numSources.ToString();
+                lblSourceCount.text = slitCount.ToString();
             if (vectorDrawing != null)
-                vectorDrawing.SetProgramVariable<int>("numSources", numSources);
+                vectorDrawing.SetProgramVariable<int>("slitCount", slitCount);
+            if (iHaveParticleSim)
+                particleSim.SetProgramVariable<int>("slitCount",slitCount);
             RequestSerialization();
         }
     }
 
     public void decSrc()
     {
-        NumSources -= 1;
+        if (!iamOwner)
+            Networking.SetOwner(player, gameObject);
+        SlitCount -= 1;
     }
     public void incSrc()
     {
-        NumSources += 1;
+        if (!iamOwner)
+            Networking.SetOwner(player, gameObject);
+        SlitCount += 1;
     }
 
     public float SimScale
@@ -246,9 +312,27 @@ public class HuygensMonitor : UdonSharpBehaviour
         set
         {
             simScale = value;
-            if (iHaveSimMaterial)
+            if (iHaveWaveCRT)
                 matSimControl.SetFloat("_Scale", simScale);
+            if (iHaveScaleControl)
+                scaleSlider.SetValue(simScale);
+            if (iHaveParticleSim)
+                particleSim.SetProgramVariable<float>("simScale",simScale);
             updateNeeded = true;
+        }
+    }
+
+
+    private void updateMomentum()
+    {
+        momentum = 1 / (lambda * mmToMetres);
+        if (lblMomentum != null)
+            lblMomentum.text = string.Format("p={0:0.0}", momentum);
+        if (iHaveParticleSim)
+        {
+            particleSim.SetProgramVariable<float>("maxParticleK", 1 / (minLambda * mmToMetres));
+            particleSim.SetProgramVariable<float>("minParticleK", 1 / (maxLambda * mmToMetres));
+            particleSim.SetProgramVariable<float>("particleK", momentum);
         }
     }
 
@@ -261,8 +345,11 @@ public class HuygensMonitor : UdonSharpBehaviour
             //phaseRate = 35f/value;
             if (vectorDrawing != null)
                 vectorDrawing.SetProgramVariable<float>("lambda", lambda);
-            if (iHaveSimMaterial)
+            if (iHaveWaveCRT)
                 matSimControl.SetFloat("_Lambda", lambda * mmToPixels);
+            if (iHaveLambdaControl) 
+                lambdaSlider.SetValue(lambda);
+            updateMomentum();
             UpdateWaveSpeed();
             updateNeeded = true;
         } 
@@ -313,10 +400,16 @@ public class HuygensMonitor : UdonSharpBehaviour
     }
     void Start()
     {
+        player = Networking.LocalPlayer;
+        UpdateOwnerShip();
+
         iHavePitchControl = pitchSlider != null;
         iHaveWidthControl = widthSlider != null;
         iHaveLambdaControl = lambdaSlider != null;
         iHaveScaleControl = scaleSlider != null;
+        iHaveVectorDiag = vectorDrawing != null;
+        iHaveParticleSim = particleSim != null;
+
         if (thePanel != null)
             matPanel = thePanel.material;
         iHavePanelMaterial = matPanel != null;
@@ -327,10 +420,6 @@ public class HuygensMonitor : UdonSharpBehaviour
             simCRT.Initialize();
         }
         configureSimControl(PanelHasVanillaMaterial);
-
-        defaultLambda = lambda;
-        defaultPitch = slitPitch;
-        defaultScale = simScale;
 
         mmToPixels = simResolution.x/panelWidth;
         if (useCRT)
@@ -347,24 +436,34 @@ public class HuygensMonitor : UdonSharpBehaviour
         {
             matSimControl = thePanel.material;
         }
-        iHaveSimMaterial = matSimControl != null;
-        Lambda = lambda;
+        iHaveWaveCRT = matSimControl != null;
         if (iHaveLambdaControl)
-            lambdaSlider.SetValues(lambda, 30, 80);
-        SlitPitch = slitPitch;
+        {
+            lambdaSlider.SetLimits( minLambda, maxLambda);
+            lambdaSlider.SetValue(defaultLambda);
+        }
+        Lambda = defaultLambda;
         if (iHavePitchControl)
-            pitchSlider.SetValues(slitPitch, 50, 500);
-        SlitWidth = slitWidth;
+        {
+            pitchSlider.SetLimits(50, 600);
+            pitchSlider.SetValue(defaultPitch);
+        }
+        SlitPitch = defaultPitch;
         if (iHaveWidthControl)
-            widthSlider.SetValues(slitWidth, 1, 30);
-       // if (iHaveSimMaterial)
-       //     defaultWidth = matSimControl.GetFloat("_SlitWidth") / mmToPixels;
+        {
+            widthSlider.SetLimits(5, 50);
+            widthSlider.SetValue(defaultWidth);
+        }
+        SlitWidth = defaultWidth;
         Lambda = lambda;
         SlitPitch = slitPitch;
         SlitWidth = slitWidth;
         DisplayMode = displayMode;
         SimScale = simScale;
         if (iHaveScaleControl)
-            scaleSlider.SetValues(simScale, 1, 10);
+        {
+            scaleSlider.SetLimits(1, 10);
+            scaleSlider.SetValue(simScale);
+        }
     }
 }

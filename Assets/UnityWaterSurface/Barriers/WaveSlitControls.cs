@@ -1,5 +1,4 @@
 ﻿
-using System.Collections.Generic;
 using TMPro;
 using UdonSharp;
 using UnityEngine;
@@ -18,7 +17,7 @@ public class WaveSlitControls : UdonSharpBehaviour
     public float TankScale;
     
     public float barThickness;
-    [SerializeField,UdonSynced,FieldChangeCallback(nameof (ApertureCount))]
+    [SerializeField,UdonSynced,FieldChangeCallback(nameof (SlitCount))]
     private int slitCount;
 
     [SerializeField,UdonSynced, FieldChangeCallback(nameof(ApertureWidth))]
@@ -64,7 +63,7 @@ public class WaveSlitControls : UdonSharpBehaviour
         get => slitPitch;
         private set
         {
-            if (checkGratingWidth(slitWidth, value, ApertureCount))
+            if (checkGratingWidth(slitWidth, value, SlitCount))
             {
                 if (value != slitPitch)
                 {
@@ -94,7 +93,7 @@ public class WaveSlitControls : UdonSharpBehaviour
     }
 
 
-    public int ApertureCount
+    public int SlitCount
     {
         get => slitCount;
         set
@@ -114,11 +113,11 @@ public class WaveSlitControls : UdonSharpBehaviour
 
     public void OnAperturesPlus()
     {
-        if ((ApertureCount < MAX_SLITS) && checkGratingWidth(ApertureWidth, AperturePitch, ApertureCount + 1))
+        if ((SlitCount < MAX_SLITS) && checkGratingWidth(ApertureWidth, AperturePitch, SlitCount + 1))
         {
             if (!iamOwner)
                 Networking.SetOwner(player, gameObject);
-            ApertureCount = slitCount + 1; 
+            SlitCount = slitCount + 1; 
         }
     }
 
@@ -128,12 +127,12 @@ public class WaveSlitControls : UdonSharpBehaviour
         {
             if (!iamOwner)
                 Networking.SetOwner(player, gameObject);
-            ApertureCount = slitCount - 1;
+            SlitCount = slitCount - 1;
         }
     }
     public void OnWidthPlus()
     {
-        if (checkGratingWidth(ApertureWidth + 0.005f, AperturePitch, ApertureCount))
+        if (checkGratingWidth(ApertureWidth + 0.005f, AperturePitch, SlitCount))
         {
             if (!iamOwner)
                 Networking.SetOwner(player, gameObject);
@@ -144,7 +143,7 @@ public class WaveSlitControls : UdonSharpBehaviour
     {
         if (ApertureWidth <= 0.005f)
             return;
-        if (checkGratingWidth(ApertureWidth - 0.005f, AperturePitch, ApertureCount))
+        if (checkGratingWidth(ApertureWidth - 0.005f, AperturePitch, SlitCount))
         {
             if (!iamOwner)
                 Networking.SetOwner(player,gameObject);
@@ -153,7 +152,7 @@ public class WaveSlitControls : UdonSharpBehaviour
     }
     public void OnPitchPlus()
     {
-        if (checkGratingWidth(ApertureWidth, AperturePitch + 0.05f, ApertureCount))
+        if (checkGratingWidth(ApertureWidth, AperturePitch + 0.05f, SlitCount))
         {
             if (!iamOwner)
                 Networking.SetOwner(player, gameObject);

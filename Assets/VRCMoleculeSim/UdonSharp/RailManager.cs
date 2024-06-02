@@ -14,9 +14,9 @@ public class RailManager : UdonSharpBehaviour
     GameObject thePlank;
     [SerializeField]
     bool[] plankEnables;
-    [Range(0,2),SerializeField, UdonSynced, FieldChangeCallback(nameof(ScaleIndex))]
+    [Range(0,2),SerializeField,FieldChangeCallback(nameof(ScaleIndex))]
     int scaleIndex = 1;
-    [SerializeField]
+    
     int previousIndex = 0;
     public int ScaleIndex
     {
@@ -32,7 +32,7 @@ public class RailManager : UdonSharpBehaviour
         }
     }
 
-    [SerializeField, UdonSynced, FieldChangeCallback(nameof(ScaleIsChanging))] private bool scaleIsChanging = false;
+    [SerializeField, FieldChangeCallback(nameof(ScaleIsChanging))] private bool scaleIsChanging = false;
     public bool ScaleIsChanging
     {
         get => scaleIsChanging;

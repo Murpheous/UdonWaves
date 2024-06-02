@@ -38,7 +38,6 @@ public class UIStateSelect : UdonSharpBehaviour
     [SerializeField]
     int clientMode;
 
-
     private void updateClientState()
     {
         if (waveControls != null)
@@ -97,33 +96,43 @@ public class UIStateSelect : UdonSharpBehaviour
         }
     }
 
-    public void incSources()
+    [SerializeField, Range(0, 1), FieldChangeCallback(nameof(OffRamp))]
+    private float offRamp = 1f;
+
+    private void UpdatePlay()
     {
-        if (!iAmOwner)
+        bool play = !offState && playSim;
+        if (iHaveClientVar)
+            clientModule.SetProgramVariable<bool>("playSim", play);
+    }
+    [SerializeField]
+    bool offState = true;
+    private float OffRamp
+    {
+        get => offRamp;
+        set
         {
-            SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner, nameof(incSources));
-            return;
+            offRamp = value;
+            if (!offState && value > 0.1f)
+            {
+                offState = true;
+                UpdatePlay();
+            }
+            if (offState && value < 0.1f)
+            {
+                offState = false;
+                UpdatePlay();
+            }
         }
-        clientModule.SendCustomEvent("incSrc");
     }
 
-    public void decSources()
-    {
-        if (!iAmOwner)
-        {
-            SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner, nameof(decSources));
-            return;
-        }
-        clientModule.SendCustomEvent("decSrc");
-    }
     private bool PlaySim
     {
         get => playSim;
         set
         {
             playSim = value;
-            if (iHaveClientVar)
-                clientModule.SetProgramVariable<bool>("playSim",value);
+            UpdatePlay();
             if (!iAmOwner)
             {
                 if (togPlay != null && !togPlay.isOn && value)
@@ -192,6 +201,7 @@ public class UIStateSelect : UdonSharpBehaviour
 
     public void onMode()
     {
+        UpdatePlay();
         if (iHaveTogReal && togReal.isOn)
         {
             selState0();

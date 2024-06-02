@@ -17,7 +17,7 @@ public class CameraZoom : UdonSharpBehaviour
     private float screenDistance;
 
     // Set the camera field of view to match the targetwidth & height rectangle 
-    [Tooltip("Spatial Scaling"), UdonSynced, FieldChangeCallback(nameof(ExperimentScale))]
+    [Tooltip("Spatial Scaling"), FieldChangeCallback(nameof(ExperimentScale))]
 
     public float experimentScale = 10;
     public float ExperimentScale

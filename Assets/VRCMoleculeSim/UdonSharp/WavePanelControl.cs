@@ -529,8 +529,7 @@ public class WavePanelControl : UdonSharpBehaviour
         SlitPitch = defaultPitch;
         if (iHavePitchControl)
         {
-            pitchSlider.MaxValue = 500;
-            pitchSlider.MinValue = 20;
+            pitchSlider.SetLimits(20,500);
             pitchSlider.SetValue(defaultPitch);
         }
         NumSources = defaultSources;

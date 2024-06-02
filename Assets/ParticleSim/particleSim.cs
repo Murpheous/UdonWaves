@@ -131,7 +131,7 @@ public class particleSim : UdonSharpBehaviour
         {
             float slitPitch = apertureControl.AperturePitch;
             float slitWidth = apertureControl.ApertureWidth;
-            int slitCount = apertureControl.ApertureCount;
+            int slitCount = apertureControl.SlitCount;
             float lmin = 0;
             if ((slitCount != currentSlitCount) ||
                 (slitWidth != currentSlitWidth) ||

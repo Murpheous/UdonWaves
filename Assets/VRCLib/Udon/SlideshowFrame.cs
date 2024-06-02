@@ -39,7 +39,7 @@ public class SlideshowFrame : UdonSharpBehaviour
     
     void Start()
     {
-        Debug.Log("!!!!!!!!!!!!!!!!Start SlideShow");
+       // Debug.Log("!!!!!!!!!!!!!!!!Start SlideShow");
         // Downloaded textures will be cached in a texture array.
         _downloadedTextures = new Texture2D[imageUrls.Length];
         
@@ -50,7 +50,7 @@ public class SlideshowFrame : UdonSharpBehaviour
         // To receive Image and String loading events, 'this' is casted to the type needed
         _udonEventReceiver = (IUdonEventReceiver)this;
 
-        Debug.Log("Start SlideShow:Go for Strings ["+stringUrl+"]");
+        //Debug.Log("Start SlideShow:Go for Strings ["+stringUrl+"]");
         // Captions are downloaded once. On success, OnImageLoadSuccess() will be called.
         VRCStringDownloader.LoadUrl(stringUrl, _udonEventReceiver);
 
@@ -66,7 +66,7 @@ public class SlideshowFrame : UdonSharpBehaviour
     
     private void LoadNext()
     {
-        Debug.Log("Loadnext");
+        //Debug.Log("Loadnext");
 
         // All clients share the same server time. That's used to sync the currently displayed image.
         _loadedIndex = (int)(Networking.GetServerTimeInMilliseconds() / 1000f / slideDurationSeconds) % imageUrls.Length;
@@ -85,7 +85,7 @@ public class SlideshowFrame : UdonSharpBehaviour
             var rgbInfo = new TextureInfo();
             rgbInfo.GenerateMipMaps = true;
             rgbInfo.MaterialProperty = "_EmissionMap";
-            Debug.Log("Load Image:" + imageUrls[_loadedIndex]);
+            //Debug.Log("Load Image:" + imageUrls[_loadedIndex]);
 
             _imageDownloader.DownloadImage(imageUrls[_loadedIndex], renderer.material, _udonEventReceiver, rgbInfo);
         }
@@ -118,7 +118,7 @@ public class SlideshowFrame : UdonSharpBehaviour
 
     public override void OnImageLoadSuccess(IVRCImageDownload result)
     {
-        Debug.Log($"Image loaded: {result.SizeInMemoryBytes} bytes.");
+        //Debug.Log($"Image loaded: {result.SizeInMemoryBytes} bytes.");
         
         _downloadedTextures[_loadedIndex] = result.Result;
     }

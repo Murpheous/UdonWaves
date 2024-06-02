@@ -11,51 +11,12 @@ public class GratingControl : UdonSharpBehaviour
 {
     [SerializeField]
     Transform gratingXfrm;
+    [SerializeField]
+    Transform frameSupport;
     public GameObject barPrefab;
-    public GameObject frameSupport;
-    [SerializeField,Range(0.0001f,0.01f)] float increment = 0.001f;
+    //public GameObject frameSupport;
+
     public float panelThickness;
-    [SerializeField,UdonSynced,FieldChangeCallback(nameof(BarsCollide))]
-    bool barsCollide = false;
-    [SerializeField,UdonSynced, FieldChangeCallback(nameof(FrameCollides))]
-    bool frameCollides = false;
-
-    public bool BarsCollide {  
-        get => barsCollide; 
-        set
-        {
-            if (value != barsCollide)
-            {
-                barsCollide = value;
-                gratingVersionIsCurrent = false;
-            }
-            if (togBarsCollide != null)
-            {
-                if (value != togBarsCollide.isOn)
-                    togBarsCollide.isOn = value;
-            }
-            RequestSerialization();
-        }
-    }
-
-    public bool FrameCollides
-    {
-        get => frameCollides;
-        set
-        {
-            if (value != frameCollides)
-            {
-                frameCollides = value;
-                gratingVersionIsCurrent = false;
-            }
-            if (togFrameCollides != null)
-            {
-                if (value != togFrameCollides.isOn)
-                    togFrameCollides.isOn = value;
-            }
-            RequestSerialization();
-        }
-    }
 
     private bool iamOwner;
     //private VRC.Udon.Common.Interfaces.NetworkEventTarget toTheOwner = VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner;
@@ -64,6 +25,12 @@ public class GratingControl : UdonSharpBehaviour
     [Header("Dimensions @ native 1:1 scale")]
     [Tooltip("Graphics Metres at Native Scaling 1/x"), SerializeField, UdonSynced, FieldChangeCallback(nameof(NativeGraphicsRatio))]
     private int nativeGraphicsRatio = 10;
+
+    private void updateScales()
+    {
+        metricScaleFactor = 1.0f / (scaleDownFactor * nativeGraphicsRatio);
+        graphicsScaleFactor = experimentScale * metricScaleFactor;
+    }
     public int NativeGraphicsRatio
     {
         get => nativeGraphicsRatio > 0 ? nativeGraphicsRatio : 1;
@@ -73,47 +40,51 @@ public class GratingControl : UdonSharpBehaviour
             if (value != nativeGraphicsRatio)
             {
                 nativeGraphicsRatio = value;
-                gratingVersionIsCurrent = false;
-                metricScaleFactor = 1.0f / (scaleDownFactor * nativeGraphicsRatio);
-                outerDimsMetres = nativeMaxDimensions / nativeGraphicsRatio;
+                gratingVersionValid = false;
             }
+            updateScales();
         }
     }
 
     [SerializeField] private Vector2 nativeMaxDimensions;
 
-
-    [SerializeField, UdonSynced, FieldChangeCallback(nameof(HoleWidthNative))]
-    private float holeWidthNative = 0.008f;
     private float graphicsColWidth = 0;
 
-    public float ApertureWidthMetres { get { return holeWidthNative * metricScaleFactor; } }
 
-    [SerializeField, UdonSynced, FieldChangeCallback(nameof(ColumnPitchNative))]
-    private float columnPitchNative = 0.01f;
+    [SerializeField]
+    private float slitPitchNative = 0.8f;
+
+    [SerializeField]
+    private float rowPitchNative = 0.8f;
+
     private float graphicsColPitch;
-    public float ColumnPitchMetres { get { return columnPitchNative * metricScaleFactor; } }
+
+    public float SlitWidthMetres { get { return slitPitchNative * slitWidthFrac * metricScaleFactor; } }
+    public float SlitHeightMetres { get { return rowHeightFrac * rowPitchNative * metricScaleFactor; } }
+    public float RowPitchMetres { get { return rowPitchNative * metricScaleFactor; } }
+    public float SlitPitchMetres { get { return slitPitchNative * metricScaleFactor; } }
 
     [SerializeField,UdonSynced,FieldChangeCallback(nameof(ColumnCount))]
     private int columnCount = 15;
 
-    [SerializeField, UdonSynced, FieldChangeCallback(nameof(HoleHeightNative))]
-    private float holeHeightNative = 0.0575f;
-    public float ApertureHeightMetres { get { return holeHeightNative * metricScaleFactor; } }
-    
-    private float graphicsColHeight;
-    
-    [SerializeField, UdonSynced, FieldChangeCallback(nameof(RowPitchNative))]
-    private float rowPitchNative = 0.06f;
-    //[SerializeField]
-    private float graphicsRowPitch;
-    public float RowPitchMetres { get { return rowPitchNative * metricScaleFactor; } }
+    [SerializeField, Range(0.25f, 1f), FieldChangeCallback(nameof(GratingWidthFrac))]
+    private float gratingWidthFrac = 0.8f;
+
+
+    [SerializeField, Range(0.1f, 0.9f), FieldChangeCallback(nameof(SlitWidthFrac))]
+    private float slitWidthFrac = 0.8f;
+
+
+    [SerializeField, Range(0.25f, 1f), FieldChangeCallback(nameof(GratingHeightFrac))]
+    private float gratingHeightFrac = 0.8f;
+
+    [SerializeField, Range(0.1f,0.9f), FieldChangeCallback(nameof(RowHeightFrac))]
+    private float rowHeightFrac = 0.8f;
 
     [SerializeField, UdonSynced, FieldChangeCallback(nameof(RowCount))]
     private int rowCount = 8;
 
-
-    private int[] scaleSteps = { 1, 5, 10, 50, 100, 500, 1000};
+    private int[] scaleSteps = { 1, 5, 10, 50, 100, 500, 1000, 5000};
     [SerializeField,UdonSynced,FieldChangeCallback(nameof(GratingScaleStep))]
     private int gratingScaleStep = 0;
 
@@ -124,6 +95,7 @@ public class GratingControl : UdonSharpBehaviour
         {
             gratingScaleStep = CheckScaleIndex(value, scaleSteps);
             ScaleDownFactor = scaleSteps[GratingScaleStep];
+            updateScales();
             RequestSerialization();
         }
     }
@@ -133,28 +105,45 @@ public class GratingControl : UdonSharpBehaviour
     }
     [Header("Grating Scale Factors")]
 
-    [SerializeField] 
+    [Tooltip("Spatial Scaling"), FieldChangeCallback(nameof(ExperimentScale))]
+    public float experimentScale = 10;
+    public float ExperimentScale
+    {
+        get => experimentScale;
+        set
+        {
+            gratingVersionValid &= experimentScale == value;
+            experimentScale = value;
+            if (iHaveFrame)
+            {
+                frameSupport.localScale = frameInitialScale * experimentScale/nativeGraphicsRatio;
+            }
+            updateScales();
+        }
+    }
+
+    //[SerializeField] 
     private int scaleDownFactor = 1;
-    [SerializeField]
+    //[SerializeField]
     float metricScaleFactor = 1;
-    [SerializeField]
+    //[SerializeField]
     float graphicsScaleFactor = 1;
     public int ScaleDownFactor 
     {
         get => scaleDownFactor; 
         set 
         {
-            value = Mathf.Clamp(value, 1, 1000);
+            value = Mathf.Max(value, 1);
             if (scaleDownFactor != value || !started)
             {
                 scaleDownFactor = value;
-                gratingVersionIsCurrent = false;
+                gratingVersionValid = false;
             }
         } 
     }
 
 
-    [SerializeField, UdonSynced, FieldChangeCallback(nameof(ScaleIsChanging))]
+    [SerializeField, FieldChangeCallback(nameof(ScaleIsChanging))]
     bool scaleIsChanging = true;
     public bool ScaleIsChanging
     {
@@ -166,52 +155,38 @@ public class GratingControl : UdonSharpBehaviour
                 scaleIsChanging = value;
             }
             if (!value)
-                gratingVersionIsCurrent = false;
+                gratingVersionValid = false;
         }
     }
 
-    [Tooltip("Spatial Scaling"), UdonSynced, FieldChangeCallback(nameof(ExperimentScale))]
-    public float experimentScale = 10;
-    public float ExperimentScale 
-    { 
-        get => experimentScale; 
-        set 
-        {
-            if (experimentScale != value)
-            {
-                experimentScale = value;
-                gratingVersionIsCurrent = false;
-            }
-        } 
-    }
-    [Header("Dimension Debug")]
-    [SerializeField, Tooltip("Outer Frame at Native Res")] Vector2 outerDimsMetres;
-    [SerializeField, Tooltip("Outer Frame as seen in Scaled World")] Vector2 maxDimsReduced;
-
-    //[SerializeField] Vector2 outerDimsMetres;
-    
-    [SerializeField]
-    private Vector2 gratingGraphicsSize = Vector2.one;
-    private Vector2 gratingGraphicHalfSize = Vector2.one;
-    [SerializeField,Tooltip("Grating Border Size")]
+    [Header("Editor Debug")]
+    bool iHaveFrame = false;
+    //[SerializeField]
+    Vector3 frameInitialScale = Vector3.one;   
+    //[SerializeField, Tooltip("Outer Frame as seen in Scaled World")]
+    Vector2 maxDimsReduced;
+    //[SerializeField]
+    private float graphicsRowHeight;
+    //[SerializeField]
+    private float graphicsRowPitch;
+    //[SerializeField]
+    private Vector2 activeGratingSize = Vector2.one;
+    private Vector2 activeGratingHalf = Vector2.one;
+    //[SerializeField,Tooltip("Grating Border Size")]
     private Vector2 gratingBorderSize = Vector2.one;
 
-    [SerializeField]
-    private Vector2 pitchSteps = Vector2.one;
-    [SerializeField]
-    private Vector2 sizeSteps = Vector2.one;
-    [SerializeField]
+    //[SerializeField]
     private float barWidth;
-    [SerializeField]
+    //[SerializeField]
     private float railHeight;
-    [SerializeField]
+    //[SerializeField]
     private float sideBarWidth;
-    [SerializeField]
+    //[SerializeField]
     private float upperLowerHeight;
 
-    public Vector2 GratingGraphicsSize
+    public Vector2 ActiveGratingSize
     {
-        get => gratingGraphicsSize;
+        get => activeGratingSize;
     }
 
     // Grating properties
@@ -223,22 +198,22 @@ public class GratingControl : UdonSharpBehaviour
     private GameObject panelBottom;
 
     [Header("UI Elements")]
-    [SerializeField] TextMeshProUGUI labelSlits;
-    [SerializeField] TextMeshProUGUI labelSlitPitch;
-    [SerializeField] TextMeshProUGUI labelSlitWidth;
-    [SerializeField] TextMeshProUGUI labelRows;
-    [SerializeField] TextMeshProUGUI labelRowPitch;
-    [SerializeField] TextMeshProUGUI labelRowHeight;
-    [SerializeField] TextMeshProUGUI labelGratingScale;
-    [SerializeField] Toggle togBarsCollide;
-    [SerializeField] Toggle togFrameCollides;
+    [SerializeField] SyncedSlider gratingWidthSlider;
+    [SerializeField] SyncedSlider slitWidthSlider;
+    [SerializeField] SyncedSlider gratingHeightSlider;
+    [SerializeField] SyncedSlider rowHeightSlider;
 
-    [Header("Constants"), SerializeField]
-    private int MAX_SLITS = 16;
-    [SerializeField]
-    private int MAX_ROWS = 20;
-    //private QuantumScatter particleScatter;
-    bool gratingVersionIsCurrent;
+    [SerializeField] TextMeshProUGUI labelSlits;
+    [SerializeField] TextMeshProUGUI labelRows;
+    [SerializeField] TextMeshProUGUI labelGratingScale;
+    [SerializeField] TextMeshProUGUI gratingDescription;
+
+    //[Header("Constants"), SerializeField]
+    const int MAX_SLITS = 16;
+    //[SerializeField]
+    const int MAX_ROWS = 16;
+
+    bool gratingVersionValid;
     private void UpdateOwnerShip()
     {
         iamOwner = Networking.IsOwner(this.gameObject);
@@ -257,70 +232,68 @@ public class GratingControl : UdonSharpBehaviour
 
     private void UpdateLabels()
     {
-        setText(labelSlits, "Slits\n" + columnCount.ToString());
-        setText(labelSlitPitch, "Spacing\n" + Units.ToEngineeringNotation(ColumnPitchMetres) + "m");
-        setText(labelSlitWidth, "Slit Width\n" + Units.ToEngineeringNotation(ApertureWidthMetres) + "m");
-        setText(labelRows, "Rows\n" + rowCount.ToString());
-        setText(labelRowPitch, "Row Spacing\n" + Units.ToEngineeringNotation(RowPitchMetres    ) + "m");
-        setText(labelRowHeight, "Row Height\n" + Units.ToEngineeringNotation(ApertureHeightMetres) + "m");
         setText(labelGratingScale,"Grating\nScale\n1:" +scaleDownFactor.ToString());
+        if (gratingDescription == null)
+            return;
+        string gratingdesc = 
+                string.Format("<b>Slit:</b>\n<indent=5%>w={0}m h={1}m</indent>\n<b>Spacing:</b>\n<indent=5%>x={2}m y={3}m\n</indent>", 
+                Units.ToEngineeringNotation(SlitWidthMetres), Units.ToEngineeringNotation(SlitHeightMetres),
+                Units.ToEngineeringNotation(SlitPitchMetres), Units.ToEngineeringNotation(RowPitchMetres));
+        gratingDescription.text = gratingdesc;
     }
-    public float ColumnPitchNative
+
+    private void UpdateSlitPitch()
     {
-        get => columnPitchNative;
-        private set
+        slitPitchNative = nativeMaxDimensions.x * gratingWidthFrac / Mathf.Max(1,columnCount);
+    }
+
+    private void UpdateRowPitch()
+    {
+        rowPitchNative = nativeMaxDimensions.y * gratingHeightFrac / Mathf.Max(rowCount,1);
+    }
+    public float GratingWidthFrac
+    {
+        get => gratingWidthFrac; 
+        set
         {
-            if (checkGratingWidth(holeWidthNative, value, columnCount))
-            {
-                columnPitchNative = value;
-                gratingVersionIsCurrent = false;
-                RequestSerialization();
-            }
+            value = Mathf.Clamp(value,0.25f,1f);
+            gratingVersionValid &= value == gratingWidthFrac;
+            gratingWidthFrac = value;
+            UpdateSlitPitch();
         }
     }
 
-    public float RowPitchNative
+    private float GratingHeightFrac
     {
-        get => rowPitchNative;
-        private set
+        get => gratingHeightFrac;
+        set
         {
-            if (checkGratingHeight(holeHeightNative, value, rowCount))
-            {
-                rowPitchNative = value;
-                gratingVersionIsCurrent = false;
-                RequestSerialization();
-            }
+            value = Mathf.Clamp(value, 0.25f, 1f);
+            gratingVersionValid &= value == gratingHeightFrac;
+            gratingHeightFrac = value;
+            UpdateRowPitch();
         }
     }
 
-    public float HoleWidthNative
+    private float SlitWidthFrac
     {
-        get => holeWidthNative;
-        private set
+        get => slitWidthFrac;
+        set
         {
-            if (checkGratingWidth(value, columnPitchNative, columnCount) && value >= sizeSteps.x)
-            {
-                holeWidthNative = value;
-                gratingVersionIsCurrent = false;
-                RequestSerialization();
-            }
+            gratingVersionValid &=  slitWidthFrac == value;
+            slitWidthFrac = value;
         }
     }
 
-    public float HoleHeightNative
+    public float RowHeightFrac
     {
-        get => holeHeightNative;
+        get => rowHeightFrac;
         private set
         {
-            if (checkGratingHeight(value, rowPitchNative, rowCount) && value >= sizeSteps.y)
-            {
-                holeHeightNative = value;
-                gratingVersionIsCurrent = false;
-                RequestSerialization();
-            }
+            gratingVersionValid &= rowHeightFrac == value;
+            rowHeightFrac = value;
         }
     }
-
 
     public int ColumnCount
     {
@@ -335,9 +308,11 @@ public class GratingControl : UdonSharpBehaviour
             if (value != columnCount)
             {
                 columnCount = value;
-                gratingVersionIsCurrent = false;
+                gratingVersionValid = false;
                 RequestSerialization();
             }
+            UpdateSlitPitch();
+            setText(labelSlits, "Slits\n" + columnCount.ToString());
         }
     }
 
@@ -354,25 +329,12 @@ public class GratingControl : UdonSharpBehaviour
             if (value != rowCount)
             {
                 rowCount = value;
-                gratingVersionIsCurrent = false;
+                gratingVersionValid = false;
                 RequestSerialization();
             }
+            UpdateRowPitch();
+            setText(labelRows, "Rows\n" + rowCount.ToString());
         }
-    }
-
-    public void OnBarsCollide()
-    {
-        if (!iamOwner)
-            Networking.SetOwner(player, gameObject);
-
-        if (togBarsCollide != null)
-        {
-            BarsCollide = togBarsCollide.isOn;
-            Debug.Log("BarCollide Set:"+BarsCollide.ToString());
-            gratingVersionIsCurrent = false;
-        }
-        else
-            BarsCollide = !barsCollide;
     }
     public void OnGratingScaleDown()
     {
@@ -386,68 +348,26 @@ public class GratingControl : UdonSharpBehaviour
             Networking.SetOwner(player, gameObject);
         GratingScaleStep = gratingScaleStep + 1;
     }
-    public void OnAperturesPlus()
+    public void onSlitsPlus()
     {
         if (!iamOwner)
             Networking.SetOwner(player, gameObject);
-        if ((ColumnCount < MAX_SLITS) && checkGratingWidth(HoleWidthNative, ColumnPitchNative, ColumnCount + 1))
+        if (ColumnCount < MAX_SLITS)
             ColumnCount = columnCount + 1;
     }
 
-    public void OnAperturesMinus()
+    public void onSlitsMinus()
     {
         if (!iamOwner)
             Networking.SetOwner(player, gameObject);
         ColumnCount = columnCount - 1;
-    }
-    public void OnWidthPlus()
-    {
-
-        if (!iamOwner)
-        {
-            Networking.SetOwner(player, gameObject);
-        }
-        float testVal = HoleWidthNative + sizeSteps.x;
-        if (testVal >= ColumnPitchNative)
-            return;
-        if (checkGratingWidth(testVal, ColumnPitchNative, ColumnCount))
-            HoleWidthNative = testVal;
-    }
-    public void OnWidthMinus()
-    {
-        if (!iamOwner)
-            Networking.SetOwner(player, gameObject);
-
-        float testVal = HoleWidthNative - sizeSteps.x;
-        if (testVal <= sizeSteps.x)
-            return;
-        if (checkGratingWidth(testVal, ColumnPitchNative, ColumnCount))
-            HoleWidthNative = testVal;
-    }
-    public void OnPitchPlus()
-    {
-        if (!iamOwner)
-            Networking.SetOwner(player, gameObject);
-        float testVal = ColumnPitchNative + pitchSteps.x;
-        if (checkGratingWidth(HoleWidthNative, testVal, ColumnCount))
-            ColumnPitchNative = testVal;
-    }
-    public void OnPitchMinus()
-    {
-        if (!iamOwner)
-            Networking.SetOwner(player, gameObject);
-        float testVal = ColumnPitchNative - pitchSteps.x;
-        if (testVal <= HoleWidthNative) 
-            return;
-        if (checkGratingWidth(HoleWidthNative, testVal, ColumnCount))
-            ColumnPitchNative = testVal;
     }
 
     public void OnRowsPlus()
     {
         if (!iamOwner)
             Networking.SetOwner(player, gameObject);
-        if ((RowCount < MAX_ROWS) && checkGratingHeight(HoleHeightNative, RowPitchNative, RowCount + 1))
+        if (RowCount < MAX_ROWS)
             RowCount = rowCount + 1;
     }
 
@@ -457,46 +377,6 @@ public class GratingControl : UdonSharpBehaviour
             Networking.SetOwner(player, gameObject);
         RowCount = rowCount - 1;
     }
-    public void OnHeightPlus()
-    {
-        if (!iamOwner)
-            Networking.SetOwner(player, gameObject);
-        float testVal = HoleHeightNative + sizeSteps.y;
-        if (testVal >= RowPitchNative) 
-            return;
-        if (checkGratingHeight(testVal, RowPitchNative, RowCount))
-            HoleHeightNative = testVal;
-    }
-    public void OnHeightMinus()
-    {
-        if (!iamOwner)
-            Networking.SetOwner(player, gameObject);
-        float testVal = HoleHeightNative - sizeSteps.y;
-        if (testVal <= sizeSteps.y)
-            return;
-        if (checkGratingHeight(testVal, RowPitchNative, RowCount))
-            HoleHeightNative = testVal;
-    }
-    public void OnRowPitchPlus()
-    {
-        if (!iamOwner)
-            Networking.SetOwner(player, gameObject);
-
-        float testVal = RowPitchNative + pitchSteps.y;
-        if (checkGratingHeight(HoleHeightNative, testVal, RowCount))
-            RowPitchNative = testVal;
-    }
-    public void OnRowPitchMinus()
-    {
-        if (!iamOwner)
-            Networking.SetOwner(player, gameObject);
-        float testVal = RowPitchNative - pitchSteps.y;
-        if (testVal <= HoleHeightNative)
-            return;
-        if (checkGratingHeight(HoleHeightNative, testVal, RowCount))
-            RowPitchNative = testVal;
-    }
-
 
     private void setCollisionFilter()
     {
@@ -523,12 +403,12 @@ public class GratingControl : UdonSharpBehaviour
         {
             if (rowsOdd)
             {
-                minRowFrac = graphicsColHeight / (graphicsRowPitch * 2.0f);
+                minRowFrac = graphicsRowHeight / (graphicsRowPitch * 2.0f);
                 maxRowFrac = 1.0f - minRowFrac;
             }
             else
             {
-                minRowFrac = (1.0f - (graphicsColHeight / graphicsRowPitch)) / 2.0f;
+                minRowFrac = (1.0f - (graphicsRowHeight / graphicsRowPitch)) / 2.0f;
                 maxRowFrac = 1.0f - minRowFrac;
             }
         }
@@ -541,9 +421,9 @@ public class GratingControl : UdonSharpBehaviour
 
     public bool checkBorderCollide(Vector3 particlePosition)
     {
-        if (Mathf.Abs(particlePosition.y) > gratingGraphicHalfSize.y)
+        if (Mathf.Abs(particlePosition.y) > activeGratingHalf.y)
             return true;
-        if (Mathf.Abs(particlePosition.z) > gratingGraphicHalfSize.x)
+        if (Mathf.Abs(particlePosition.z) > activeGratingHalf.x)
             return true;
         return false;
     }
@@ -556,18 +436,16 @@ public class GratingControl : UdonSharpBehaviour
     private float maxRowFrac;
     public bool checkLatticeCollision(Vector3 particlePosition)
     {
-        if (!gratingVersionIsCurrent)
+        if (!gratingVersionValid)
             return false;
         // First calculate
         float verticalDelta = Mathf.Abs(particlePosition.y);
-        if (verticalDelta > gratingGraphicHalfSize.y)
+        if (verticalDelta > activeGratingHalf.y)
             return true;
         float horizDelta = Mathf.Abs(particlePosition.z);
         // First check if particle is outside grating overall aperture, if so return true.		
-        if (horizDelta > gratingGraphicHalfSize.x)
+        if (horizDelta > activeGratingHalf.x)
             return true;
-        if (!BarsCollide)
-            return false;
         // now look to see if it hits a horizontal bar
         if (rowCount > 0)
         {
@@ -618,37 +496,15 @@ public class GratingControl : UdonSharpBehaviour
         return result;
     }
 
-    void SetBarSizeAndPosition(Transform bar, float targetWidth, float targetHeight, Vector2 targetPos, bool isVisible , bool barCollides = true)
+    void SetBarSizeAndPosition(Transform bar, float targetWidth, float targetHeight, Vector2 targetPos, bool isVisible)// , bool barCollides = true)
     {
         if (bar == null)
             return;
         bar.localScale = new Vector3(panelThickness, targetHeight, targetWidth);
         bar.localPosition = new Vector3(0, targetPos.y, targetPos.x);
         bar.gameObject.SetActive(isVisible);
-        Collider col = bar.GetComponent<Collider>();
-        if (col != null)
-            col.enabled = barCollides && isVisible;
     }
 
-    bool checkGratingWidth(float holeWidthNative, float columnPitchNative, int numGaps)
-    {
-        if (numGaps <= 0)
-            return true;
-        if (numGaps == 1)
-            return holeWidthNative <= nativeMaxDimensions.x;
-        return nativeMaxDimensions.x >= (((numGaps - 1) * columnPitchNative) + holeWidthNative);
-    }
-
-    bool checkGratingHeight(float holeHeightNative, float rowPitchNative, int rowCount)
-    {
-        if (rowCount <= 0)
-            return true;
-        if (rowCount == 1)
-            return holeHeightNative <= nativeMaxDimensions.y;
-        return nativeMaxDimensions.y >= (((rowCount - 1) * rowPitchNative) + holeHeightNative);
-    }
-
-    [SerializeField]
     private int gratingVersion = -1;
     public int GratingVersion 
     { 
@@ -656,56 +512,60 @@ public class GratingControl : UdonSharpBehaviour
         set 
         {
             gratingVersion = value;
-           // RequestSerialization();
         }
     }
     void setupLattice()
     {
         if (nativeGraphicsRatio <= 0)
             return;
-        metricScaleFactor = 1.0f / (scaleDownFactor * nativeGraphicsRatio);
-        outerDimsMetres = nativeMaxDimensions / nativeGraphicsRatio;
-        graphicsScaleFactor = experimentScale * metricScaleFactor;
         // Set dimensons for the construction of the lattice;
+        updateScales();
         maxDimsReduced = nativeMaxDimensions * graphicsScaleFactor;
-        graphicsRowPitch = rowPitchNative * graphicsScaleFactor;
-        graphicsColPitch = columnPitchNative * graphicsScaleFactor;
-        graphicsColWidth = holeWidthNative * graphicsScaleFactor;
-        graphicsColHeight = holeHeightNative * graphicsScaleFactor;
-        barWidth = graphicsColPitch > graphicsColWidth ? graphicsColPitch - graphicsColWidth : 0;
-        railHeight = graphicsRowPitch > graphicsColHeight ? graphicsRowPitch - graphicsColHeight : 0;
-        gratingGraphicsSize.x = columnCount < 1 ? 0 : ((graphicsColPitch * (columnCount - 1)) + graphicsColWidth);
-        gratingGraphicsSize.y = rowCount < 1 ? (maxDimsReduced.y/scaleDownFactor) : ((graphicsRowPitch * (rowCount - 1)) + graphicsColHeight);
-        gratingBorderSize.x = Mathf.Min(maxDimsReduced.x, gratingGraphicsSize.x * 1.25f);
-        gratingBorderSize.y = Mathf.Min(maxDimsReduced.y, gratingGraphicsSize.y * 1.25f);
-        gratingGraphicHalfSize = gratingGraphicsSize * 0.5f;
 
-        sideBarWidth = (gratingBorderSize.x - gratingGraphicsSize.x) / 2.0f;
-        upperLowerHeight = (gratingBorderSize.y - gratingGraphicsSize.y) / 2.0f;
-        if (sideBarWidth < 0.001f)
-            sideBarWidth = 0.001f;
+        graphicsRowPitch = rowPitchNative * graphicsScaleFactor;
+        graphicsColPitch = slitPitchNative * graphicsScaleFactor;
+
+        graphicsColWidth = graphicsColPitch * slitWidthFrac;
+        graphicsRowHeight = graphicsRowPitch * rowHeightFrac;
+        //
+        barWidth = graphicsColPitch > graphicsColWidth ? graphicsColPitch - graphicsColWidth : 0;
+        railHeight = graphicsRowPitch > graphicsRowHeight ? graphicsRowPitch - graphicsRowHeight : 0;
+
+        activeGratingSize.x = graphicsColPitch * columnCount;
+        activeGratingSize.y = rowCount < 1 ? maxDimsReduced.y : graphicsRowPitch * rowCount;
+        gratingBorderSize.x = Mathf.Max(maxDimsReduced.x, activeGratingSize.x+barWidth);
+        gratingBorderSize.y = Mathf.Max(maxDimsReduced.y, activeGratingSize.y+railHeight);
+        activeGratingHalf = activeGratingSize * 0.5f;
+
+        sideBarWidth = (gratingBorderSize.x - activeGratingSize.x) / 2.0f;
+        upperLowerHeight = (gratingBorderSize.y - activeGratingSize.y) / 2.0f;
 
         // Cache the lattice collision parameters
         setCollisionFilter();
 
         // Calculate positions of side and top panels
-        Vector2 sidePanelPos = new Vector2 (gratingGraphicHalfSize.x + (sideBarWidth / 2.0f),0);
-        Vector2 topPanelPos = new Vector2 (0,gratingGraphicHalfSize.y + (upperLowerHeight / 2.0f));
-        if (frameSupport != null)
-        {
-            SetBarSizeAndPosition(frameSupport.transform, outerDimsMetres.x * experimentScale, outerDimsMetres.y * experimentScale, Vector2.zero, true, barsCollide);
-            frameSupport.transform.localPosition = Vector3.right * (panelThickness * .5f);
-        }
+        Vector2 sidePanelPos = new Vector2 (activeGratingHalf.x + (sideBarWidth / 2.0f),0);
+        Vector2 topPanelPos = new Vector2 (0,activeGratingHalf.y + (upperLowerHeight / 2.0f));
 
         if (barPrefab != null)
         {
             // Set Scales for the Slit and Block Prefabs
-            SetBarSizeAndPosition(panelLeft.transform, sideBarWidth, gratingBorderSize.y, sidePanelPos, true,!barsCollide);
-            SetBarSizeAndPosition(panelRight.transform, sideBarWidth, gratingBorderSize.y, -sidePanelPos, true,!barsCollide);
-            if (rowCount >= 1)
+            if (sideBarWidth > 0)
             {
-                SetBarSizeAndPosition(panelTop.transform, gratingBorderSize.x, upperLowerHeight, topPanelPos, true,!barsCollide);
-                SetBarSizeAndPosition(panelBottom.transform, gratingBorderSize.x,upperLowerHeight, -topPanelPos, true,!barsCollide); ;
+                SetBarSizeAndPosition(panelLeft.transform, sideBarWidth, gratingBorderSize.y, sidePanelPos, true); //,false);
+                SetBarSizeAndPosition(panelRight.transform, sideBarWidth, gratingBorderSize.y, -sidePanelPos, true); //,false);
+                panelLeft.SetActive(true);
+                panelRight.SetActive(true);
+            }
+            else
+            {
+                panelLeft.SetActive(false);
+                panelRight.SetActive(false);
+            }
+            if (rowCount >= 1 && upperLowerHeight > 0)
+            {
+                SetBarSizeAndPosition(panelTop.transform, gratingBorderSize.x, upperLowerHeight, topPanelPos, true);
+                SetBarSizeAndPosition(panelBottom.transform, gratingBorderSize.x,upperLowerHeight, -topPanelPos, true);
                 panelTop.SetActive(true);
                 panelBottom.SetActive(true);
             }
@@ -715,37 +575,33 @@ public class GratingControl : UdonSharpBehaviour
                panelBottom.SetActive(false);
             }
             // Set scale and then position of the first spacer
-            float barHeight = rowCount > 0 ? gratingGraphicsSize.y : gratingBorderSize.y;
-            float railWidth = columnCount > 0 ? gratingGraphicsSize.x : gratingBorderSize.x;
-            Vector2 studPos = new Vector2 (gratingGraphicHalfSize.x - (graphicsColWidth + (barWidth / 2.0F)), 0);
+            Vector2 studPos = new Vector2 (activeGratingHalf.x, 0);
             for (int nSlit = 0; nSlit < theBars.Length; nSlit++)
             {
-                bool visible = (nSlit + 1) < columnCount;
-                SetBarSizeAndPosition(theBars[nSlit].transform, barWidth, barHeight, studPos, visible, false);
+                bool visible = (columnCount > 0) && (nSlit < columnCount + 1);
+                SetBarSizeAndPosition(theBars[nSlit].transform, barWidth, activeGratingSize.y+railHeight, studPos, visible);
                 if (visible)
                     studPos.x -= graphicsColPitch;
             }
-            Vector2 railPos = new Vector2(0, gratingGraphicHalfSize.y - (graphicsColHeight + (railHeight / 2.0F)));
+            Vector2 railPos = new Vector2(0, activeGratingHalf.y);
             for (int nRail = 0; nRail < theRails.Length; nRail++)
             {
-                bool visible = (nRail) < (rowCount-1);
-                SetBarSizeAndPosition(theRails[nRail].transform, railWidth, railHeight, railPos, visible, false);
+                bool visible = (rowCount > 0) && (nRail < rowCount+1);
+                SetBarSizeAndPosition(theRails[nRail].transform, activeGratingSize.x, railHeight, railPos, visible);
                 if (visible)
                     railPos.y -= graphicsRowPitch;
             }
         }
-        gratingVersionIsCurrent = true;
+        gratingVersionValid = true;
         GratingVersion = gratingVersion + 1;
-        //        if (vectorDisplay != null)
-        //            vectorDisplay.menuClick("grating", "updated");
     }
 
     void populateBars()
     {
         if (theBars == null)
-            theBars = new GameObject[MAX_SLITS - 1];
+            theBars = new GameObject[MAX_SLITS + 1];
         if (theRails == null)
-            theRails = new GameObject[MAX_ROWS - 1];
+            theRails = new GameObject[MAX_ROWS + 1];
         for (int i = 0; i < theBars.Length; i++)
         {
             if (theBars[i] == null)
@@ -772,35 +628,43 @@ public class GratingControl : UdonSharpBehaviour
             panelLeft = LocalFromPrefab(barPrefab, "LeftPanel", gratingXfrm);
         if (panelRight == null)
             panelRight = LocalFromPrefab(barPrefab, "RightPanel", gratingXfrm);
-        gratingVersionIsCurrent = false;
     }
 
 
     private bool started = false;
+    private bool iHaveWidthSlider = false;
+    private bool iHaveSlitWidthCtl = false;
+    private bool iHaveHeightSlider = false;
+    private bool iHaveRowHeightCtl = false;
     public bool Started { get =>  started;}
     void Start()
     {
+        iHaveFrame = frameSupport != null;
+        frameInitialScale = iHaveFrame ? frameSupport.localScale : transform.localScale;
         if (gratingXfrm == null)
             gratingXfrm = transform;
         player = Networking.LocalPlayer;
-
-        outerDimsMetres = nativeMaxDimensions / nativeGraphicsRatio;
-        maxDimsReduced = outerDimsMetres * experimentScale;
-        //MAX_SLITS = 15;
-        if (togBarsCollide != null)
-            togBarsCollide.isOn = barsCollide;
+        iHaveWidthSlider = gratingWidthSlider != null;
+        iHaveSlitWidthCtl = slitWidthSlider != null;
+        iHaveHeightSlider = gratingHeightSlider != null;
+        iHaveRowHeightCtl = rowHeightSlider != null;
+        NativeGraphicsRatio = nativeGraphicsRatio;
         GratingScaleStep = gratingScaleStep;
-        sizeSteps = new Vector2(increment, increment);
-        pitchSteps = sizeSteps * 5;
-
         ColumnCount = Mathf.Clamp(columnCount, 1, MAX_SLITS);
         RowCount = Mathf.Clamp(rowCount, 0, MAX_ROWS);
-        gratingVersionIsCurrent = false;
-        //columnPitchNative = Mathf.Clamp(columnPitchNative, pitchSteps.x, 0.1f);
-        //rowPitchNative = Mathf.Clamp(rowPitchNative, pitchSteps.y, nativeMaxDimensions.y/(rowCount > 0 ? nativeMaxDimensions.y / rowCount : nativeMaxDimensions.y));
-        //holeHeightNative = Mathf.Clamp(holeHeightNative, 0, maxHeight/2.0f);
-        //holeWidthNative = Mathf.Clamp(holeWidthNative, 0, maxWidth/2.0f);
-        if (panelThickness <= 0) panelThickness = 0.001f;
+        gratingVersionValid = false;
+        SlitWidthFrac = slitWidthFrac;
+        if (iHaveSlitWidthCtl)
+            slitWidthSlider.SetValues(slitWidthFrac,0.1f, 0.9f);
+        if (iHaveWidthSlider)
+            gratingWidthSlider.SetValues(gratingWidthFrac,.25f, 1f);
+        RowHeightFrac = rowHeightFrac;
+        if (iHaveRowHeightCtl)
+            rowHeightSlider.SetValues(rowHeightFrac, 0.1f, 0.9f);
+        if (iHaveHeightSlider)
+            gratingHeightSlider.SetValues(gratingHeightFrac, .25f, 1f);
+        if (panelThickness <= 0)
+            panelThickness = 0.001f;
         populateBars();
         UpdateOwnerShip();
         started = true;
@@ -815,10 +679,10 @@ public class GratingControl : UdonSharpBehaviour
         pollTick += 0.1f;
         if (!started)
             return;
-        if (!gratingVersionIsCurrent)
+        if (!gratingVersionValid)
         {
            // Debug.Log("gratingVersion:"+gratingVersion);
-            gratingVersionIsCurrent = true;
+            gratingVersionValid = true;
             setupLattice();
             UpdateLabels();
         }

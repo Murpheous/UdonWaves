@@ -16,12 +16,6 @@ public class QuantumScatter : UdonSharpBehaviour
     private float slitWidth = 0.8f;
     [SerializeField]
     private float widthDivLambdaMin;
-    [SerializeField]
-    Material matSim = null;
-    [SerializeField]
-    string texName = null;
-    [SerializeField]
-    bool simMatIsValid = false;
 
     private bool isStarted = false;
     public bool IsStarted { get => isStarted; }
@@ -30,43 +24,6 @@ public class QuantumScatter : UdonSharpBehaviour
         settingsChanged = true;
     }
 
-    public void DefineTexture(Material theMaterial, string thePropertyName)
-    {
-        matSim = theMaterial;
-        texName = !string.IsNullOrWhiteSpace(thePropertyName) ? thePropertyName : "_MainTex";
-        simMatIsValid = (matSim != null);
-        //Debug.Log(gameObject.name + " Defined Texture: [" + matSim.name + "]");
-        if (simMatIsValid && IsStarted && settingsLoaded)
-        {
-            CreateTexture();
-        }
-        else
-            settingsLoaded = false;
-    } 
-
-    public bool CreateTexture()
-    {
-        if (!simMatIsValid)
-        {
-            Debug.LogWarning(gameObject.name + " Create Texture: [No Material]");
-            return false;
-        }
-        var tex = new Texture2D(pointsWide, 1, TextureFormat.RGBAFloat, false);
-        Color xColor = Color.clear;
-        for (int i = 0; i < pointsWide; i++)
-        {
-            xColor.r = gratingFourierSq[i];
-            xColor.g = probIntegral[i];
-            xColor.b = probabilityLookup[i];
-            tex.SetPixel(i, 0, xColor);
-        }
-        tex.filterMode = FilterMode.Point;
-        tex.wrapMode = TextureWrapMode.Clamp;
-        tex.Apply();
-        matSim.SetTexture(texName, tex);
-       // Debug.Log(" Created Texture: [" + texName +"]");
-        return true;
-    }
     private float SlitWidth
     {
         set 
@@ -97,16 +54,12 @@ public class QuantumScatter : UdonSharpBehaviour
     public bool SettingsLoaded { get => settingsLoaded; }
     //[SerializeField]
     private bool gotSettings = false;
-    //[SerializeField]
+   // [SerializeField]
     private float[] gratingFourierSq;
    // [SerializeField]
     private float[] probIntegral;
     //[SerializeField]
     private float[] probabilityLookup;
-    //[SerializeField]
-    int distributionSegment;
-    //[SerializeField]
-    int distributionRange;
     [SerializeField]
     private float lambdaMin = 1;
     [SerializeField]
@@ -172,8 +125,10 @@ public class QuantumScatter : UdonSharpBehaviour
     {
         if (!settingsLoaded)
             return 0f;
-        distributionSegment = Mathf.RoundToInt((pointsWide - 1)*incidentSpeedFrac);
-        distributionRange = (int)Mathf.Round(probIntegral[distributionSegment]);
+        // distributionSegment = Mathf.RoundToInt((pointsWide - 1)*incidentSpeedFrac);
+        // int distributionRange = (int)Mathf.Round(probIntegral[distributionSegment]);
+        int distributionRange= (int)Mathf.Round(probIntegral[pointsWide-1]);
+
         float resultIndex = SubsetSample(distributionRange);
         float resultFrac = (distributionScale * resultIndex )/ (pointsWide * incidentSpeedFrac);
         return Mathf.Clamp(resultFrac,-1f,1f);
@@ -203,7 +158,7 @@ public class QuantumScatter : UdonSharpBehaviour
         float dX;
         float thisValue;
         probIntegral[0] = 0;
-        float thetaMaxSingle = Mathf.Asin((7.0f * lambdaMin/slitWidth));
+        float thetaMaxSingle = Mathf.Asin(6.0f * lambdaMin/slitWidth);
         if (thetaMaxSingle < Mathf.PI)
             scaleTheta = thetaMaxSingle;
 
@@ -271,8 +226,6 @@ public class QuantumScatter : UdonSharpBehaviour
             }
             probabilityLookup[i] = val; // * norm;
         }
-        if (simMatIsValid) 
-            CreateTexture();
         settingsLoaded = true;
         //Debug.Log(gameObject.name + ": Recalc Done");
     }

@@ -82,13 +82,13 @@ public static class Units
 			switch ((int)Mathf.Floor(exponent))
 			{
 			case -1: case -2: case -3:
-				sRet =  string.Format("{0:.##}m",(d * 1e3));
+				sRet =  string.Format("{0:.#}m",(d * 1e3));
 				break;
 			case -4: case -5: case -6:
-				sRet =  string.Format("{0:.##}μ",(d * 1e6));
+				sRet =  string.Format("{0:.#}μ",(d * 1e6));
 				break;
 			case -7: case -8: case -9:
-				sRet =  string.Format("{0:.##}n",(d * 1e9));
+				sRet =  string.Format("{0:.#}n",(d * 1e9));
 				break;
 			case -10: case -11: case -12:
 				return (d * 1e12).ToString() + "p";

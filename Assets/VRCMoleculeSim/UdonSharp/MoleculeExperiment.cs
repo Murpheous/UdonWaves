@@ -5,19 +5,19 @@ using UnityEngine;
 using UnityEngine.UI;
 using VRC.SDKBase;
 using VRC.Udon;
-using static UnityEngine.Rendering.VolumeComponent;
+
 [UdonBehaviourSyncMode(BehaviourSyncMode.Manual)]
 public class MoleculeExperiment : UdonSharpBehaviour
 {
     [Tooltip("Particle speed at middle of range")]
     public float avgMoleculeSpeed=150;
-    [SerializeField, Range(0, 70), Tooltip("% Fraction of avg velocity +-"),UdonSynced,FieldChangeCallback(nameof(RandomRangePercent))]
+    [SerializeField, Range(0, 70), Tooltip("% Fraction of avg velocity +-"),FieldChangeCallback(nameof(RandomRangePercent))]
     private int randomRangePercent = 50;
     [SerializeField, UdonSynced,  FieldChangeCallback(nameof(RandomizeSpeed))] bool randomizeSpeed = true;
     
-    [SerializeField,FieldChangeCallback(nameof(SpeedPercent))] private int speedPercent = 0;
+    [SerializeField,FieldChangeCallback(nameof(SpeedPercent))] private float speedPercent = 0;
 
-    [SerializeField] private SyncedSlider speedSlider;
+    [SerializeField] private UdonSlider speedSlider;
 
     private bool RandomizeSpeed
     {
@@ -41,18 +41,12 @@ public class MoleculeExperiment : UdonSharpBehaviour
     [SerializeField] private TextMeshProUGUI moleculeText;
 
     [Header("Operating Settings-------")]
-    [SerializeField, Tooltip("Default Particle Size"), UdonSynced, FieldChangeCallback(nameof(ParticleStartSize))] 
+    [SerializeField, Tooltip("Default Particle Size"), FieldChangeCallback(nameof(ParticleStartSize))] 
     private float particleStartSize = 0.001f;
     [SerializeField, Range(0.1f, 5f), FieldChangeCallback(nameof(MarkerPointSize))] 
     private float markerPointSize = 2;
-    [SerializeField] private SyncedSlider pointSizeSlider;
+    [SerializeField] private UdonSlider markerSizeSlider;
 
-    private float pendingBeamSize = 0;
-    private bool beamSizeIsPending = false;
-    private int pendingSpeed = 0;
-    private bool speedIsPending = false;
-    private float pendingPointSize = 0f;
-    private bool pointSizeIsPending = false;
     private VRCPlayerApi player;
     private bool iamOwner = false;
 
@@ -70,9 +64,9 @@ public class MoleculeExperiment : UdonSharpBehaviour
         }
     }
 
-    [Tooltip("Decay time of particles at target"), SerializeField, Range(0.5f, 20f), UdonSynced, FieldChangeCallback(nameof(MarkerLifetime))] float markerLifetime = 15;
+    [Tooltip("Decay time of particles at target"), SerializeField, Range(0.5f, 20f), FieldChangeCallback(nameof(MarkerLifetime))] float markerLifetime = 15;
     [Tooltip("Exaggerate/Suppress Beam Particle Size"),SerializeField, Range(0.1f, 5f), FieldChangeCallback(nameof(ParticleSize))] float particleSize = 1;
-    public SyncedSlider particleSizeSlider;
+    public UdonSlider particleSizeSlider;
 
     private float ParticleSize
     {
@@ -168,7 +162,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
 
     //[SerializeField]
     private float slowScaled = 0.025f;
-    [SerializeField,UdonSynced,FieldChangeCallback(nameof(ScaleIsChanging))] 
+    [SerializeField,FieldChangeCallback(nameof(ScaleIsChanging))] 
     private bool scaleIsChanging = true;
     private bool ScaleIsChanging
     {
@@ -199,9 +193,10 @@ public class MoleculeExperiment : UdonSharpBehaviour
             }
         }
     }
+
     [SerializeField]
     private float graphicsScale = 1f;
-    [Tooltip("Scale of objects at design (10x)"),SerializeField,UdonSynced,FieldChangeCallback(nameof(NativeGraphicsRatio))]
+    [Tooltip("Scale of objects at design (10x)"),SerializeField,FieldChangeCallback(nameof(NativeGraphicsRatio))]
     private int nativeGraphicsRatio = 10;
     public int NativeGraphicsRatio 
     { 
@@ -217,7 +212,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
         }
     }
 
-    [Tooltip("Spatial Scaling"), UdonSynced, FieldChangeCallback(nameof(ExperimentScale))]
+    [Tooltip("Spatial Scaling"), FieldChangeCallback(nameof(ExperimentScale))]
     public float experimentScale = 10f; 
     public float ExperimentScale
     {
@@ -253,7 +248,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
     [SerializeField]
     private float randomRange = 0.7f;
 
-    private int SpeedPercent
+    private float SpeedPercent
     {
         get => speedPercent;
         set
@@ -263,9 +258,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
             userSpeedFraction = speedPercent/100f;
             userSpeedTrim = (Mathf.Clamp(userSpeedFraction / randomRange,-1f,1f)+1f)/2f;
             if (isRunning && speedSlider != null)
-            {
                 speedSlider.TitleText = string.Format("Speed\n{0}m/s", Mathf.RoundToInt((1 + userSpeedFraction) * avgMoleculeSpeed));
-            }
         }
     }
 
@@ -326,7 +319,6 @@ public class MoleculeExperiment : UdonSharpBehaviour
             markerLifetime = value;
             if (hasTargetDecorator)
                 targetDisplay.MarkerLifetime = markerLifetime;
-            RequestSerialization();
         }
     }
     public float ParticleStartSize
@@ -334,12 +326,8 @@ public class MoleculeExperiment : UdonSharpBehaviour
         get => particleStartSize;
         set
         {
-            if (value != particleStartSize)
-            {
-                particleStartSize = value;
-                checkMarkerSizes();
-            }
-            RequestSerialization();
+            particleStartSize = value;
+            checkMarkerSizes();
         }
     }
 
@@ -400,8 +388,10 @@ public class MoleculeExperiment : UdonSharpBehaviour
         set 
         {  
             playParticles = value;
-            if (togPlay != null && togPlay.isOn != value)
-                togPlay.isOn = value;
+            if (togPlay != null && value && !togPlay.isOn)
+                togPlay.isOn = true;
+            if (togPause != null && !value && !togPause.isOn)
+                togPause.isOn = true;
             if (hasSource)
             {
                 if (value)
@@ -477,25 +467,6 @@ public class MoleculeExperiment : UdonSharpBehaviour
     private void ReviewOwnerShip()
     {
         iamOwner = Networking.IsOwner(this.gameObject);
-
-        if (iamOwner)
-        {
-            if (pointSizeIsPending)
-            {
-                MarkerPointSize = pendingPointSize;
-                pointSizeIsPending = false;
-            }
-            if (speedIsPending)
-            {
-                SpeedPercent = pendingSpeed;
-                speedIsPending = false;
-            }
-            if (beamSizeIsPending)
-            {
-                ParticleSize = pendingBeamSize;
-                beamSizeIsPending = false;
-            }
-        }
     }
     public override void OnOwnershipTransferred(VRCPlayerApi player)
     {
@@ -572,7 +543,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
             particleEmitter.Clear(); // Restart.
     }
 
-    public void btnReset()
+    public void doReset()
     {
         SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, nameof(resetSim));
     }
@@ -920,9 +891,9 @@ public class MoleculeExperiment : UdonSharpBehaviour
     //[SerializeField]
     private int gratingVersion = -1;
     private Vector2Int apertureCounts = Vector2Int.zero;
-    //[SerializeField]
+    [SerializeField]
     private Vector2 aperturePitches = Vector2.zero;
-    //[SerializeField] 
+    [SerializeField] 
     private Vector2 apertureSize = Vector2.zero;
     // Grating Dimensions in World Space
     //[SerializeField] 
@@ -938,21 +909,21 @@ public class MoleculeExperiment : UdonSharpBehaviour
             if (!hasGrating)
                 return;
             planckChanged = false;
-            gratingSize = gratingControl.GratingGraphicsSize;
+            gratingSize = gratingControl.ActiveGratingSize;
             gratingThickness = gratingControl.panelThickness*1.5f;
             startDimensions = gratingSize/1.8f;
             int rowCount = gratingControl.RowCount;
             int colCount = gratingControl.ColumnCount;
-            float holeWidth = gratingControl.ApertureWidthMetres;
-            float holeHeight = gratingControl.ApertureHeightMetres;
-            float colPitch = gratingControl.ColumnPitchMetres;
+            float holeWidth = gratingControl.SlitWidthMetres;
+            float holeHeight = gratingControl.SlitHeightMetres;
+            float colPitch = gratingControl.SlitPitchMetres;
             float rowPitch = gratingControl.RowPitchMetres;
             bool horizChanged = force || ((colCount != apertureCounts.x) || (holeWidth != apertureSize.x) || (colPitch != aperturePitches.x));
             bool vertChanged = force || ((rowCount != apertureCounts.y) || (holeHeight != apertureSize.y) || (rowPitch != aperturePitches.y));
             apertureCounts.x = colCount; apertureCounts.y = rowCount;
             apertureSize.x = holeWidth; apertureSize.y = holeHeight; 
             aperturePitches.x = colPitch; aperturePitches.y = rowPitch;
-            gratingMarkerSize = experimentScale * Mathf.Min(gratingControl.ApertureHeightMetres, gratingControl.ApertureWidthMetres);
+            gratingMarkerSize = experimentScale * Mathf.Min(gratingControl.SlitHeightMetres, gratingControl.SlitWidthMetres);
             //if (hasGratingDecorator)
             //    gratingDecals.ParticleSize = gratingMarkerSize;
 
@@ -1047,7 +1018,10 @@ public class MoleculeExperiment : UdonSharpBehaviour
         }
         SpeedPercent = speedPercent;
         if (speedSlider != null)
-            speedSlider.SetValues(speedPercent,-50,50);
+        {
+            speedSlider.SetLimits(-50, 50);
+            speedSlider.SetValue(speedPercent);
+        }
         RandomRangePercent = randomRangePercent;
         float tmp = experimentScale;
         experimentScale = 0;
@@ -1058,19 +1032,23 @@ public class MoleculeExperiment : UdonSharpBehaviour
         if (hasSource)
         {
             sourceXfrm = particleEmitter.transform;
-            //sourceXfrm.Rotate(new Vector3(0, 90, 0));
             mainModule = particleEmitter.main;
             mainModule.startSpeed = 0.1f;
             mainModule.playOnAwake = true;
         }
 
         MarkerPointSize = markerPointSize;
-        if (pointSizeSlider != null)
-            pointSizeSlider.SetValues(markerPointSize, 0.1f, 5f);
+        if (markerSizeSlider != null)
+        {
+            markerSizeSlider.SetLimits(0.1f, 5f);
+            markerSizeSlider.SetValue(markerPointSize);
+        }
         ParticleSize = particleSize;
         if (particleSizeSlider != null)
-            particleSizeSlider.SetValues(particleSize, 0.1f, 5f);
-        
+        {
+            particleSizeSlider.SetLimits(0.1f, 5f);
+            particleSizeSlider.SetValue(particleSize);
+        }
         RandomizeSpeed = randomizeSpeed;
         hasHorizontalScatter = (horizontalScatter != null);
         hasVerticalScatter = (verticalScatter != null);

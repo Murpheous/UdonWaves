@@ -6,8 +6,8 @@ using VRC.Udon;
 [RequireComponent(typeof(LineRenderer))]
 public class UdonPointer : UdonSharpBehaviour
 {
-    [SerializeField, FieldChangeCallback(nameof(LineLength))]
-    public float lineLength = 0.5f;
+    [SerializeField]
+    private float lineLength = 0.5f;
     public float LineLength { 
         get => lineLength; 
         set 
@@ -20,8 +20,8 @@ public class UdonPointer : UdonSharpBehaviour
             }
         } 
     }
-    [SerializeField,Range(0f,0.1f), FieldChangeCallback(nameof(LineWidth))]
-    public float lineWidth = 0.03f;
+    [SerializeField,Range(0f,0.1f)]
+    private float lineWidth = 0.03f;
 
     public float LineWidth
     {
@@ -34,8 +34,8 @@ public class UdonPointer : UdonSharpBehaviour
     }
 
 
-    [SerializeField,FieldChangeCallback(nameof(ThetaDegrees))]
-    public float thetaDegrees = 0;
+    [SerializeField]
+    private float thetaDegrees = 0;
     [SerializeField]
     private Vector2 startLocal = Vector2.zero;
     [SerializeField]
@@ -53,10 +53,10 @@ public class UdonPointer : UdonSharpBehaviour
     [SerializeField]
     private bool isIncoming = false;
     
-    [SerializeField,FieldChangeCallback(nameof(LineColour))]
+    [SerializeField]
     public Color lineColour= Color.cyan;
-    [SerializeField,Range(0f,1f),FieldChangeCallback(nameof(Alpha))]
-    public float alpha = 1;
+    [SerializeField,Range(0f,1f)]
+    private float alpha = 1;
     private Color currentColour= Color.white;
 
     public Color LineColour
