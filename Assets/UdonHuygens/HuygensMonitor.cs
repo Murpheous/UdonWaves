@@ -68,7 +68,6 @@ public class HuygensMonitor : UdonSharpBehaviour
     private float simScale = 1f;
     [SerializeField] 
     private UdonBehaviour vectorDrawing;
-    private bool iHaveVectorDiag = false;
     [SerializeField]
     private UdonBehaviour particleSim;
     private bool iHaveParticleSim;
@@ -251,7 +250,7 @@ public class HuygensMonitor : UdonSharpBehaviour
         set
         {
             slitWidth = value;
-            if (iHaveVectorDiag)
+            if (vectorDrawing != null)
                 vectorDrawing.SetProgramVariable<float>("slitWidth", slitWidth);
             if (iHaveParticleSim)
                 particleSim.SetProgramVariable<float>("slitWidth", slitWidth*mmToMetres);
@@ -407,7 +406,6 @@ public class HuygensMonitor : UdonSharpBehaviour
         iHaveWidthControl = widthSlider != null;
         iHaveLambdaControl = lambdaSlider != null;
         iHaveScaleControl = scaleSlider != null;
-        iHaveVectorDiag = vectorDrawing != null;
         iHaveParticleSim = particleSim != null;
 
         if (thePanel != null)

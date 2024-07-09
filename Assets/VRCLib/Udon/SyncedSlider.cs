@@ -83,9 +83,18 @@ public class SyncedSlider : UdonSharpBehaviour
             syncedValue = value;
             return;
         }
-        updateThreshold();        
+        updateThreshold();
         if (locallyOwned)
-            SyncedValue = value;
+        {
+            if (slider != null)
+                slider.SetValueWithoutNotify(value);
+            syncedValue = value;
+            targetValue = value;
+            if (reportedValue != syncedValue)
+                ReportedValue = syncedValue;
+            UpdateLabel();
+            RequestSerialization();
+        }
     }
 
     public void SetValue(float value)
@@ -96,10 +105,17 @@ public class SyncedSlider : UdonSharpBehaviour
             syncedValue = value;
             return;
         }
+        updateThreshold();
         if (locallyOwned)
         {
-            reportedValue = value;
-            SyncedValue = value;
+            if (slider != null)
+                slider.SetValueWithoutNotify(value);
+            syncedValue = value;
+            targetValue = value;
+            if (reportedValue != syncedValue)
+                ReportedValue = syncedValue;
+            UpdateLabel();
+            RequestSerialization();
         }
     }
 
@@ -278,9 +294,12 @@ public class SyncedSlider : UdonSharpBehaviour
             slider.maxValue = maxValue;
            // slider.SetValueWithoutNotify(syncedValue);
         }
+        reportedValue = syncedValue;
+        targetValue = syncedValue;
         SyncedValue = syncedValue;
         DisplayScale = displayScale;
         updateThreshold();
+        UpdateLabel();
         started = true;
     }
 }

@@ -12,36 +12,17 @@ public class CameraZoom : UdonSharpBehaviour
     [SerializeField] Vector2 targetWidthHeight = new Vector2(1, 1);
     [SerializeField] float targetAspect = 0.75f;
     [SerializeField] int _zoom = 1;
-
     private float myCameraInitialFOV;
-    private float screenDistance;
-
-    // Set the camera field of view to match the targetwidth & height rectangle 
-    [Tooltip("Spatial Scaling"), FieldChangeCallback(nameof(ExperimentScale))]
-
-    public float experimentScale = 10;
-    public float ExperimentScale
-    {
-        get => experimentScale;
-        set
-        {
-            if (experimentScale != value)
-            {
-                experimentScale = value;
-                UpdateScale();
-            }
-        }
-    }
+    [SerializeField] private float workingDistance = 1;
 
     private void UpdateScale()
     {
-        screenDistance = Mathf.Abs(myCamera.transform.localPosition.x);//(myCamera.transform.position - myTarget.transform.position).magnitude;
         targetAspect = targetWidthHeight.x / targetWidthHeight.y;
         myCamera.aspect = targetAspect;
-        if ((screenDistance > 0) && (_zoom > 0))
+        if ((workingDistance > 0) && (_zoom > 0))
         {
             float targetHeight = targetWidthHeight.y / _zoom;
-            float theta = Mathf.Atan2(targetHeight, screenDistance);
+            float theta = Mathf.Atan2(targetHeight, workingDistance);
             theta *= Mathf.Rad2Deg;
             myCamera.fieldOfView = theta;
 
@@ -68,7 +49,7 @@ public class CameraZoom : UdonSharpBehaviour
     {
         if (myCamera == null)
             return;
-        if (_enabled)
+        if (camEnabled)
         {
             if (displayMaterial != null)
             {
@@ -98,15 +79,16 @@ public class CameraZoom : UdonSharpBehaviour
         }
     }
 
-    bool _enabled = false;
+    [SerializeField]
+    bool camEnabled = false;
     public bool Enabled
     {
-        get => _enabled;
+        get => camEnabled;
         set
         {
-            if (_enabled != value)
+            if (camEnabled != value)
             {
-                _enabled = value;
+                camEnabled = value;
                 CheckTexture();
             }
         }
@@ -131,6 +113,8 @@ public class CameraZoom : UdonSharpBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        if (workingDistance <= 0)
+            workingDistance = Mathf.Abs(transform.localScale.x);
         if (myCamera == null)
             myCamera = GetComponent<Camera>();
         if (myTarget == null)

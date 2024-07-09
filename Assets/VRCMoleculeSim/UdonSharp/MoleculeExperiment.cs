@@ -307,8 +307,6 @@ public class MoleculeExperiment : UdonSharpBehaviour
     [SerializeField]
     Transform collimatorProp;
     [SerializeField]
-    Transform targetProp;
-    [SerializeField]
     ParticleSystem particleEmitter;
 
     public float MarkerLifetime
@@ -825,8 +823,6 @@ public class MoleculeExperiment : UdonSharpBehaviour
         targetMarkerSize = Mathf.Lerp(0.1f,1,trimValue) * mul;
         if (hasTargetDecorator)
             targetDisplay.ParticleSize = targetMarkerSize;
-        //if (hasFloorDecorator)
-        //    floorDisplay.ParticleSize = targetMarkerSize;
         if (hasSource)
             mainModule.startSize = particleStartSize * particleSize * Mathf.Sqrt(experimentScale);
     }
@@ -835,13 +831,8 @@ public class MoleculeExperiment : UdonSharpBehaviour
     {
         if (hasSource)
             particleEmitter.Clear();
-        //if (hasFloorDecorator)
-        //    floorDisplay.Dissolve();
         if (hasTargetDecorator)
             targetDisplay.Dissolve();
-        //if (hasGratingDecorator)
-        //    gratingDecals.Dissolve();
-        //Debug.Log("dissolveDisplays()");
     }
     private void updateSettings()
     {
@@ -881,11 +872,8 @@ public class MoleculeExperiment : UdonSharpBehaviour
         }
         if (hasTarget)
         {
-            targetPosition = gratingPosition;
-            targetPosition.x += gratingToTargetSim;
+            targetPosition = new Vector3(gratingToTargetSim,0f,0f);
             targetTransform.position = targetPosition;
-            if (targetProp != null)
-                targetProp.localScale = new Vector3(graphicsScale, graphicsScale, graphicsScale);
         }
     }
     //[SerializeField]

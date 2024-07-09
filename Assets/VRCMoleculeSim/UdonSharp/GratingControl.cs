@@ -3,6 +3,7 @@ using TMPro;
 using UdonSharp;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.UIElements;
 using VRC.SDKBase;
 using VRC.Udon;
 [UdonBehaviourSyncMode(BehaviourSyncMode.Manual)] // Keeps performance up
@@ -14,6 +15,9 @@ public class GratingControl : UdonSharpBehaviour
     [SerializeField]
     Transform frameSupport;
     public GameObject barPrefab;
+    [SerializeField] private UdonBehaviour gratingDisplay;
+    [SerializeField] private CameraZoom gratingCamera;
+    [SerializeField] string displayZoomVar = "gratingZoomIndex";
     //public GameObject frameSupport;
 
     public float panelThickness;
@@ -93,10 +97,19 @@ public class GratingControl : UdonSharpBehaviour
         get => gratingScaleStep;
         set
         {
-            gratingScaleStep = CheckScaleIndex(value, scaleSteps);
-            ScaleDownFactor = scaleSteps[GratingScaleStep];
-            updateScales();
-            RequestSerialization();
+            value = CheckScaleIndex(value, scaleSteps);
+            if (value != gratingScaleStep)
+            {
+                gratingScaleStep = value;
+                updateScales();
+                RequestSerialization();
+
+            }
+            if (gratingDisplay != null)
+                gratingDisplay.SetProgramVariable<int>(displayZoomVar, gratingScaleStep);
+            if (gratingCamera != null)
+                gratingCamera.Zoom = scaleSteps[gratingScaleStep];
+            ScaleDownFactor = scaleSteps[gratingScaleStep];
         }
     }
     private int CheckScaleIndex(int newIndex, int[] steps)
@@ -116,7 +129,7 @@ public class GratingControl : UdonSharpBehaviour
             experimentScale = value;
             if (iHaveFrame)
             {
-                frameSupport.localScale = frameInitialScale * experimentScale/nativeGraphicsRatio;
+                frameSupport.localScale = Vector3.one * experimentScale/nativeGraphicsRatio;
             }
             updateScales();
         }
@@ -161,9 +174,7 @@ public class GratingControl : UdonSharpBehaviour
 
     [Header("Editor Debug")]
     bool iHaveFrame = false;
-    //[SerializeField]
-    Vector3 frameInitialScale = Vector3.one;   
-    //[SerializeField, Tooltip("Outer Frame as seen in Scaled World")]
+    [SerializeField]
     Vector2 maxDimsReduced;
     //[SerializeField]
     private float graphicsRowHeight;
@@ -336,14 +347,18 @@ public class GratingControl : UdonSharpBehaviour
             setText(labelRows, "Rows\n" + rowCount.ToString());
         }
     }
-    public void OnGratingScaleDown()
+    public void scaleDown()
     {
+        if (gratingScaleStep <= 0)
+            return;
         if (!iamOwner)
             Networking.SetOwner(player, gameObject);
         GratingScaleStep = gratingScaleStep - 1;
     }
-    public void OnGratingScaleUp()
+    public void scaleUp()
     {
+        if (gratingScaleStep >= scaleSteps.Length-1)
+            return;
         if (!iamOwner)
             Networking.SetOwner(player, gameObject);
         GratingScaleStep = gratingScaleStep + 1;
@@ -640,7 +655,6 @@ public class GratingControl : UdonSharpBehaviour
     void Start()
     {
         iHaveFrame = frameSupport != null;
-        frameInitialScale = iHaveFrame ? frameSupport.localScale : transform.localScale;
         if (gratingXfrm == null)
             gratingXfrm = transform;
         player = Networking.LocalPlayer;

@@ -9,8 +9,8 @@ public class VectorDiagram : UdonSharpBehaviour
     [SerializeField, FieldChangeCallback(nameof(DisplayRect))] public Vector2 displayRect = new Vector2(1.95f,0.95f);
     private float halfHeight = 0.46f;
 
-    [Tooltip("Source Count"),SerializeField, Range(1,16),FieldChangeCallback(nameof(NumSources))] public int numSources = 2;
-    [Tooltip("Slit Width (mm)"),SerializeField, FieldChangeCallback(nameof(SourceWidth))] float sourceWidth;
+    [Tooltip("Slit Count"),SerializeField, Range(1,16),FieldChangeCallback(nameof(SlitCount))] public int slitCount = 2;
+    [Tooltip("Slit Width (mm)"),SerializeField, FieldChangeCallback(nameof(SlitWidth))] float slitWidth;
     [Tooltip("Slit Pitch (mm)"), SerializeField,FieldChangeCallback(nameof(SlitPitch))] public float slitPitch = 436.5234f;
     [Tooltip("Lambda (mm)"), SerializeField, FieldChangeCallback(nameof(Lambda))] public float lambda = 48.61111f;
     [SerializeField] private float arrowLambda = 18;
@@ -82,14 +82,14 @@ public class VectorDiagram : UdonSharpBehaviour
         beamAngles = new string[kVectors.Length];
         labelPoints = new Vector2[kVectors.Length];
         float sinTheta;
-        float WidthX2 = sourceWidth * 2;
+        float WidthX2 = slitWidth * 2;
         for (int i = 0; i < kVectors.Length; i++)
         {
             float thetaRadians;
-            if (numSources > 1)
+            if (slitCount > 1)
                 sinTheta = i * lambda / slitPitch;
             else
-                sinTheta = i == 0 ? 0 : (2 * i + 1) / WidthX2;
+                sinTheta = i == 0 ? 0 : lambda * (2 * i + 1) / WidthX2;
             float lineLength = arrowLength;
             Vector2 endPoint = Vector2.left;
             Vector2 startPoint = Vector3.zero;
@@ -283,23 +283,23 @@ public class VectorDiagram : UdonSharpBehaviour
         needsUpdate = false;
     }
 
-    public int NumSources
+    public int SlitCount
     {
-        get => numSources;
+        get => slitCount;
         set
         {
             value = Mathf.Max(1,value);
-            numSources = value;
+            slitCount = value;
             needsUpdate = true;
         }
     }
 
-    public float SourceWidth
+    public float SlitWidth
     {
-        get => sourceWidth;
+        get => slitWidth;
         set
         {
-            sourceWidth = Mathf.Max(1.0f,value);
+            slitWidth = Mathf.Max(1.0f,value);
             needsUpdate = true;
         }
     }
