@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: M_HuygensCRT
-  m_Shader: {fileID: 4800000, guid: 583981127ea36064e809dbfaf0d9c843, type: 3}
+  m_Name: M_CRT Ballistic Wall
+  m_Shader: {fileID: 4800000, guid: b0e7d5a31bdacb74f875029f845c4e00, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -23,6 +23,10 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - _ApertureTex2D:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _BumpMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -51,6 +55,14 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _MomentumMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MomentumTex2D:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _OcclusionMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -61,58 +73,47 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _AperturePitch: 448
-    - _BottomPx: 1964
-    - _BottonPx: 1964
+    - _BeamWidth: 246.4
+    - _Brightness: 4.5
     - _BumpScale: 1
+    - _CellType: 0
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
-    - _DisplayMode: 2
     - _DstBlend: 0
-    - _Frequency: 1
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _Lambda: 49.6667
-    - _LambdaPixels: 52.130512
-    - _LambdaPx: 39.73336
-    - _LeftPx: 50
-    - _LowerEdge: 0
+    - _GratingOffset: 0
+    - _GratingWidth: 58.000004
+    - _MapLength: 0
+    - _MapMaxI: 255
+    - _MapMaxP: 33.333332
+    - _MapSum: 255
+    - _MaxP: 1
     - _Metallic: 0
     - _Mode: 0
-    - _NumApertures: 2
-    - _NumSlits: 2
-    - _NumSources: 5
+    - _MomentumToPhase: 23.561945
+    - _NumSources: 2
     - _OcclusionStrength: 1
-    - _OutputRaw: 1
+    - _OutputRaw: 0
     - _Parallax: 0.02
-    - _Phase: 0.27649894
-    - _RightPx: 1996
+    - _ParticleK: 0.2617994
+    - _ParticleP: 16.10737
+    - _SamplesPerSlit: 24.2
     - _Scale: 1
-    - _SimBottonPx: 945
-    - _SimLeftPx: 48
-    - _SimRightPx: 1996
-    - _SimTopPx: 52
     - _SlitCount: 2
-    - _SlitPitch: 451.2
-    - _SlitPitchPx: 357.6
-    - _SlitWidePx: 8
-    - _SlitWidth: 32
+    - _SlitPitch: 225.6
+    - _SlitWidth: 16.000002
     - _SmoothnessTextureChannel: 0
-    - _SourceOffset: 60
-    - _SourcePhase: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
-    - _TopEdge: 53
-    - _TopPx: 53
     - _UVSec: 0
-    - _UpperEdge: 1280
-    - _WaveNumPx: 0.12622471
     - _ZWrite: 1
+    - _particleK: 0.2617994
     m_Colors:
-    - _Color: {r: 0, g: 1, b: 0.6503699, a: 1}
-    - _ColorFlow: {r: 0, g: 0.26948547, b: 1, a: 1}
-    - _ColorNeg: {r: 0.2466228, g: 0.20000002, b: 0.4627451, a: 1}
-    - _ColorVel: {r: 1, g: 0.45490196, b: 0, a: 1}
+    - _BeamVector: {r: 0, g: 0, b: 0, a: 0}
+    - _CellDimensions: {r: 1, g: 1, b: 1, a: 1}
+    - _Color: {r: 1, g: 0.89318913, b: 0.2, a: 1}
+    - _ColorNeg: {r: 0.27542007, g: 0, b: 0.3207547, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
   m_BuildTextureStacks: []

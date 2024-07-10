@@ -11,6 +11,8 @@ public class HuygensMonitor : UdonSharpBehaviour
     [SerializeField, Tooltip("Use Render texture mode")] bool useCRT = false;
 
     [Tooltip("DisplayPanel")] public MeshRenderer thePanel;
+    [SerializeField, FieldChangeCallback(nameof(Visibility))]
+    private float visibility = 1;
     [SerializeField, FieldChangeCallback(nameof(DisplayMode))]
     public int displayMode = 1;
     [SerializeField] Vector2Int simResolution = new Vector2Int(2048, 1280);
@@ -111,6 +113,18 @@ public class HuygensMonitor : UdonSharpBehaviour
     [SerializeField]
     private float defaultScale = 1;
 
+    private float Visibility
+    {
+        get => visibility;
+        set
+        {
+            visibility = Mathf.Clamp01(value);
+            if (iHaveSimDisplay)
+            {
+                matSimDisplay.SetFloat("_Visibility",visibility);
+            }
+        }
+    }
     private void configureSimControl(bool vanillaDisplay)
     {
         if (vanillaDisplay)
