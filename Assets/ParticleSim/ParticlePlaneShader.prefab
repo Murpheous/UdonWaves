@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 7997278413858446030}
   - component: {fileID: 9178903624540889406}
   m_Layer: 0
-  m_Name: BallisticMesh
+  m_Name: DensityMesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -140,29 +140,42 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3034890226411355165}
-  simCRT: {fileID: 8600000, guid: 37117a148feee504082e374128808320, type: 2}
+  probabilityCRT: {fileID: 0}
   simSize: {x: 2.4, y: 1.5}
+  showProbability: 1
+  probVisPercent: 45
   simPixels: {x: 1024, y: 640}
-  matSim: {fileID: 0}
+  matProbabilitySim: {fileID: 0}
   texName: _MomentumMap
-  iHaveMatSim: 0
   particleMeshRend: {fileID: 0}
   matParticleFlow: {fileID: 0}
-  ihaveParticleFlow: 0
+  visibility: 1
   pointsWide: 256
-  planckSim: 12
+  gratingOffset: 0
   slitCount: 2
   slitPitch: 45
   slitWidth: 12
+  pulseParticles: 0
+  pulseWidth: 1
+  speedRange: 10
   simScale: 0
-  maxMomentum: 10
-  particleMomentum: 1
+  displayColor: {r: 0, g: 1, b: 1, a: 1}
+  maxParticleK: 10
+  minParticleK: 1
+  setColour: 0
+  particleK: 1
   togPlay: {fileID: 0}
   togPause: {fileID: 0}
-  btnReset: {fileID: 0}
   togShowHide: {fileID: 0}
-  playParticles: 1
-  hideParticles: 0
+  togProbability: {fileID: 0}
+  togPulseParticles: {fileID: 0}
+  probVizSlider: {fileID: 0}
+  pulseWidthSlider: {fileID: 0}
+  speedRangeSlider: {fileID: 0}
+  particlePlayState: 1
+  crtUpdateRequired: 0
+  gratingUpdateRequired: 0
+  simPixelScale: 1
 --- !u!114 &3034890226411355165
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -297,12 +310,11 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 8543289631845535759}
   meshDimensions: {x: 2.56, y: 1.6, z: 0.01}
-  fillRectangle: 1
+  isRectangular: 0
   centerArrayOrigin: 1
   pointsAcross: {x: 192, y: 120, z: 1}
   snapOrigin: 0
   material: {fileID: 0}
-  maxRes: {x: 3, y: 3, z: 3}
   arraySpacing: {x: 0, y: 0, z: 0}
   arrayRadius: 0
   arrayOrigin: {x: 0, y: 0, z: 0}

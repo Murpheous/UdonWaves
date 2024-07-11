@@ -13,6 +13,9 @@ public class HuygensMonitor : UdonSharpBehaviour
     [Tooltip("DisplayPanel")] public MeshRenderer thePanel;
     [SerializeField, FieldChangeCallback(nameof(Visibility))]
     private float visibility = 1;
+    [SerializeField, Range(0.1f, 1f), FieldChangeCallback(nameof(Contrast))]
+    private float contrast = 0.2f;
+
     [SerializeField, FieldChangeCallback(nameof(DisplayMode))]
     public int displayMode = 1;
     [SerializeField] Vector2Int simResolution = new Vector2Int(2048, 1280);
@@ -24,7 +27,7 @@ public class HuygensMonitor : UdonSharpBehaviour
     [Header("Source Settings")]
     [SerializeField, Tooltip("Scales control settings in mm to lengths in metres")]
     private float mmToMetres = 0.001f;
-    [SerializeField, UdonSynced, FieldChangeCallback(nameof(SlitCount))] 
+    [SerializeField, UdonSynced, FieldChangeCallback(nameof(SlitCount))]
     private int slitCount = 2;
     [SerializeField] private TextMeshProUGUI lblSourceCount;
     [SerializeField, Range(50, 600), FieldChangeCallback(nameof(SlitPitch))]
@@ -68,7 +71,7 @@ public class HuygensMonitor : UdonSharpBehaviour
 
     [SerializeField, Range(1, 10), FieldChangeCallback(nameof(SimScale))]
     private float simScale = 1f;
-    [SerializeField] 
+    [SerializeField]
     private UdonBehaviour vectorDrawing;
     [SerializeField]
     private UdonBehaviour particleSim;
@@ -113,6 +116,18 @@ public class HuygensMonitor : UdonSharpBehaviour
     [SerializeField]
     private float defaultScale = 1;
 
+    private float Contrast
+    {
+        get => contrast;
+        set
+        {
+            contrast = value;
+            if (iHaveSimDisplay)
+            {
+                matSimDisplay.SetFloat("_Visibility", visibility * contrast);
+            }
+        }
+    }
     private float Visibility
     {
         get => visibility;
@@ -121,7 +136,7 @@ public class HuygensMonitor : UdonSharpBehaviour
             visibility = Mathf.Clamp01(value);
             if (iHaveSimDisplay)
             {
-                matSimDisplay.SetFloat("_Visibility",visibility);
+                matSimDisplay.SetFloat("_Visibility",visibility*contrast);
             }
         }
     }
