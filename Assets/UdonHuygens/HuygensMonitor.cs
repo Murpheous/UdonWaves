@@ -11,8 +11,8 @@ public class HuygensMonitor : UdonSharpBehaviour
     [SerializeField, Tooltip("Use Render texture mode")] bool useCRT = false;
 
     [Tooltip("DisplayPanel")] public MeshRenderer thePanel;
-    [SerializeField, FieldChangeCallback(nameof(Visibility))]
-    private float visibility = 1;
+    [SerializeField, FieldChangeCallback(nameof(Brightness))]
+    private float brightness = 1;
     [SerializeField, Range(0.1f, 1f), FieldChangeCallback(nameof(Contrast))]
     private float contrast = 0.2f;
 
@@ -124,19 +124,19 @@ public class HuygensMonitor : UdonSharpBehaviour
             contrast = value;
             if (iHaveSimDisplay)
             {
-                matSimDisplay.SetFloat("_Visibility", visibility * contrast);
+                matSimDisplay.SetFloat("_Brightness", brightness * contrast);
             }
         }
     }
-    private float Visibility
+    private float Brightness
     {
-        get => visibility;
+        get => brightness;
         set
         {
-            visibility = Mathf.Clamp01(value);
+            brightness = Mathf.Clamp01(value);
             if (iHaveSimDisplay)
             {
-                matSimDisplay.SetFloat("_Visibility",visibility*contrast);
+                matSimDisplay.SetFloat("_Brightness", brightness*contrast);
             }
         }
     }
