@@ -3,6 +3,7 @@ using TMPro;
 using UdonSharp;
 using VRC.SDKBase;
 using VRC.Udon;
+using UnityEngine.UI;
 
 [UdonBehaviourSyncMode(BehaviourSyncMode.Manual)]
 public class HuygensMonitor : UdonSharpBehaviour
@@ -13,8 +14,8 @@ public class HuygensMonitor : UdonSharpBehaviour
     [Tooltip("DisplayPanel")] public MeshRenderer thePanel;
     [SerializeField, FieldChangeCallback(nameof(Brightness))]
     private float brightness = 1;
-    [SerializeField, Range(0.1f, 1f), FieldChangeCallback(nameof(Contrast))]
-    private float contrast = 0.2f;
+    [SerializeField, Range(0.1f, 1f), FieldChangeCallback(nameof(Visibility))]
+    private float visibility = 0.2f;
 
     [SerializeField, FieldChangeCallback(nameof(DisplayMode))]
     public int displayMode = 1;
@@ -38,8 +39,13 @@ public class HuygensMonitor : UdonSharpBehaviour
 
     [Header("Controls")]
     [SerializeField, FieldChangeCallback(nameof(WaveSpeed))] public float waveSpeed;
+    [SerializeField]
+    private Toggle togWaves;
+    [SerializeField]
+    private Toggle togParticles;
 
-    [SerializeField] UdonSlider speedSlider;
+    [SerializeField] 
+    private UdonSlider speedSlider;
 
     [SerializeField]
     private UdonSlider lambdaSlider;
@@ -90,23 +96,7 @@ public class HuygensMonitor : UdonSharpBehaviour
         UpdateOwnerShip();
     }
 
-    [Header("Serialized for monitoring in Editor")]
-    [SerializeField]
-    private Material matPanel = null;
-    [SerializeField]
-    private Material matSimControl = null;
-    [SerializeField]
-    private Material matSimDisplay = null;
-    [SerializeField]
-    private bool iHaveCRT = false;
-    [SerializeField]
-    private bool iHavePanelMaterial = false;
-    [SerializeField]
-    private bool iHaveSimDisplay = false;
-    [SerializeField]
-    private bool iHaveWaveCRT = false;
-    [SerializeField]
-    private bool iHaveSimControl = false;
+    [Header("Default Values")]
     [SerializeField]
     private float defaultLambda = 50;
     [SerializeField]
@@ -116,15 +106,33 @@ public class HuygensMonitor : UdonSharpBehaviour
     [SerializeField]
     private float defaultScale = 1;
 
-    private float Contrast
+    //[Header("Serialized for monitoring in Editor")]
+    //[SerializeField]
+    private Material matPanel = null;
+    //[SerializeField]
+    private Material matSimControl = null;
+    //[SerializeField]
+    private Material matSimDisplay = null;
+    //[SerializeField]
+    private bool iHaveCRT = false;
+    //[SerializeField]
+    private bool iHavePanelMaterial = false;
+    //[SerializeField]
+    private bool iHaveSimDisplay = false;
+    //[SerializeField]
+    private bool iHaveWaveCRT = false;
+    //[SerializeField]
+    private bool iHaveSimControl = false;
+
+    private float Visibility
     {
-        get => contrast;
+        get => visibility;
         set
         {
-            contrast = value;
+            visibility = value;
             if (iHaveSimDisplay)
             {
-                matSimDisplay.SetFloat("_Brightness", brightness * contrast);
+                matSimDisplay.SetFloat("_Brightness", brightness * visibility);
             }
         }
     }
@@ -136,7 +144,7 @@ public class HuygensMonitor : UdonSharpBehaviour
             brightness = Mathf.Clamp01(value);
             if (iHaveSimDisplay)
             {
-                matSimDisplay.SetFloat("_Brightness", brightness*contrast);
+                matSimDisplay.SetFloat("_Brightness", brightness*visibility);
             }
         }
     }
@@ -200,6 +208,10 @@ public class HuygensMonitor : UdonSharpBehaviour
             {
                 if (displayMode < 0) 
                 {
+                    if (togParticles != null)
+                        togParticles.interactable = true;
+                    if (togWaves != null)
+                        togWaves.interactable = true;
                     if (iHavePitchControl)
                         pitchSlider.Interactable = true;
                     if (iHaveWidthControl)
@@ -214,6 +226,14 @@ public class HuygensMonitor : UdonSharpBehaviour
             }
             else
             {
+                if (togParticles != null)
+                    togParticles.interactable = false;
+                if (togWaves != null)
+                {
+                    if (!togWaves.isOn)
+                        togWaves.isOn = true;
+                    togWaves.interactable = false;
+                }
                 SlitPitch = defaultPitch;
                 if (iHavePitchControl)
                 {
