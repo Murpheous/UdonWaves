@@ -4,10 +4,8 @@
     Properties
     {
         // _ViewSelection("Show A=0, A^2=1, E=2",Range(0.0,2.0)) = 0.0
-        _CdTdXsq("CdTdX^2", Float) = 0.2
         _CdTdX("CdTdX", Float) = 0.25
         _K("K",Float) = 0.25
-        _KSquared("K Squared",Float) = 0.0625
         _DeltaT("DeltaT",Float) = 1
         _T2Radians("T2Radians",Float) = 6.283
         _DriveSettings("DriveSettings",Vector) = (0,0,0,0)
@@ -23,11 +21,8 @@
     #define A(U)  tex2D(_SelfTexture2D, float2(U))
     #define O(U)  tex2D(_ObstacleTex2D, float2(U))
 
-        //float _ViewSelection;
-    float _CdTdXsq;
     float _CdTdX; // c/2pi
     float _K;
-    float _KSquared;
     float _DeltaT;
     float _T2Radians;
     float4 _DriveSettings;

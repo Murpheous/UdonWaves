@@ -144,7 +144,6 @@ public class WaveMonitor : UdonSharpBehaviour
     [SerializeField] private float CFL = 0.5f;
 
     [Header("Calculated-Debug")]
-    [SerializeField] private float CFLSq = 0.25f;
     [SerializeField] private float effectPeriod = 1;
     [SerializeField] private float absorbFactor = 0.25f;
     [SerializeField] private float dt; // Time step
@@ -421,7 +420,6 @@ public class WaveMonitor : UdonSharpBehaviour
     void CalcParameters()
     {
         Lambda = WaveSpeed / frequency;
-        CFLSq = CFL * CFL;
         absorbFactor = (CFL - 1) / (1 + CFL);
         effectPeriod = 1/frequency;
         dt = CFL / waveSpeedPixels;
@@ -435,9 +433,7 @@ public class WaveMonitor : UdonSharpBehaviour
         // dt = CFL/(c);
         if (simulationMaterial != null)
         {
-            simulationMaterial.SetFloat("_CdTdX^2", CFLSq);
             simulationMaterial.SetFloat("_CdTdX", CFL);
-            simulationMaterial.SetFloat("_KSquared", angularWaveNumber * angularWaveNumber);
             simulationMaterial.SetFloat("_K", angularWaveNumber);
             simulationMaterial.SetFloat("_DeltaT", dt);
             simulationMaterial.SetFloat("_T2Radians", frequency * (Mathf.PI * 2));
