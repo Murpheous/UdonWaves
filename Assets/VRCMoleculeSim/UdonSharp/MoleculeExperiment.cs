@@ -30,6 +30,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
             if (isRunning && speedSlider != null)
                 speedSlider.gameObject.SetActive(!randomizeSpeed);
             RequestSerialization();
+            updateSourceElevation();
         }
     }
 
@@ -308,6 +309,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
     Transform collimatorProp;
     [SerializeField]
     ParticleSystem particleEmitter;
+    Transform sourceXfrm;
 
     public float MarkerLifetime
     {
@@ -329,7 +331,6 @@ public class MoleculeExperiment : UdonSharpBehaviour
         }
     }
 
-    Transform sourceXfrm;
     [SerializeField]
     QuantumScatter horizontalScatter;
     [SerializeField]
@@ -350,6 +351,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
     Vector3 gratingPosition = Vector3.zero;
     //[SerializeField]
     Vector3 targetPosition = Vector3.zero;
+    Vector3 targetRotation = Vector3.zero;
     //[SerializeField]
     bool hasFloor;
     //[SerializeField]
@@ -834,6 +836,20 @@ public class MoleculeExperiment : UdonSharpBehaviour
         if (hasTargetDecorator)
             targetDisplay.Dissolve();
     }
+
+    private void updateSourceElevation()
+    {
+        float elevationDegrees = 0f;
+        if (hasTrajectoryModule && trajectoryValid)
+        {
+            float speedTrim = randomizeSpeed ? 0.5f : userSpeedTrim;
+            int velocityIndex = (int)Mathf.Lerp(0, trajectoryModule.LookupPoints, speedTrim);
+            Vector3 launchVelocity = trajectoryModule.lookupVelocity(velocityIndex);
+            elevationDegrees = Mathf.Atan2(launchVelocity.y, launchVelocity.x) * Mathf.Rad2Deg;
+        }
+        if (collimatorProp != null)
+            collimatorProp.localRotation = Quaternion.Euler(0, 0, elevationDegrees);
+    }
     private void updateSettings()
     {
         MarkerLifetime = markerLifetime;
@@ -856,6 +872,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
         }
         else
             trajectoryValid = false;
+        updateSourceElevation();
         //logDebug(string.Format("U: Has Traj {0}, Traj Valid {1}", hasTrajectoryModule, trajectoryValid));
 
         trajectoryChanged = false;

@@ -185,6 +185,7 @@ public class TrajectoryModule : UdonSharpBehaviour
             launchVelocities = new Vector3[lookupPoints];
             launchColours = new Color[lookupPoints];
         }
+        // Calculate average elevation
         for (int i = 0; i < lookupPoints; i++)
         {
             frac = (float)i / (lookupPoints-1);
