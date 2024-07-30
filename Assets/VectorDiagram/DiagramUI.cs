@@ -25,13 +25,13 @@ public class DiagramUI : UdonSharpBehaviour
     private void updateClientState()
     {
         if (togOff != null && optionSelect <= 0 && !togOff.isOn)
-            togOff.isOn = true;
+            togOff.SetIsOnWithoutNotify(true);
         if (tgInterfere != null && optionSelect == 1 && !tgInterfere.isOn)
-            tgInterfere.isOn = true;
+            tgInterfere.SetIsOnWithoutNotify(true);
         if (togKVec != null && optionSelect == 2 && !togKVec.isOn)
-            togKVec.isOn = true;
+            togKVec.SetIsOnWithoutNotify(true);
         if (togVanVliet != null && optionSelect == 3 && !togVanVliet.isOn)
-            togVanVliet.isOn = true;
+            togVanVliet.SetIsOnWithoutNotify(true);
         if (optionSelect != clientOption)
         {
             clientOption = optionSelect;

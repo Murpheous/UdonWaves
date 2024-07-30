@@ -46,32 +46,32 @@ public class UIStateSelect : UdonSharpBehaviour
         {
             case 0:
                 if (iHaveTogReal && !togReal.isOn)
-                    togReal.isOn = true;
+                    togReal.SetIsOnWithoutNotify(true);
                 break;
             case 1:
                 if (iHaveTogRealPwr && !togRealPwr.isOn)
-                    togRealPwr.isOn = true;
+                    togRealPwr.SetIsOnWithoutNotify(true);
                 break;
             case 2:
                 if (iHaveTogIm && !togImaginary.isOn)
-                    togImaginary.isOn = true;
+                    togImaginary.SetIsOnWithoutNotify(true);
                 break;
             case 3:
                 if (iHaveToImPwr && !togImPwr.isOn)
-                    togImPwr.isOn = true;
+                    togImPwr.SetIsOnWithoutNotify(true);
                 break;
             case 4:
                 if (iHaveTogAmp && !togAmplitude.isOn)
-                    togAmplitude.isOn = true;
+                    togAmplitude.SetIsOnWithoutNotify(true);
                 break;
             case 5:
                 if (iHaveTogProb && !togProbability.isOn)
-                    togProbability.isOn = true;
+                    togProbability.SetIsOnWithoutNotify(true);
                 break;
             default:
                 displayMode = -1;
                 if (iHaveTogReset && !togReset.isOn)
-                    togReset.isOn = true;
+                    togReset.SetIsOnWithoutNotify(true);
                 break;
         }
         if (displayMode != clientMode)
@@ -133,13 +133,10 @@ public class UIStateSelect : UdonSharpBehaviour
         {
             playSim = value;
             UpdatePlay();
-            if (!iAmOwner)
-            {
-                if (togPlay != null && !togPlay.isOn && value)
-                    togPlay.isOn = true;
-                if (togPause != null && !togPause.isOn && !value)
-                    togPause.isOn = true;
-            }
+            if (togPlay != null && !togPlay.isOn && value)
+                togPlay.SetIsOnWithoutNotify(true);
+            if (togPause != null && !togPause.isOn && !value)
+                togPause.SetIsOnWithoutNotify(true);
             RequestSerialization();
         }
     }

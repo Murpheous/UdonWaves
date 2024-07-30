@@ -224,9 +224,9 @@ public class WaveMonitor : UdonSharpBehaviour
             if (!iamOwner)
             {
                 if (value && (TogglePlay != null) && (!TogglePlay.isOn))
-                    TogglePlay.isOn = true;
+                    TogglePlay.SetIsOnWithoutNotify(true);
                 if ((!value) && (TogglePause != null) && (!TogglePause.isOn))
-                    TogglePause.isOn = true;
+                    TogglePause.SetIsOnWithoutNotify(true);
             }
             animationPlay = value;
             RequestSerialization();
@@ -239,24 +239,24 @@ public class WaveMonitor : UdonSharpBehaviour
         {
             case 1:
                 if (togViewPE != null && !togViewPE.isOn)
-                    togViewPE.isOn = true;
+                    togViewPE.SetIsOnWithoutNotify(true);
                 break;
             case 2:
                 if (togViewVelocity != null && !togViewVelocity.isOn)
-                    togViewVelocity.isOn = true;
+                    togViewVelocity.SetIsOnWithoutNotify(true);
                 break;
             case 3:
                 if (togViewKE != null && !togViewKE.isOn)
-                    togViewKE.isOn = true;
+                    togViewKE.SetIsOnWithoutNotify(true);
                 break;
             case 4:
                 if (togViewEnergy != null && !togViewEnergy.isOn)
-                    togViewEnergy.isOn = true;
+                    togViewEnergy.SetIsOnWithoutNotify(true);
                 break;
             default:
                 displayMode = 0;
                 if (togViewHeight != null && !togViewHeight.isOn)
-                    togViewHeight.isOn = true;
+                    togViewHeight.SetIsOnWithoutNotify(true);
                 break;
         }
     }

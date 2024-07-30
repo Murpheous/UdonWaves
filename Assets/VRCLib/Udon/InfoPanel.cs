@@ -127,7 +127,7 @@ public class InfoPanel : UdonSharpBehaviour
             if (value >= 0 && value < toggleCount)
             {
                 if (toggles[selectedToggle] != null)
-                    toggles[selectedToggle].isOn = true;
+                    toggles[selectedToggle].SetIsOnWithoutNotify(true);
             }
             if (toggleGroup != null && value < 0)
                 toggleGroup.SetAllTogglesOff(false);

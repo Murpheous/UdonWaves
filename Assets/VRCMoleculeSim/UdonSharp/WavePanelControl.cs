@@ -192,9 +192,9 @@ public class WavePanelControl : UdonSharpBehaviour
             if (!iamOwner)
             {
                 if (togPlay != null && value && !togPlay.isOn)
-                    togPlay.isOn = true;
+                    togPlay.SetIsOnWithoutNotify(true);
                 if (togPause != null && !value && !togPause.isOn)
-                    togPause.isOn = true;
+                    togPause.SetIsOnWithoutNotify(true);
             }
             UpdateWaveSpeed();
             RequestSerialization();
@@ -251,12 +251,17 @@ public class WavePanelControl : UdonSharpBehaviour
     private void updateDisplayTxture(int displayMode)
     {
         if (!iHaveSimDisplay)
+        {
+            Debug.Log(gameObject.name + " Warning- no Display material");
             return;
+        }
         if (matSimDisplay.HasProperty("_DisplayMode"))
-        { 
+        {
+            //Debug.Log(gameObject.name + "updateDisplayTxture(Mode 1#" + displayMode.ToString() +")");
             matSimDisplay.SetFloat("_DisplayMode", displayMode);
             return;
         }
+        //Debug.Log(gameObject.name + "updateDisplayTxture(Mode 2#" + displayMode.ToString() + ")");
         matSimDisplay.SetFloat("_ShowCRT", displayMode >= 0 ? 1f : 0f);
         matSimDisplay.SetFloat("_ShowReal", displayMode == 0 || displayMode == 1 || displayMode >= 4 ? 1f : 0f);
         matSimDisplay.SetFloat("_ShowImaginary", displayMode == 2 || displayMode == 3 || displayMode >= 4 ? 1f : 0f);
@@ -274,27 +279,27 @@ public class WavePanelControl : UdonSharpBehaviour
             {
                 case 0:
                     if (iHaveTogReal && !togReal.isOn)
-                        togReal.isOn = true;
+                        togReal.SetIsOnWithoutNotify(true);
                     break;
                 case 1:
                     if (iHaveTogRealPwr&& !togRealPwr.isOn)
-                        togRealPwr.isOn = true;
+                        togRealPwr.SetIsOnWithoutNotify(true);
                     break;
                 case 2:
                     if (iHaveTogIm && !togImaginary.isOn)
-                        togImaginary.isOn = true;
+                        togImaginary.SetIsOnWithoutNotify(true);
                     break;
                 case 3:
                     if (iHaveTogImPwr && !togImPwr.isOn)
-                        togImPwr.isOn = true;
+                        togImPwr.SetIsOnWithoutNotify(true);
                     break;
                 case 4:
                     if (iHaveTogAmp && !togAmplitude.isOn)
-                        togAmplitude.isOn = true;
+                        togAmplitude.SetIsOnWithoutNotify(true);
                     break;
                 default:
                     if (iHaveTogProb && !togProbability.isOn)
-                        togProbability.isOn = true;
+                        togProbability.SetIsOnWithoutNotify(true);
                     break;
             }
             RequestSerialization();
@@ -489,10 +494,10 @@ public class WavePanelControl : UdonSharpBehaviour
             scaleSlider.SetValue(simScale);
         }
         iHavePitchControl = pitchSlider != null;
-        if (iHaveSimDisplay)
+        if (iHaveSimDisplay && displayMode < 0)
         {
             if (matSimDisplay.HasProperty("_DisplayMode"))
-                DisplayMode = Mathf.RoundToInt(matSimDisplay.GetFloat("_DisplayMode"));
+                displayMode = Mathf.RoundToInt(matSimDisplay.GetFloat("_DisplayMode"));
             else
             {
                 int dMode = Mathf.RoundToInt(matSimDisplay.GetFloat("_ShowReal")) > 0 ? 1 : 0;
@@ -502,21 +507,20 @@ public class WavePanelControl : UdonSharpBehaviour
                 switch (dMode)
                 {
                     case 1:
-                        DisplayMode = nSq;
+                        displayMode = nSq;
                         break;
                     case 2: 
-                        DisplayMode = 2 + nSq;
+                        displayMode = 2 + nSq;
                         break;
                     case 3:
-                        DisplayMode = 4 + nSq;
+                        displayMode = 4 + nSq;
                         break;
                     default:
-                        DisplayMode = -1;
+                        displayMode = 0;
                         break;
                 }
             }
         }
-
         Lambda = defaultLambda;
         if (iHaveLambdaControl)
             lambdaSlider.SetValue(defaultLambda);
@@ -537,5 +541,6 @@ public class WavePanelControl : UdonSharpBehaviour
         if (iHaveWidthControl) 
             widthSlider.SetValue(defaultWidth);
         crtUpdateNeeded |= iHaveCRT;
+        DisplayMode = displayMode;
     }
 }
