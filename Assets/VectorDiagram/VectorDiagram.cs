@@ -16,7 +16,7 @@ public class VectorDiagram : UdonSharpBehaviour
     [SerializeField] private float arrowLambda = 18;
     [SerializeField] private float layerGap = 0.003f;
     [SerializeField, FieldChangeCallback(nameof(DemoMode))] public int demoMode;
-    [SerializeField] UdonPointer[] kVectors;
+    [SerializeField] UdonBehaviour[] kVectors;
     [SerializeField] UdonPointer[] kComponents;
     [SerializeField] UdonLabel[] vecLabels;
     [SerializeField] UdonLine[] kLines;
@@ -61,7 +61,7 @@ public class VectorDiagram : UdonSharpBehaviour
                 for (int i = 0; i < kVectors.Length; i++)
                 {
                     if (kVectors[i] != null)
-                        kVectors[i].Alpha = 0f;
+                        kVectors[i].SetProgramVariable("alpha",0f);
                 }
             }
             if (vecLabels != null)
@@ -151,15 +151,15 @@ public class VectorDiagram : UdonSharpBehaviour
             if (kVectors[i] != null && endPoint.x > 0)
             {
                 kVectors[i].transform.localPosition = (Vector3)startPoint + layerOffset;
-                kVectors[i].ShowTip = demoMode >= 2;
-                kVectors[i].LineLength = lineLength;
-                kVectors[i].ThetaDegrees = thetaRadians * Mathf.Rad2Deg;
-                kVectors[i].Alpha = 1.0f;
+                kVectors[i].SetProgramVariable<bool>("showTip",demoMode >= 2);
+                kVectors[i].SetProgramVariable("lineLength",lineLength);
+                kVectors[i].SetProgramVariable("thetaDegrees",thetaRadians * Mathf.Rad2Deg);
+                kVectors[i].SetProgramVariable("alpha", 1.0f);
 
             }
             else
             {
-                kVectors[i].Alpha = 0f;
+                kVectors[i].SetProgramVariable("alpha", 0f);
             }
         }
         if (vecLabels != null && vecLabels.Length > 0)

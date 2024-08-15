@@ -1,12 +1,12 @@
-﻿
-using UdonSharp;
+﻿using UdonSharp;
 using UnityEngine;
 using VRC.SDKBase;
 using VRC.Udon;
 [RequireComponent(typeof(LineRenderer))]
+[UdonBehaviourSyncMode(BehaviourSyncMode.None)]
 public class UdonPointer : UdonSharpBehaviour
 {
-    [SerializeField]
+    [SerializeField,FieldChangeCallback(nameof(LineLength))]
     private float lineLength = 0.5f;
     public float LineLength { 
         get => lineLength; 
@@ -20,7 +20,7 @@ public class UdonPointer : UdonSharpBehaviour
             }
         } 
     }
-    [SerializeField,Range(0f,0.1f)]
+    [SerializeField,Range(0f,0.1f),FieldChangeCallback(nameof(LineWidth))]
     private float lineWidth = 0.03f;
 
     public float LineWidth
@@ -34,12 +34,8 @@ public class UdonPointer : UdonSharpBehaviour
     }
 
 
-    [SerializeField]
+    [SerializeField,FieldChangeCallback(nameof(ThetaDegrees))]
     private float thetaDegrees = 0;
-    [SerializeField]
-    private Vector2 startLocal = Vector2.zero;
-    [SerializeField]
-    private Vector2 endLocal = Vector2.right;
     public float ThetaDegrees
     {
         get => thetaDegrees; 
@@ -50,12 +46,13 @@ public class UdonPointer : UdonSharpBehaviour
         } 
     }
 
+
     [SerializeField]
     private bool isIncoming = false;
     
-    [SerializeField]
+    [SerializeField,FieldChangeCallback(nameof(LineColour))]
     public Color lineColour= Color.cyan;
-    [SerializeField,Range(0f,1f)]
+    [SerializeField,Range(0f,1f),FieldChangeCallback(nameof(Alpha))]
     private float alpha = 1;
     private Color currentColour= Color.white;
 
@@ -90,7 +87,7 @@ public class UdonPointer : UdonSharpBehaviour
 
     [SerializeField,Tooltip("Tip object transform")]
     Transform tip;
-    [SerializeField]
+    [SerializeField,FieldChangeCallback(nameof(ShowTip))]
     private bool showTip = true;
     public bool ShowTip 
     {
@@ -106,7 +103,7 @@ public class UdonPointer : UdonSharpBehaviour
     }
     [SerializeField, Tooltip("Mirror Tip object transform")]
     Transform mirrorTip;
-    [SerializeField]
+    [SerializeField,FieldChangeCallback(nameof(ShowMirrorTip))]
     private bool showMirrorTip;
     public bool ShowMirrorTip
     {
@@ -122,7 +119,7 @@ public class UdonPointer : UdonSharpBehaviour
         }
     }
 
-    [SerializeField, Range(0f, 1f),Tooltip("Slide pointer position along shaft")]
+    [SerializeField, Range(0f, 1f),Tooltip("Slide pointer position along shaft"),FieldChangeCallback(nameof(TipLocation))]
     private float tipLocation;
     public float TipLocation
     {
@@ -144,6 +141,10 @@ public class UdonPointer : UdonSharpBehaviour
     //[SerializeField]
     private bool tipIsPresent;
     private bool mirrorTipIsPresent;
+    //[SerializeField]
+    private Vector2 startLocal = Vector2.zero;
+    //[SerializeField]
+    private Vector2 endLocal = Vector2.right;
 
     private void RefreshColours()
     {
