@@ -17,9 +17,9 @@ public class VectorDiagram : UdonSharpBehaviour
     [SerializeField] private float layerGap = 0.003f;
     [SerializeField, FieldChangeCallback(nameof(DemoMode))] public int demoMode;
     [SerializeField] UdonBehaviour[] kVectors;
-    [SerializeField] UdonPointer[] kComponents;
+    [SerializeField] UdonBehaviour[] kComponents;
     [SerializeField] UdonLabel[] vecLabels;
-    [SerializeField] UdonLine[] kLines;
+    [SerializeField] UdonBehaviour[] kLines;
 
     Vector2[] kEndPoints;
     Vector2[] kStartPoints;
@@ -213,22 +213,22 @@ public class VectorDiagram : UdonSharpBehaviour
             if (kLines[i] != null)
             {
                 if (demoMode < 2 || j >= posMax)
-                    kLines[i].Alpha = 0;
+                    kLines[i].SetProgramVariable("alpha",0);
                 else
                 {
                     if (labelPoints[j].x < 0)
-                        kLines[i].Alpha = 0f;
+                        kLines[i].SetProgramVariable("alpha",0f);
                     else
                     {
-                        kLines[i].Alpha = 1f;
+                        kLines[i].SetProgramVariable("alpha",1f);
                         if (demoMode == 2)
                         {
-                            kLines[i].LineLength = displayRect.x;
+                            kLines[i].SetProgramVariable("lineLength",displayRect.x);
                             kLines[i].transform.localPosition = new Vector3(0, labelPoints[j].y, 0) + offset;
                         }
                         else
                         {
-                            kLines[i].LineLength = kEndPoints[j].x - kStartPoints[j].x;
+                            kLines[i].SetProgramVariable("lineLength",kEndPoints[j].x - kStartPoints[j].x);
                             kLines[i].transform.localPosition = (Vector3)kStartPoints[j]+ offset;
                         }
                     }
@@ -246,7 +246,7 @@ public class VectorDiagram : UdonSharpBehaviour
             for (int i = 0; i < kComponents.Length; i++)
             {
                 if (kComponents[i] != null)
-                    kComponents[i].Alpha = 0f;
+                    kComponents[i].SetProgramVariable("alpha",0f);
             }
             return;
         }
@@ -262,15 +262,15 @@ public class VectorDiagram : UdonSharpBehaviour
                 float len = kEndPoints[j + 1].y - kStartPoints[j +1].y;
                 linePos.x = kEndPoints[j + 1].x;
                 linePos.y = kEndPoints[j + 1].y-len;
-                kComponents[j].LineLength = len;
+                kComponents[j].SetProgramVariable("lineLength",len);
                 if (linePos.x >= 0)
                 {
                     kComponents[j].transform.localPosition = linePos;
-                    kComponents[j].Alpha = 1;
+                    kComponents[j].SetProgramVariable("alpha",1);
                 }
                 else
                 {
-                    kComponents[j].Alpha = 0;
+                    kComponents[j].SetProgramVariable("alpha",0);
                 }
             }
         }

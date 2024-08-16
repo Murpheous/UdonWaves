@@ -26,7 +26,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
         {
             randomizeSpeed = value;
             if (togRandomSpeed != null)
-                togRandomSpeed.isOn = randomizeSpeed;
+                togRandomSpeed.SetIsOnWithoutNotify(randomizeSpeed);
             if (isRunning && speedSlider != null)
                 speedSlider.gameObject.SetActive(!randomizeSpeed);
             RequestSerialization();
@@ -111,7 +111,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
                 gravityChanged = true;
             }
             if ((togGravity != null) && (togGravity.isOn != value))
-                togGravity.isOn = value;
+                togGravity.SetIsOnWithoutNotify(value);
             RequestSerialization();
         }
     }
@@ -278,12 +278,9 @@ public class MoleculeExperiment : UdonSharpBehaviour
         get => useQuantumScatter;
         set
         {
-            if (useQuantumScatter != value)
-            {
-                useQuantumScatter = value;
-            }
+            useQuantumScatter = value;
             if ((togQuantum != null) && (togQuantum.isOn != value))
-                togQuantum.isOn = value;
+                togQuantum.SetIsOnWithoutNotify(value);
             RequestSerialization();
         }
     }
@@ -293,13 +290,10 @@ public class MoleculeExperiment : UdonSharpBehaviour
         get => useMonochrome;
         set
         {
-            if (useMonochrome != value)
-            {
-                useMonochrome = value;
-                RequestSerialization();
-            }
+            useMonochrome = value;
             if ((togMonochrome != null) && (togMonochrome.isOn != value))
-                togMonochrome.isOn = value;
+                togMonochrome.SetIsOnWithoutNotify(value);
+            RequestSerialization();
         }
     }
 
@@ -310,7 +304,6 @@ public class MoleculeExperiment : UdonSharpBehaviour
     [SerializeField]
     ParticleSystem particleEmitter;
     Transform sourceXfrm;
-
     public float MarkerLifetime
     {
         get => markerLifetime;
@@ -389,9 +382,9 @@ public class MoleculeExperiment : UdonSharpBehaviour
         {  
             playParticles = value;
             if (togPlay != null && value && !togPlay.isOn)
-                togPlay.isOn = true;
+                togPlay.SetIsOnWithoutNotify(true);
             if (togPause != null && !value && !togPause.isOn)
-                togPause.isOn = true;
+                togPause.SetIsOnWithoutNotify(true);
             if (hasSource)
             {
                 if (value)

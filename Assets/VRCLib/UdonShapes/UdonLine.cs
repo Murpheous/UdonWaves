@@ -36,8 +36,6 @@ public class UdonLine : UdonSharpBehaviour
 
     [SerializeField, FieldChangeCallback(nameof(LineColour))]
     public Color lineColour = Color.cyan;
-    [SerializeField, Range(0f, 1f),FieldChangeCallback(nameof(Alpha))]
-    public float alpha = 1;
     private Color currentColour = Color.white;
 
     public Color LineColour
@@ -49,6 +47,9 @@ public class UdonLine : UdonSharpBehaviour
             RefreshColours();
         }
     }
+
+    [SerializeField, Range(0f, 1f),FieldChangeCallback(nameof(Alpha))]
+    public float alpha = 1;
 
     public float Alpha
     {
@@ -108,8 +109,7 @@ public class UdonLine : UdonSharpBehaviour
 
     void Start()
     {
-        if (theLine == null)
-            theLine = GetComponent<LineRenderer>();
+        theLine = GetComponent<LineRenderer>();
         UpdateLine();
         RefreshColours();
         ThetaDegrees = thetaDegrees;

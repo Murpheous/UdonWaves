@@ -46,9 +46,7 @@ public class SyncedToggle : UdonSharpBehaviour
         if (toggle != null)
         {
             if (toggle.isOn != state)
-            {
-                toggle.isOn = state;
-            }
+                toggle.SetIsOnWithoutNotify(state);
         }
     }
     public void onToggle()
