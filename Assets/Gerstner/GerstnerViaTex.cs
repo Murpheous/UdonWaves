@@ -19,8 +19,8 @@ public class GerstnerViaTex : UdonSharpBehaviour
 
     [SerializeField]
     private Vector2[] circleMap = null;
-    [SerializeField]
-    private Color[]  texMap = null;
+    //[SerializeField]
+    //private Color[]  texMap = null;
 
     bool hasWaveSimMat = false;
 
@@ -40,16 +40,16 @@ public class GerstnerViaTex : UdonSharpBehaviour
             float p = Mathf.Sin(k*x);
             circleMap[i] = new Vector2(q, p);
         }
-        float xBelow = 0;
-        float xAbove = 0;
+        //float xBelow = 0;
+        //float xAbove = 0;
 
-        int indexBelow = 0;
-        int indexAbove = 1;
+        //int indexBelow = 0;
+        //int indexAbove = 1;
 
-        for (int i = 0;i < pointsWide; i++)
-        {
+        //for (int i = 0;i < pointsWide; i++)
+        //{
             
-        }
+        //}
     }
 
     void Start()

@@ -44,7 +44,7 @@ public class DiagramUI : UdonSharpBehaviour
         get => optionSelect;
         set
         {
-            Debug.Log("Vec OptionSelect: " + value.ToString());
+            //Debug.Log("Vec OptionSelect: " + value.ToString());
             optionSelect = value;
             updateClientState();
             RequestSerialization();
@@ -105,7 +105,7 @@ public class DiagramUI : UdonSharpBehaviour
 
     public void onSel0()
     {
-        Debug.Log("onSel0");
+        //Debug.Log("onSel0");
         if (togOff == null)
             return;
         if (togOff.isOn && optionSelect != 0)
@@ -114,7 +114,7 @@ public class DiagramUI : UdonSharpBehaviour
 
     public void onSel1()
     {
-        Debug.Log("onSel1");
+       // Debug.Log("onSel1");
         if (tgInterfere == null)
             return;
         if (tgInterfere.isOn && optionSelect != 1)

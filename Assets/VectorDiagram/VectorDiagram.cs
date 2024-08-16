@@ -45,7 +45,6 @@ public class VectorDiagram : UdonSharpBehaviour
         get => demoMode; 
         set
         {
-            Debug.Log("Vec Demo Mode: "+value.ToString());
             demoMode = value;
             needsUpdate = true;
         }
@@ -61,7 +60,12 @@ public class VectorDiagram : UdonSharpBehaviour
                 for (int i = 0; i < kVectors.Length; i++)
                 {
                     if (kVectors[i] != null)
-                        kVectors[i].SetProgramVariable("alpha",0f);
+                    {
+                        kVectors[i].SetProgramVariable("alpha", 0f);
+                        //Debug.Log(string.Format("kVectors[{0}]: alpha=>{1:0.0}", i, 0f));
+                    }
+                    //else
+                        //Debug.Log(string.Format("kVectors[{0}]: null",i));
                 }
             }
             if (vecLabels != null)
@@ -148,19 +152,22 @@ public class VectorDiagram : UdonSharpBehaviour
             kEndPoints[i] = endPoint;
             kStartPoints[i] = startPoint;
             labelPoints[i] = labelPoint;
-            if (kVectors[i] != null && endPoint.x > 0)
+            if (kVectors[i] != null)
             {
-                kVectors[i].transform.localPosition = (Vector3)startPoint + layerOffset;
-                kVectors[i].SetProgramVariable<bool>("showTip",demoMode >= 2);
-                kVectors[i].SetProgramVariable("lineLength",lineLength);
-                kVectors[i].SetProgramVariable("thetaDegrees",thetaRadians * Mathf.Rad2Deg);
-                kVectors[i].SetProgramVariable("alpha", 1f);
-
+                UdonBehaviour tmp = kVectors[i];
+                if (endPoint.x > 0)
+                {
+                    tmp.transform.localPosition = (Vector3)startPoint + layerOffset;
+                    tmp.SetProgramVariable("lineLength", lineLength);
+                    tmp.SetProgramVariable("thetaDegrees", thetaRadians * Mathf.Rad2Deg);
+                    tmp.SetProgramVariable("alpha", 1f);
+                    tmp.SetProgramVariable<bool>("showTip", demoMode >= 2);
+                }
+                else
+                    tmp.SetProgramVariable("alpha", 0f);
             }
             else
-            {
-                kVectors[i].SetProgramVariable("alpha", 0f);
-            }
+                Debug.Log(string.Format("kVectors[{0}]: null", i));
         }
         if (vecLabels != null && vecLabels.Length > 0)
         {
@@ -320,8 +327,6 @@ public class VectorDiagram : UdonSharpBehaviour
         {
             lambda = value;
             needsUpdate = true;
-
-           // Debug.Log("Vect Lamby: " + value);
         }
     }
 
