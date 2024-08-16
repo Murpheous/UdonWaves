@@ -154,7 +154,7 @@ public class VectorDiagram : UdonSharpBehaviour
                 kVectors[i].SetProgramVariable<bool>("showTip",demoMode >= 2);
                 kVectors[i].SetProgramVariable("lineLength",lineLength);
                 kVectors[i].SetProgramVariable("thetaDegrees",thetaRadians * Mathf.Rad2Deg);
-                kVectors[i].SetProgramVariable("alpha", 1.0f);
+                kVectors[i].SetProgramVariable("alpha", 1f);
 
             }
             else
@@ -213,7 +213,7 @@ public class VectorDiagram : UdonSharpBehaviour
             if (kLines[i] != null)
             {
                 if (demoMode < 2 || j >= posMax)
-                    kLines[i].SetProgramVariable("alpha",0);
+                    kLines[i].SetProgramVariable("alpha",0f);
                 else
                 {
                     if (labelPoints[j].x < 0)
@@ -266,11 +266,11 @@ public class VectorDiagram : UdonSharpBehaviour
                 if (linePos.x >= 0)
                 {
                     kComponents[j].transform.localPosition = linePos;
-                    kComponents[j].SetProgramVariable("alpha",1);
+                    kComponents[j].SetProgramVariable("alpha",1f);
                 }
                 else
                 {
-                    kComponents[j].SetProgramVariable("alpha",0);
+                    kComponents[j].SetProgramVariable("alpha",0f);
                 }
             }
         }
