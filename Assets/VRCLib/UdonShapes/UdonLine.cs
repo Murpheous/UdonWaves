@@ -29,6 +29,8 @@ public class UdonLine : UdonSharpBehaviour
         get => lineWidth;
         set
         {
+            if (lineWidth == value) 
+                return;
             lineWidth = value;
             UpdateLine();
         }
@@ -43,6 +45,8 @@ public class UdonLine : UdonSharpBehaviour
         get => lineColour;
         set
         {
+            if (lineColour == value) 
+                return;
             lineColour = value;
             RefreshColours();
         }
@@ -56,6 +60,8 @@ public class UdonLine : UdonSharpBehaviour
         get => alpha;
         set
         {
+            if (alpha == value)
+                return;
             alpha = value;
             RefreshColours();
         }
@@ -71,6 +77,8 @@ public class UdonLine : UdonSharpBehaviour
         get => thetaDegrees;
         set
         {
+            if (thetaDegrees == value)
+                return;
             thetaDegrees = value;
             transform.localRotation = Quaternion.Euler(0, 0, thetaDegrees);
         }
