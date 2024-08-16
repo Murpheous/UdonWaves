@@ -7,13 +7,14 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: M_HuygensCRT
-  m_Shader: {fileID: 4800000, guid: 583981127ea36064e809dbfaf0d9c843, type: 3}
+  m_Name: CW2 Opaque
+  m_Shader: {fileID: 4800000, guid: 24d8e1d99d50a0b4789de8d29247161a, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
-  m_InvalidKeywords: []
-  m_LightmapFlags: 4
+  m_InvalidKeywords:
+  - _STATICHIGHLIGHTS_ON
+  m_LightmapFlags: 0
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
@@ -43,8 +44,12 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _Foam:
+        m_Texture: {fileID: 2800000, guid: f6168229305547d4088b11c9ca33c8a5, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 055777424246e8242adc291d59254c8e, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -59,60 +64,62 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _Wave:
+        m_Texture: {fileID: 2800000, guid: 8884489275fda5f4b9059c9194c0d4b0, type: 3}
+        m_Scale: {x: 0.1, y: 0.1}
+        m_Offset: {x: 0, y: 0}
+    - _Wave2:
+        m_Texture: {fileID: 2800000, guid: 3fb04a6d4d613b249875c7242fbfd2dc, type: 3}
+        m_Scale: {x: 0.1, y: 0.1}
+        m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _AperturePitch: 448
-    - _BottomPx: 1964
-    - _BottonPx: 1964
     - _BumpScale: 1
+    - _CullMode: 2
     - _Cutoff: 0.5
+    - _DepthDensity: 0.037
+    - _DepthDensityVertical: 0.15
+    - _DepthFar: 100
+    - _DepthMultiply: 1
+    - _DepthNear: -80
     - _DetailNormalMapScale: 1
-    - _DisplayMode: 2
     - _DstBlend: 0
-    - _Frequency: 1
+    - _FoamDensity: 1
+    - _FoamDistortion: 0.5
+    - _FoamMax: 0.17399997
+    - _FoamMin: 1.076
+    - _FoamScrollSpeed: 1
     - _GlossMapScale: 1
-    - _Glossiness: 0.5
+    - _Glossiness: 1
     - _GlossyReflections: 1
-    - _Lambda: 49.6667
-    - _LambdaPixels: 52.130512
-    - _LambdaPx: 39.73336
-    - _LeftPx: 50
-    - _LowerEdge: 0
-    - _Metallic: 0
+    - _IgnoreDepthBuffer: 0
+    - _IgnoreUVs: 1
+    - _IgnoreVertexColour: 0
+    - _Metallic: 0.143
     - _Mode: 0
-    - _NumApertures: 2
-    - _NumSlits: 2
-    - _NumSources: 5
     - _OcclusionStrength: 1
-    - _OutputRaw: 1
     - _Parallax: 0.02
-    - _Phase: 0.27649894
-    - _RightPx: 1996
-    - _Scale: 1
-    - _SimBottonPx: 945
-    - _SimLeftPx: 48
-    - _SimRightPx: 1996
-    - _SimTopPx: 52
-    - _SlitCount: 2
-    - _SlitPitch: 451.2
-    - _SlitPitchPx: 357.6
-    - _SlitWidePx: 8
-    - _SlitWidth: 32
     - _SmoothnessTextureChannel: 0
-    - _SourceOffset: 60
-    - _SourcePhase: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
-    - _TopEdge: 53
-    - _TopPx: 53
     - _UVSec: 0
-    - _UpperEdge: 1280
-    - _WaveNumPx: 0.12622471
+    - _WaterFogDensity: 0.15
+    - _Wave2ScrollSpeed: 0.19
+    - _Wave2ScrollX: 0.198
+    - _Wave2ScrollY: 0.059
+    - _Wave2Strength: 0.1
+    - _WaveReflectionDistortion: 0.25
+    - _WaveScrollSpeed: 0.69
+    - _WaveScrollX: 0.015
+    - _WaveScrollY: 0.025
+    - _WaveStrength: 0.093
     - _ZWrite: 1
+    - _foamMax: 0
+    - _foamMin: 1
     m_Colors:
-    - _Color: {r: 0, g: 1, b: 0.6503699, a: 1}
-    - _ColorFlow: {r: 0, g: 0.26948547, b: 1, a: 1}
-    - _ColorNeg: {r: 0.2466228, g: 0.20000002, b: 0.4627451, a: 1}
-    - _ColorVel: {r: 1, g: 0.45490196, b: 0, a: 1}
+    - _Color: {r: 1, g: 1, b: 1, a: 0}
+    - _DepthColour: {r: 0.22707576, g: 0.39568633, b: 0.5147058, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _FoamColour: {r: 1, g: 1, b: 1, a: 1}
+    - _Tint: {r: 0, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
