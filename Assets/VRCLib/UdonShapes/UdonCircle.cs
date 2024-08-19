@@ -6,10 +6,11 @@ using VRC.SDKBase;
 using VRC.Udon;
 
 [RequireComponent(typeof(LineRenderer))]
+[UdonBehaviourSyncMode(BehaviourSyncMode.None)]
 public class UdonCircle : UdonSharpBehaviour
 {
     public float ThetaScale = 0.02f;
-    [SerializeField]
+    [SerializeField,FieldChangeCallback(nameof(Radius))]
     private float radius = 0.5f;
     public float Radius
     {
