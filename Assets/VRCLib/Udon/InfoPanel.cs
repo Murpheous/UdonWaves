@@ -12,6 +12,8 @@ public class InfoPanel : UdonSharpBehaviour
 {
     [SerializeField] private ToggleGroup toggleGroup;
     [SerializeField] private Button closeButton;
+    [SerializeField, FieldChangeCallback(nameof(LanguageIndex))]
+    int languageIndex = 0;
     [SerializeField] private bool growShrink = true;
     [SerializeField] Vector2 panelSize = Vector2.one;
     [SerializeField] Vector2 shrinkSize = Vector2.one;
@@ -21,6 +23,7 @@ public class InfoPanel : UdonSharpBehaviour
     [SerializeField] TextMeshProUGUI contentText;
     [SerializeField] Toggle[] toggles = null;
     [SerializeField] InfoPage[] pages = null;
+
     int toggleCount = 0;
 
     bool hasTextField = false;
@@ -34,7 +37,36 @@ public class InfoPanel : UdonSharpBehaviour
     [SerializeField,UdonSynced,FieldChangeCallback(nameof(ActiveInfoPage))] 
     private int activeInfoPage = -1;
 
-    [SerializeField,TextArea] string defaultText = string.Empty;
+    [SerializeField] string[] defaultTexts;
+    
+    public int LanguageIndex
+    {
+        get => languageIndex;
+        set
+        {
+            languageIndex = value;
+            foreach (var page in pages)
+            {
+                if (page != null)
+                    page.LangaugeIndex = languageIndex;
+            }
+            ActiveInfoPage = activeInfoPage;
+        }
+    }
+
+    private string defaultText
+    {
+        get
+        {
+            if (defaultTexts == null)
+                return "";
+            if (defaultTexts[languageIndex] == null || languageIndex >= defaultTexts.Length)
+                return defaultTexts[0];
+            return defaultTexts[languageIndex];
+        }
+    }
+
+
     public int ActiveInfoPage
     {
         get => activeInfoPage;
@@ -61,6 +93,7 @@ public class InfoPanel : UdonSharpBehaviour
             {
                 if (hasClose)
                     closeButton.gameObject.SetActive(activeInfoPage >= 0);
+
                 if (growShrink)
                 {
                     Vector2 newSize = activeInfoPage >= 0 ? panelSize : shrinkSize;
@@ -102,6 +135,34 @@ public class InfoPanel : UdonSharpBehaviour
         }
         //Debug.Log("Toggle Changed: " + toggleIdx.ToString());
         SelectedToggle = toggleIdx;
+    }
+
+    
+    public void lang_0()
+    {
+        LanguageIndex = 0;
+        //Debug.Log("Lang 0");
+    }
+    public void lang_1()
+    {
+        LanguageIndex = 1;
+        //Debug.Log("Lang 1");
+    }
+    public void lang_2()
+    {
+        LanguageIndex = 2;
+    }
+    public void lang_3()
+    {
+        LanguageIndex = 3;
+    }
+    public void lang_4()
+    {
+        LanguageIndex = 4;
+    }
+    public void lang_5()
+    {
+        LanguageIndex = 5;
     }
 
     [SerializeField,UdonSynced,FieldChangeCallback(nameof(SelectedToggle))]

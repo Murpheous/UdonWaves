@@ -141,7 +141,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
             {
                 gravityScale = value;
                 gravityChanged = true;
-                Debug.Log("Grav Scale=" + gravityScale.ToString());
+                //Debug.Log("MoleculeExperiment.cs: Grav Scale=" + gravityScale.ToString());
             }
         }
     }

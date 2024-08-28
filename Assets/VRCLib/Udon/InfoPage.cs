@@ -20,7 +20,9 @@ public class InfoPage : UdonSharpBehaviour
     {
         get 
         {
-            if (languageIndex > pageTitles.Length || pageTitles[languageIndex] == null)
+            if (pageTitles == null)
+                return "";
+            if (languageIndex >= pageTitles.Length || string.IsNullOrEmpty(pageTitles[languageIndex]))
                 return pageTitles[0];
             return pageTitles[languageIndex];
         }
@@ -29,7 +31,9 @@ public class InfoPage : UdonSharpBehaviour
     {
         get
         {
-            if (languageIndex > pageBodies.Length || pageBodies[languageIndex] == null)
+            if (pageBodies == null)
+                return "";
+            if (languageIndex >= pageBodies.Length || string.IsNullOrEmpty(pageBodies[languageIndex]))
                 return pageBodies[0];
             return pageBodies[languageIndex];
         }
