@@ -12,8 +12,8 @@ public class InfoPanel : UdonSharpBehaviour
 {
     [SerializeField] private ToggleGroup toggleGroup;
     [SerializeField] private Button closeButton;
-    [SerializeField, FieldChangeCallback(nameof(LanguageIndex))]
-    int languageIndex = 0;
+    [SerializeField, FieldChangeCallback(nameof(LanguageIndex))] int languageIndex = 0;
+    [SerializeField] private GameObject languagePanel;
     [SerializeField] private bool growShrink = true;
     [SerializeField] Vector2 panelSize = Vector2.one;
     [SerializeField] Vector2 shrinkSize = Vector2.one;
@@ -58,7 +58,7 @@ public class InfoPanel : UdonSharpBehaviour
     {
         get
         {
-            if (defaultTexts == null)
+            if (defaultTexts == null || defaultTexts.Length <= 0)
                 return "";
             if (defaultTexts[languageIndex] == null || languageIndex >= defaultTexts.Length)
                 return defaultTexts[0];
@@ -93,7 +93,8 @@ public class InfoPanel : UdonSharpBehaviour
             {
                 if (hasClose)
                     closeButton.gameObject.SetActive(activeInfoPage >= 0);
-
+                if (languagePanel != null)
+                    languagePanel.SetActive(activeInfoPage >= 0);
                 if (growShrink)
                 {
                     Vector2 newSize = activeInfoPage >= 0 ? panelSize : shrinkSize;
