@@ -517,7 +517,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: -0.295, y: 0.428}
+  m_AnchoredPosition: {x: -0.295, y: 0.201}
   m_SizeDelta: {x: 110, y: 220}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &3289139877992556207
@@ -1194,7 +1194,6 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 2890608389210959650}
   - {fileID: 2713520900062493483}
   - {fileID: 9179013110110107035}
   - {fileID: 3287455082415625557}
@@ -2506,8 +2505,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0.54}
-  m_SizeDelta: {x: 480, y: 450}
+  m_AnchoredPosition: {x: -0.05, y: 0.54}
+  m_SizeDelta: {x: 580, y: 450}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &1443759537494921117
 Canvas:
@@ -2611,9 +2610,9 @@ MonoBehaviour:
   closeButton: {fileID: 0}
   languageIndex: 0
   languagePanel: {fileID: 211179067172088312}
-  growShrink: 0
-  panelSize: {x: 1, y: 1}
-  shrinkSize: {x: 1, y: 1}
+  growShrink: 1
+  panelSize: {x: 580, y: 450}
+  shrinkSize: {x: 580, y: 76}
   showHideContentPanel: 1
   contentPanelRect: {fileID: 7013033673740437331}
   contentText: {fileID: 6821593148504734539}
@@ -2622,7 +2621,10 @@ MonoBehaviour:
   pages:
   - {fileID: 4220627865209410048}
   activeInfoPage: -1
-  defaultTexts: []
+  defaultTexts:
+  - A Phase, Amplitude & Energy Map
+  - "\u4F4D\u76F8\u3001\u632F\u5E45\u3001\u30A8\u30CD\u30EB\u30AE\u30FC\u30DE\u30C3\u30D7"
+  - "\u76F8\u4F4D\u3001\u632F\u5E45\u548C\u80FD\u91CF\u5716"
   selectedToggle: -1
 --- !u!114 &6967118494463113989
 MonoBehaviour:
@@ -3683,6 +3685,7 @@ GameObject:
   - component: {fileID: 7013033673740437331}
   - component: {fileID: 5192383594661919660}
   - component: {fileID: 769004980240605101}
+  - component: {fileID: 6812062555761414407}
   m_Layer: 17
   m_Name: InfoPanel
   m_TagString: Untagged
@@ -3703,12 +3706,13 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2009106860101501356}
+  - {fileID: 2890608389210959650}
   m_Father: {fileID: 2639084358137423837}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 580, y: 450}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5192383594661919660
 CanvasRenderer:
@@ -3748,6 +3752,19 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 2
+--- !u!114 &6812062555761414407
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6554274283294892569}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1533785930, guid: 661092b4961be7145bfbe56e1e62337b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  AllowFocusView: 1
 --- !u!1 &7635803903915933997
 GameObject:
   m_ObjectHideFlags: 0
@@ -3858,8 +3875,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -32, y: -32}
+  m_AnchoredPosition: {x: -10, y: 0}
+  m_SizeDelta: {x: -60, y: -32}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &9123832060754989627
 CanvasRenderer:
@@ -3889,7 +3906,16 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 
+  m_text: 'This simulation uses a computer-generated field of complex numbers (real-imaginary
+    number pairs) to make the amplitude and energy flow patterns that underlie wave
+    propagation visible.
+
+
+
+    The complex number technique allows for real-time
+    recalculation of the wave pattern using parallel processing on the GPU.
+
+'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ddbcc27b0346e4644a45316aaf00c441, type: 2}
   m_sharedMaterial: {fileID: 4410821715232426517, guid: ddbcc27b0346e4644a45316aaf00c441,
@@ -3899,7 +3925,7 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
+    rgba: 4294959104
   m_fontColor: {r: 0, g: 0.8784314, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -3917,8 +3943,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 22
-  m_fontSizeBase: 22
+  m_fontSize: 26
+  m_fontSizeBase: 26
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -5122,7 +5148,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 1101165257558698946}
+    m_TransformParent: {fileID: 7013033673740437331}
     m_Modifications:
     - target: {fileID: 5122222944705522520, guid: 55364beb7ba2a8947a1432fca720b16d,
         type: 3}
@@ -5142,38 +5168,24 @@ PrefabInstance:
     - target: {fileID: 7618224890888347476, guid: 55364beb7ba2a8947a1432fca720b16d,
         type: 3}
       propertyPath: pageBodies.Array.data[0]
-      value: 'This panel demonstrates wave interference simulation.
-
-
-
-        Change
-        the number of sources, source separation and scale the simulation.
-
-
-
-        Switch
-        display mode to display:
-
-        Amplitude due to surface tension, surface
-        velocity, or a combination.
-
-        Wave energy from potential, kinetic,
-        or total energy.'
+      value: "This simulation uses a computer-generated field of complex numbers
+        (real-imaginary number pairs) to make the amplitude and energy flow patterns
+        that underlie wave propagation visible.\r\n\r\nThe complex number technique
+        allows for real-time recalculation of the wave pattern using parallel processing
+        on the GPU.\r"
       objectReference: {fileID: 0}
     - target: {fileID: 7618224890888347476, guid: 55364beb7ba2a8947a1432fca720b16d,
         type: 3}
       propertyPath: pageBodies.Array.data[1]
-      value: "\u3053\u306E\u30D1\u30CD\u30EB\u306F\u3001\u6CE2\u306E\u5E72\u6E09\u30B7\u30DF\u30E5\u30EC\u30FC\u30B7\u30E7\u30F3\u3092\u793A\u3057\u307E\u3059\u3002\r\n\r\n\u30BD\u30FC\u30B9\u306E\u6570\u3001\u30BD\u30FC\u30B9\u306E\u5206\u96E2\u3092\u5909\u66F4\u3057\u3001\u30B7\u30DF\u30E5\u30EC\u30FC\u30B7\u30E7\u30F3
-        \u30B9\u30B1\u30FC\u30EB\u3092\u62E1\u5927\u3057\u307E\u3059\u3002\r\n\r\n\u8868\u793A\u30E2\u30FC\u30C9\u3092\u5207\u308A\u66FF\u3048\u3066\u3001\u6B21\u3092\u8868\u793A\u3057\u307E\u3059:\r\n\u2022
-        \u8868\u9762\u5F35\u529B\u3001\u8868\u9762\u901F\u5EA6\u3001\u307E\u305F\u306F\u7D44\u307F\u5408\u308F\u305B\u3068\u3057\u3066\u306E\u6CE2\u306E\u632F\u5E45\u3002\r\n\r\u2022
-        \u4F4D\u7F6E\u30A8\u30CD\u30EB\u30AE\u30FC\u3001\u904B\u52D5\u30A8\u30CD\u30EB\u30AE\u30FC\u3001\u307E\u305F\u306F\u7D44\u307F\u5408\u308F\u305B\u30A8\u30CD\u30EB\u30AE\u30FC\u3068\u3057\u3066\u306E\u6CE2\u306E\u30A8\u30CD\u30EB\u30AE\u30FC\u3002"
+      value: "\u3053\u306E\u30B7\u30DF\u30E5\u30EC\u30FC\u30B7\u30E7\u30F3\u3067\u306F\u3001\u30B3\u30F3\u30D4\u30E5\u30FC\u30BF\u30FC\u3067\u751F\u6210\u3055\u308C\u305F\u8907\u7D20\u6570\u306E\u30D5\u30A3\u30FC\u30EB\u30C9\u3092\u4F7F\u7528\u3057\u3066\u3001\u6CE2\u306E\u4F1D\u64AD\u306E\u80CC\u5F8C\u306B\u3042\u308B\u632F\u5E45\u3068\u30A8\u30CD\u30EB\u30AE\u30FC
+        \u30D5\u30ED\u30FC\u306E\u30D1\u30BF\u30FC\u30F3\u3092\u53EF\u8996\u5316\u3057\u307E\u3059\u3002\n\n\u8907\u7D20\u6570\u306E\u624B\u6CD5\u306B\u3088\u308A\u3001GPU
+        \u3067\u306E\u4E26\u5217\u51E6\u7406\u3092\u4F7F\u7528\u3057\u3066\u3001\u6CE2\u306E\u30D1\u30BF\u30FC\u30F3\u3092\u30EA\u30A2\u30EB\u30BF\u30A4\u30E0\u3067\u518D\u8A08\u7B97\u3067\u304D\u307E\u3059\u3002"
       objectReference: {fileID: 0}
     - target: {fileID: 7618224890888347476, guid: 55364beb7ba2a8947a1432fca720b16d,
         type: 3}
       propertyPath: pageBodies.Array.data[2]
-      value: "\u6B64\u9762\u677F\u6F14\u793A\u4E86\u6CE2\u5E72\u6D89\u6A21\u64EC\u3002\n\n\u6539\u8B8A\u6E90\u7684\u6578\u91CF\u3001\u6E90\u5206\u96E2\u4E26\u7E2E\u653E\u6A21\u64EC\u6BD4\u4F8B\u3002\n\n\u5207\u63DB\u986F\u793A\u6A21\u5F0F\u986F\u793A\uFF1A\n\u2022
-        \u6CE2\u5E45\u4F5C\u70BA\u8868\u9762\u5F35\u529B\u3001\u8868\u9762\u901F\u5EA6\u6216\u7D44\u5408\u3002\n\u2022
-        \u6CE2\u6D6A\u80FD\u4F5C\u70BA\u4F4D\u80FD\u3001\u52D5\u80FD\u6216\u7D44\u5408\u80FD\u3002"
+      value: "\u6B64\u6A21\u64EC\u4F7F\u7528\u96FB\u8166\u751F\u6210\u7684\u8907\u6578\u5834\uFF08\u5BE6\u6578\u548C\u865B\u6578\u5C0D\uFF09\u4F86\u4F7F\u6CE2\u50B3\u64AD\u80CC\u5F8C\u7684\u632F\u5E45\u548C\u80FD\u91CF\u6D41\u6A21\u5F0F\u8B8A\u5F97\u53EF\u898B\u3002\n\n\u8907\u6578\u6280\u8853\u5141\u8A31\u4F7F\u7528
+        GPU \u4E0A\u7684\u5E73\u884C\u8655\u7406\u5373\u6642\u91CD\u65B0\u8A08\u7B97\u6CE2\u5F62\u3002"
       objectReference: {fileID: 0}
     - target: {fileID: 7618224890888347476, guid: 55364beb7ba2a8947a1432fca720b16d,
         type: 3}
@@ -5214,7 +5226,7 @@ PrefabInstance:
     - target: {fileID: 8878407416592638581, guid: 55364beb7ba2a8947a1432fca720b16d,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8878407416592638582, guid: 55364beb7ba2a8947a1432fca720b16d,
         type: 3}
@@ -5234,7 +5246,7 @@ PrefabInstance:
     - target: {fileID: 8878407416592638582, guid: 55364beb7ba2a8947a1432fca720b16d,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8878407416592638582, guid: 55364beb7ba2a8947a1432fca720b16d,
         type: 3}
@@ -5244,17 +5256,17 @@ PrefabInstance:
     - target: {fileID: 8878407416592638582, guid: 55364beb7ba2a8947a1432fca720b16d,
         type: 3}
       propertyPath: m_AnchorMin.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8878407416592638582, guid: 55364beb7ba2a8947a1432fca720b16d,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 50
+      value: 64
       objectReference: {fileID: 0}
     - target: {fileID: 8878407416592638582, guid: 55364beb7ba2a8947a1432fca720b16d,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 50
+      value: 64
       objectReference: {fileID: 0}
     - target: {fileID: 8878407416592638582, guid: 55364beb7ba2a8947a1432fca720b16d,
         type: 3}
@@ -5269,7 +5281,7 @@ PrefabInstance:
     - target: {fileID: 8878407416592638582, guid: 55364beb7ba2a8947a1432fca720b16d,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -1
+      value: -0.1
       objectReference: {fileID: 0}
     - target: {fileID: 8878407416592638582, guid: 55364beb7ba2a8947a1432fca720b16d,
         type: 3}
@@ -5279,17 +5291,17 @@ PrefabInstance:
     - target: {fileID: 8878407416592638582, guid: 55364beb7ba2a8947a1432fca720b16d,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 8878407416592638582, guid: 55364beb7ba2a8947a1432fca720b16d,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 8878407416592638582, guid: 55364beb7ba2a8947a1432fca720b16d,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 8878407416592638582, guid: 55364beb7ba2a8947a1432fca720b16d,
         type: 3}
@@ -5299,7 +5311,7 @@ PrefabInstance:
     - target: {fileID: 8878407416592638582, guid: 55364beb7ba2a8947a1432fca720b16d,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -36
+      value: 36
       objectReference: {fileID: 0}
     - target: {fileID: 8878407416592638582, guid: 55364beb7ba2a8947a1432fca720b16d,
         type: 3}
