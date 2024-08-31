@@ -104,7 +104,5 @@ public static class Units
 		}
 		return sRet;
 	}
-	
     // Start is called before the first frame update
-
 }

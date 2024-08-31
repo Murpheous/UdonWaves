@@ -57,7 +57,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 2100000, guid: 35630e38b4e5ffb40b44ec5348b4333f, type: 2}
   m_Color: {r: 1, g: 0.7817019, b: 0, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
@@ -133,7 +133,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 2100000, guid: 35630e38b4e5ffb40b44ec5348b4333f, type: 2}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
@@ -273,19 +273,19 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 5122222944705522520}
   pageTitles:
-  - Barrier Interactions
+  - Amplitude and Energy Flux
+  - "\u632F\u5E45\u3068\u30A8\u30CD\u30EB\u30AE\u30FC\u675F"
+  - "\u632F\u5E45\u548C\u80FD\u91CF\u901A\u91CF"
   pageBodies:
-  - "<b>Wave simulation:</b> \r\n<indent=4%>A numerical wave model is employed for
-    the simulation, with the tank's barrier layout included in the wave boundary.
-    A Mur absorbing boundary damps the wall/obstacle reflections.</indent>\r\n<b>Particle
-    simulation:</b>\r\n<indent=4%>Through applying quantum theory to the wave barrier
-    structure, Duane (1923-26) and Van Vliet (2010) show that there is a static distribution
-    for the momentum impulses that the barrier can exchange with any particle passing
-    through the apertures. This aperture momentum expectation function is the square
-    of the Fourier transform of the aperture pattern multiplied by Planck\u2019s
-    constant. \r\n\r\nNote: The particle simulation is scaled such that Planck's
-    constant equals 1. As a result, particle momentum is equivalent to the tank simulation\u2019s
-    wave vector K = 1/wavelength.\r"
+  - "<b>Select:</b>\r\n<indent=4%><b>Amplitudes:</b> Show the height (real component,)
+    velocity (imaginary component,) and magnitude of the complex wave amplitude.\r\n\r\n<b>Energy
+    Flux:</b> Show the potential (real)\xB2, kinetic (imaginary)\xB2, and total energy
+    transport/momentum."
+  - "<b>\u9078\u629E:</b>\r\n<indent=4%><b>\u632F\u5E45:</b> \u8907\u7D20\u6570\u6CE2\u306E\u632F\u5E45\u306E\u9AD8\u3055
+    (\u5B9F\u6570\u6210\u5206)\u3001\u901F\u5EA6 (\u865A\u6570\u6210\u5206)\u3001\u304A\u3088\u3073\u5927\u304D\u3055\u3092\u8868\u793A\u3057\u307E\u3059\u3002\r\n\r\n<b>\u30A8\u30CD\u30EB\u30AE\u30FC
+    \u30D5\u30E9\u30C3\u30AF\u30B9:</b> \u4F4D\u7F6E (\u5B9F\u6570)\xB2\u3001\u904B\u52D5
+    (\u865A\u6570)\xB2\u3001\u304A\u3088\u3073\u7DCF\u30A8\u30CD\u30EB\u30AE\u30FC\u8F38\u9001/\u904B\u52D5\u91CF\u3092\u8868\u793A\u3057\u307E\u3059\u3002"
+  - "<b>\u9078\u64C7\uFF1A</b>\r\n<indent=4%><b>\u632F\u5E45\uFF1A</b>\u986F\u793A\u8907\u6578\u6CE2\u632F\u5E45\u7684\u9AD8\u5EA6\uFF08\u5BE6\u90E8\u3001\uFF09\u901F\u5EA6\uFF08\u865B\u90E8\uFF09\u548C\u5E45\u5EA6\u3002\r\n\r\n<b>\u80FD\u91CF\u901A\u91CF\uFF1A</b>\u986F\u793A\u4F4D\u52E2\uFF08\u5BE6\uFF09\xB2\u3001\u52D5\u80FD\uFF08\u865B\uFF09\xB2\u548C\u7E3D\u80FD\u91CF\u50B3\u8F38/\u52D5\u91CF\u3002"
   languageIndex: 0
 --- !u!114 &5122222944705522520
 MonoBehaviour:
