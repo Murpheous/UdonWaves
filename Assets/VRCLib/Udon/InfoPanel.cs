@@ -23,7 +23,7 @@ public class InfoPanel : UdonSharpBehaviour
     [SerializeField] TextMeshProUGUI contentText;
     [SerializeField] Toggle[] toggles = null;
     [SerializeField] InfoPage[] pages = null;
-    [SerializeField] UdonBehaviour localizationClient;
+    [SerializeField] UdonBehaviour[] localizationClients;
 
     int toggleCount = 0;
 
@@ -51,8 +51,14 @@ public class InfoPanel : UdonSharpBehaviour
                 if (page != null)
                     page.LangaugeIndex = languageIndex;
             }
-            if (localizationClient != null)
-                localizationClient.SetProgramVariable<int>("languageIndex", languageIndex);
+            if (localizationClients != null && localizationClients.Length > 0)
+            {
+                foreach (UdonBehaviour item in localizationClients)
+                {
+                    if (item != null)
+                        item.SetProgramVariable<int>("languageIndex", languageIndex);
+                }
+            }
             ActiveInfoPage = activeInfoPage;
         }
     }
