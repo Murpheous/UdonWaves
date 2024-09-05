@@ -69,7 +69,7 @@ public class InfoPanel : UdonSharpBehaviour
         {
             if (defaultTexts == null || defaultTexts.Length <= 0)
                 return "";
-            if (defaultTexts[languageIndex] == null || languageIndex >= defaultTexts.Length)
+            if (languageIndex >= defaultTexts.Length || defaultTexts[languageIndex] == null)
                 return defaultTexts[0];
             return defaultTexts[languageIndex];
         }
@@ -164,6 +164,7 @@ public class InfoPanel : UdonSharpBehaviour
     }
     public void lang_3()
     {
+        Debug.Log("Lang 3");
         LanguageIndex = 3;
     }
     public void lang_4()
