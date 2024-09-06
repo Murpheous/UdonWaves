@@ -6301,13 +6301,7 @@ MonoBehaviour:
   DynamicPrefabs: []
   DynamicMaterials:
   - {fileID: 2100000, guid: b16143e14e91ac843907a6fb194e290a, type: 2}
-  - {fileID: 2100000, guid: deae52e6d7dc6c14d9233257bb955ef0, type: 2}
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
-  - {fileID: 2100000, guid: dc61217d81f8b464f8b8713347b002bc, type: 2}
-  - {fileID: 2100000, guid: a8369b958175ff74eafc4ab4ddd09a6b, type: 2}
-  - {fileID: 2100000, guid: 0174816599450f24d9e87af9d8bb7450, type: 2}
   - {fileID: 2100000, guid: bc74ae9993a578e409de99a18942893c, type: 2}
-  - {fileID: 2100000, guid: 46c216281727a9341a2fdd5208729d03, type: 2}
   - {fileID: 2100000, guid: e86e7281176dae945bd655f34805ed55, type: 2}
   - {fileID: 2100000, guid: 3f13a5d1eb038764b804d1aabffed55f, type: 2}
   - {fileID: 2100000, guid: 419ae9fed5372564c995339c60fd7ebf, type: 2}
@@ -6328,6 +6322,12 @@ MonoBehaviour:
   - {fileID: 2100000, guid: b3889ddf2a4bd9346a4843eb47e0acb1, type: 2}
   - {fileID: 2100000, guid: b24ed807dd7dc224baf5390f46738647, type: 2}
   - {fileID: 2100000, guid: 51d72acecdb1ba249957953415f8e29b, type: 2}
+  - {fileID: 2100000, guid: deae52e6d7dc6c14d9233257bb955ef0, type: 2}
+  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: dc61217d81f8b464f8b8713347b002bc, type: 2}
+  - {fileID: 2100000, guid: 46c216281727a9341a2fdd5208729d03, type: 2}
+  - {fileID: 2100000, guid: a8369b958175ff74eafc4ab4ddd09a6b, type: 2}
+  - {fileID: 2100000, guid: 0174816599450f24d9e87af9d8bb7450, type: 2}
   - {fileID: 2100000, guid: 62aac346aaa6c8f40b75001d35ca7682, type: 2}
   - {fileID: 2100000, guid: 4fa0e7fe273f6ff4a8e1eb320ed0d357, type: 2}
   - {fileID: 2100000, guid: f6e58d038ebe41d42b59ca4bbb3f5fe5, type: 2}
@@ -19286,6 +19286,26 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2641283021115033946, guid: be8cbc708b9ecf74ebda4c903d3d578e,
         type: 3}
+      propertyPath: pageBodies.Array.data[1]
+      value: "<b>\u9078\u629E:</b>\r\n<indent=4%><b>\u632F\u5E45:</b> \u8907\u7D20\u6CE2\u632F\u5E45\u306E\u9AD8\u3055
+        (\u5B9F\u6570\u90E8)\u3001\u901F\u5EA6 (\u865A\u6570\u90E8)\u3001\u304A\u3088\u3073\u5927\u304D\u3055\u3092\u8868\u793A\u3057\u307E\u3059\u3002\r\n\r\n<b>\u30A8\u30CD\u30EB\u30AE\u30FC
+        \u30D5\u30E9\u30C3\u30AF\u30B9:</b> \u4F4D\u7F6E\u30A8\u30CD\u30EB\u30AE\u30FC
+        (\u5B9F\u90E8\u306E\u4E8C\u4E57)\u3001\u904B\u52D5\u30A8\u30CD\u30EB\u30AE\u30FC
+        (\u865A\u90E8\u306E\u4E8C\u4E57)\u3001\u304A\u3088\u3073\u7DCF\u30A8\u30CD\u30EB\u30AE\u30FC
+        (\u7D76\u5BFE\u5024\u306E\u4E8C\u4E57) \u3002"
+      objectReference: {fileID: 0}
+    - target: {fileID: 2641283021115033946, guid: be8cbc708b9ecf74ebda4c903d3d578e,
+        type: 3}
+      propertyPath: pageBodies.Array.data[2]
+      value: "<b>\u9078\u629E:</b>\r\n<indent=4%><b>\u632F\u5E45:</b> \u8907\u7D20\u6CE2\u632F\u5E45\u306E\u9AD8\u3055
+        (\u5B9F\u6570\u90E8)\u3001\u901F\u5EA6 (\u865A\u6570\u90E8)\u3001\u304A\u3088\u3073\u5927\u304D\u3055\u3092\u8868\u793A\u3057\u307E\u3059\u3002\r\n\r\n<b>\u30A8\u30CD\u30EB\u30AE\u30FC
+        \u30D5\u30E9\u30C3\u30AF\u30B9:</b> \u4F4D\u7F6E\u30A8\u30CD\u30EB\u30AE\u30FC
+        (\u5B9F\u90E8\u306E\u4E8C\u4E57)\u3001\u904B\u52D5\u30A8\u30CD\u30EB\u30AE\u30FC
+        (\u865A\u90E8\u306E\u4E8C\u4E57)\u3001\u304A\u3088\u3073\u7DCF\u30A8\u30CD\u30EB\u30AE\u30FC
+        (\u7D76\u5BFE\u5024\u306E\u4E8C\u4E57) \u3002"
+      objectReference: {fileID: 0}
+    - target: {fileID: 2641283021115033946, guid: be8cbc708b9ecf74ebda4c903d3d578e,
+        type: 3}
       propertyPath: pageTitles.Array.data[3]
       value: "\u632F\u5E45\u548C\u80FD\u91CF\u901A\u91CF"
       objectReference: {fileID: 0}
@@ -19358,7 +19378,7 @@ PrefabInstance:
     - target: {fileID: 3089334170114326673, guid: be8cbc708b9ecf74ebda4c903d3d578e,
         type: 3}
       propertyPath: m_Name
-      value: WaveSimLeftWall
+      value: WaveSimUIl
       objectReference: {fileID: 0}
     - target: {fileID: 3137876599689148407, guid: be8cbc708b9ecf74ebda4c903d3d578e,
         type: 3}
@@ -19382,6 +19402,11 @@ PrefabInstance:
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 1555087500}
+    - target: {fileID: 3309026028019578337, guid: be8cbc708b9ecf74ebda4c903d3d578e,
+        type: 3}
+      propertyPath: m_text
+      value: "Energy<br><size=80%>(modulus)\xB2</size>"
+      objectReference: {fileID: 0}
     - target: {fileID: 3521036799353551102, guid: be8cbc708b9ecf74ebda4c903d3d578e,
         type: 3}
       propertyPath: m_LocalPosition.z

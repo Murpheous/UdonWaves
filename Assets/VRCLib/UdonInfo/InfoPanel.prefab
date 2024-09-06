@@ -467,6 +467,7 @@ MonoBehaviour:
   toggleGroup: {fileID: 4193235092411364038}
   closeButton: {fileID: 2013130002804789347}
   languageIndex: 0
+  languagePanel: {fileID: 0}
   growShrink: 1
   panelSize: {x: 780, y: 550}
   shrinkSize: {x: 780, y: 75}
@@ -487,11 +488,14 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  localizationClients: []
   activeInfoPage: -1
   defaultTexts:
   - <align=center><b>Welcome</b>
   - "<align=center><b>\u3088\u3046\u3053\u305D</b>"
   - "<align=center><b>\u6B61\u8FCE</b>"
+  - "<align=center><b>\u6B22\u8FCE</b>"
+  - <align=center><b>Bem-vindo</b>
   selectedToggle: -1
 --- !u!114 &4926412167092619927
 MonoBehaviour:
