@@ -114,6 +114,8 @@ public class InfoPanel : UdonSharpBehaviour
                         contentPanelRect.sizeDelta = newSize;
                         contentPanelRect.localPosition = newPosition;
                     }
+                    else
+                        Debug.Log(gameObject.name + "ActiveInfoPage: ValidSize=false");
                     contentPanelRect.gameObject.SetActive(validSize);
                 }
                 else
@@ -164,7 +166,7 @@ public class InfoPanel : UdonSharpBehaviour
     }
     public void lang_3()
     {
-        Debug.Log("Lang 3");
+        //Debug.Log("Lang 3");
         LanguageIndex = 3;
     }
     public void lang_4()
@@ -248,7 +250,7 @@ public class InfoPanel : UdonSharpBehaviour
         if (contentPanelRect != null)
             panelSize = contentPanelRect.sizeDelta;
         if (growShrink)
-            growShrink = (panelSize.x * panelSize.y) * (shrinkSize.x * shrinkSize.y) > 0;
+            growShrink = (shrinkSize.x * shrinkSize.y) > 0;
         toggleGroup.EnsureValidState();
         onToggle();
     }
