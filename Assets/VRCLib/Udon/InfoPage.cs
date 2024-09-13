@@ -8,7 +8,8 @@ public class InfoPage : UdonSharpBehaviour
 {
     [SerializeField] string[] pageTitles;
     [SerializeField,TextArea] string[] pageBodies;
-    [SerializeField] int languageIndex = 0;
+    //[SerializeField] 
+    private int languageIndex = 0;
 
     
     public int LangaugeIndex
