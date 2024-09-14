@@ -84,6 +84,10 @@ public class UIStateSelect : UdonSharpBehaviour
             btnDecSources.interactable = clientMode >= 0;
         if (btnIncSources != null)
             btnIncSources.interactable = clientMode >= 0;
+        if (togPlay != null)
+            togPlay.interactable = clientMode >= 0;
+        if (togPause != null)
+            togPause.interactable = clientMode >= 0;
     }
     private int DisplayMode 
     {  
