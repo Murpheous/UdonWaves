@@ -49,7 +49,6 @@ public class HuygensMonitor : UdonSharpBehaviour
 
     [SerializeField]
     private UdonSlider lambdaSlider;
-    private bool iHaveLambdaControl = false;
     [SerializeField]
     private UdonSlider pitchSlider;
     private bool iHavePitchControl = false;
@@ -74,6 +73,9 @@ public class HuygensMonitor : UdonSharpBehaviour
 
     [SerializeField, Range(30, 80), FieldChangeCallback(nameof(Lambda))]
     private float lambda = 1f;
+    [SerializeField, FieldChangeCallback(nameof(DisplayColor))]
+    Color displayColor;
+
 
     [SerializeField, Range(1, 10), FieldChangeCallback(nameof(SimScale))]
     private float simScale = 1f;
@@ -81,7 +83,6 @@ public class HuygensMonitor : UdonSharpBehaviour
     private UdonBehaviour vectorDrawing;
     [SerializeField]
     private UdonBehaviour particleSim;
-    private bool iHaveParticleSim;
 
     private bool iamOwner;
     private VRCPlayerApi player;
@@ -216,7 +217,7 @@ public class HuygensMonitor : UdonSharpBehaviour
                         pitchSlider.Interactable = true;
                     if (iHaveWidthControl)
                         widthSlider.Interactable = true;
-                    if (iHaveLambdaControl)
+                    if (lambdaSlider != null)
                         lambdaSlider.Interactable = true;
                     if (iHaveScaleControl)
                         scaleSlider.Interactable = true;
@@ -247,7 +248,7 @@ public class HuygensMonitor : UdonSharpBehaviour
                     widthSlider.Interactable = false;
                 }
                 Lambda = defaultLambda;
-                if (iHaveLambdaControl)
+                if (lambdaSlider != null)
                 {
                     lambdaSlider.SetValue(defaultLambda);
                     lambdaSlider.Interactable = false;
@@ -271,7 +272,7 @@ public class HuygensMonitor : UdonSharpBehaviour
 
     private void updateGrating()
     {
-        if (iHaveParticleSim)
+        if (particleSim != null)
         {
             particleSim.SetProgramVariable<int>("slitCount", slitCount);
             particleSim.SetProgramVariable<float>("slitWidth", slitWidth * mmToMetres);
@@ -301,7 +302,7 @@ public class HuygensMonitor : UdonSharpBehaviour
             slitWidth = value;
             if (vectorDrawing != null)
                 vectorDrawing.SetProgramVariable<float>("slitWidth", slitWidth);
-            if (iHaveParticleSim)
+            if (particleSim != null)
                 particleSim.SetProgramVariable<float>("slitWidth", slitWidth*mmToMetres);
             updateGrating();
         }
@@ -314,7 +315,7 @@ public class HuygensMonitor : UdonSharpBehaviour
             slitPitch = value;
             if (vectorDrawing != null)
                 vectorDrawing.SetProgramVariable<float>("slitPitch", slitPitch);
-            if (iHaveParticleSim)
+            if (particleSim != null)
                 particleSim.SetProgramVariable<float>("slitPitch", slitPitch * mmToMetres);
             updateGrating();
         }
@@ -335,7 +336,7 @@ public class HuygensMonitor : UdonSharpBehaviour
                 lblSourceCount.text = slitCount.ToString();
             if (vectorDrawing != null)
                 vectorDrawing.SetProgramVariable<int>("slitCount", slitCount);
-            if (iHaveParticleSim)
+            if (particleSim != null)
                 particleSim.SetProgramVariable<int>("slitCount",slitCount);
             RequestSerialization();
         }
@@ -364,7 +365,7 @@ public class HuygensMonitor : UdonSharpBehaviour
                 matSimControl.SetFloat("_Scale", simScale);
             if (iHaveScaleControl)
                 scaleSlider.SetValue(simScale);
-            if (iHaveParticleSim)
+            if (particleSim != null)
                 particleSim.SetProgramVariable<float>("simScale",simScale);
             updateNeeded = true;
         }
@@ -376,12 +377,101 @@ public class HuygensMonitor : UdonSharpBehaviour
         momentum = 1 / (lambda * mmToMetres);
         if (lblMomentum != null)
             lblMomentum.text = string.Format("p={0:0.0}", momentum);
-        if (iHaveParticleSim)
+        if (particleSim != null)
         {
             particleSim.SetProgramVariable<float>("maxParticleK", 1 / (minLambda * mmToMetres));
             particleSim.SetProgramVariable<float>("minParticleK", 1 / (maxLambda * mmToMetres));
             particleSim.SetProgramVariable<float>("particleK", momentum);
         }
+    }
+
+    public Color spectrumColour(float wavelength, float gamma = 0.8f)
+    {
+        Color result = Color.white;
+        if (wavelength >= 380 & wavelength <= 440)
+        {
+            float attenuation = 0.3f + 0.7f * (wavelength - 380.0f) / (440.0f - 380.0f);
+            result.r = Mathf.Pow(((-(wavelength - 440) / (440 - 380)) * attenuation), gamma);
+            result.g = 0.0f;
+            result.b = Mathf.Pow((1.0f * attenuation), gamma);
+        }
+
+        else if (wavelength >= 440 & wavelength <= 490)
+        {
+            result.r = 0.0f;
+            result.g = Mathf.Pow((wavelength - 440f) / (490f - 440f), gamma);
+            result.b = 1.0f;
+        }
+        else if (wavelength >= 490 & wavelength <= 510)
+        {
+            result.r = 0.0f;
+            result.g = 1.0f;
+            result.b = Mathf.Pow(-(wavelength - 510f) / (510f - 490f), gamma);
+        }
+        else if (wavelength >= 510 & wavelength <= 580)
+        {
+            result.r = Mathf.Pow((wavelength - 510f) / (580f - 510f), gamma);
+            result.g = 1.0f;
+            result.b = 0.0f;
+        }
+        else if (wavelength >= 580f & wavelength <= 645f)
+        {
+            result.r = 1.0f;
+            result.g = Mathf.Pow(-(wavelength - 645f) / (645f - 580f), gamma);
+            result.b = 0.0f;
+        }
+        else if (wavelength >= 645 & wavelength <= 750)
+        {
+            float attenuation = 0.3f + 0.7f * (750 - wavelength) / (750 - 645);
+            result.r = Mathf.Pow(1.0f * attenuation, gamma);
+            result.g = 0.0f;
+            result.b = 0.0f;
+        }
+        else
+        {
+            result.r = 0.0f;
+            result.g = 0.0f;
+            result.b = 0.0f;
+            result.a = 0.1f;
+        }
+        return result;
+    }
+
+    private Color flowColour = Color.magenta;
+
+    public Color FlowColour
+    {
+        get => flowColour;
+        set
+        {
+            flowColour = value;
+            if (matPanel != null)
+            {
+                matPanel.SetColor("_ColorFlow", flowColour);
+            }
+        }
+    }
+
+    public Color DisplayColor
+    {
+        get => displayColor;
+        set
+        {
+            displayColor = value;
+            if (particleSim != null)
+                particleSim.SetProgramVariable<Color>("displayColor", displayColor);
+            FlowColour = displayColor;
+            RequestSerialization();
+        }
+    }
+    private void SetColour()
+    {
+        float frac = Mathf.InverseLerp(minLambda, maxLambda, lambda);
+        Color dColour = spectrumColour(Mathf.Lerp(400, 700, frac));
+        dColour.r = Mathf.Clamp(dColour.r, 0.2f, 2f);
+        dColour.g = Mathf.Clamp(dColour.g, 0.2f, 2f);
+        dColour.b = Mathf.Clamp(dColour.b, 0.2f, 2f);
+        DisplayColor = dColour;
     }
 
     private float Lambda
@@ -395,8 +485,9 @@ public class HuygensMonitor : UdonSharpBehaviour
                 vectorDrawing.SetProgramVariable<float>("lambda", lambda);
             if (iHaveWaveCRT)
                 matSimControl.SetFloat("_Lambda", lambda * mmToPixels);
-            if (iHaveLambdaControl) 
+            if (lambdaSlider != null) 
                 lambdaSlider.SetValue(lambda);
+            SetColour();
             updateMomentum();
             UpdateWaveSpeed();
             updateNeeded = true;
@@ -453,9 +544,7 @@ public class HuygensMonitor : UdonSharpBehaviour
 
         iHavePitchControl = pitchSlider != null;
         iHaveWidthControl = widthSlider != null;
-        iHaveLambdaControl = lambdaSlider != null;
         iHaveScaleControl = scaleSlider != null;
-        iHaveParticleSim = particleSim != null;
 
         if (thePanel != null)
             matPanel = thePanel.material;
@@ -484,7 +573,7 @@ public class HuygensMonitor : UdonSharpBehaviour
             matSimControl = thePanel.material;
         }
         iHaveWaveCRT = matSimControl != null;
-        if (iHaveLambdaControl)
+        if (lambdaSlider != null)
         {
             lambdaSlider.SetLimits( minLambda, maxLambda);
             lambdaSlider.SetValue(defaultLambda);
