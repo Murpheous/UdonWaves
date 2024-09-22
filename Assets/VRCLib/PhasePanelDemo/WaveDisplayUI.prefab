@@ -587,6 +587,7 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 7304814000934754105}
   languageIndex: 0
+  toggleIndex: -1
   localizedTexts:
   - {fileID: 2545612688876434192}
   - {fileID: 2561800813119863797}
@@ -603,6 +604,7 @@ MonoBehaviour:
   - {fileID: 544623410579076170}
   - {fileID: 4366818911843029998}
   - {fileID: 3137876599689148407}
+  localizationClients: []
 --- !u!114 &7304814000934754105
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1989,8 +1991,7 @@ MonoBehaviour:
   pages:
   - {fileID: 4220627865209410048}
   - {fileID: 2641283021115033946}
-  localizationClients:
-  - {fileID: 7304814000934754105}
+  localizationClients: []
   activeInfoPage: -1
   defaultTexts:
   - Waves from Imaginary Numbers
@@ -3644,41 +3645,56 @@ PrefabInstance:
       propertyPath: m_PresetInfoIsWorld
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 613758207207091119, guid: ab35e0e8a82af0a4194f622b117a77b1,
+    - target: {fileID: 1241313296890078509, guid: ab35e0e8a82af0a4194f622b117a77b1,
         type: 3}
-      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      propertyPath: serializationData.Prefab
       value: 
-      objectReference: {fileID: 6967118494463113989}
-    - target: {fileID: 613758207207091119, guid: ab35e0e8a82af0a4194f622b117a77b1,
+      objectReference: {fileID: 1241313296890078509, guid: ab35e0e8a82af0a4194f622b117a77b1,
         type: 3}
-      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: SendCustomEvent
-      objectReference: {fileID: 0}
-    - target: {fileID: 613758207207091119, guid: ab35e0e8a82af0a4194f622b117a77b1,
-        type: 3}
-      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_StringArgument
-      value: lang_3
-      objectReference: {fileID: 0}
     - target: {fileID: 2197319507159867511, guid: ab35e0e8a82af0a4194f622b117a77b1,
         type: 3}
       propertyPath: m_Name
       value: LanguageCanvas
       objectReference: {fileID: 0}
-    - target: {fileID: 4574140829237715800, guid: ab35e0e8a82af0a4194f622b117a77b1,
+    - target: {fileID: 2960926914674645481, guid: ab35e0e8a82af0a4194f622b117a77b1,
         type: 3}
-      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      propertyPath: serializationData.Prefab
+      value: 
+      objectReference: {fileID: 2960926914674645481, guid: ab35e0e8a82af0a4194f622b117a77b1,
+        type: 3}
+    - target: {fileID: 3319827582069813279, guid: ab35e0e8a82af0a4194f622b117a77b1,
+        type: 3}
+      propertyPath: serializationData.Prefab
+      value: 
+      objectReference: {fileID: 3319827582069813279, guid: ab35e0e8a82af0a4194f622b117a77b1,
+        type: 3}
+    - target: {fileID: 7089829161567303152, guid: ab35e0e8a82af0a4194f622b117a77b1,
+        type: 3}
+      propertyPath: serializationData.Prefab
+      value: 
+      objectReference: {fileID: 7089829161567303152, guid: ab35e0e8a82af0a4194f622b117a77b1,
+        type: 3}
+    - target: {fileID: 8168440233102192247, guid: ab35e0e8a82af0a4194f622b117a77b1,
+        type: 3}
+      propertyPath: serializationData.Prefab
+      value: 
+      objectReference: {fileID: 8168440233102192247, guid: ab35e0e8a82af0a4194f622b117a77b1,
+        type: 3}
+    - target: {fileID: 8168440233102192247, guid: ab35e0e8a82af0a4194f622b117a77b1,
+        type: 3}
+      propertyPath: localizationClients.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8168440233102192247, guid: ab35e0e8a82af0a4194f622b117a77b1,
+        type: 3}
+      propertyPath: localizationClients.Array.data[0]
       value: 
       objectReference: {fileID: 6967118494463113989}
-    - target: {fileID: 7190048479865512957, guid: ab35e0e8a82af0a4194f622b117a77b1,
+    - target: {fileID: 8168440233102192247, guid: ab35e0e8a82af0a4194f622b117a77b1,
         type: 3}
-      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      propertyPath: localizationClients.Array.data[1]
       value: 
-      objectReference: {fileID: 6967118494463113989}
-    - target: {fileID: 7443328789098981426, guid: ab35e0e8a82af0a4194f622b117a77b1,
-        type: 3}
-      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 6967118494463113989}
+      objectReference: {fileID: 7304814000934754105}
     - target: {fileID: 9206526953210548476, guid: ab35e0e8a82af0a4194f622b117a77b1,
         type: 3}
       propertyPath: m_Pivot.x

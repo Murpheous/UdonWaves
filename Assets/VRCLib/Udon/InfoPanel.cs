@@ -46,10 +46,13 @@ public class InfoPanel : UdonSharpBehaviour
         set
         {
             languageIndex = value;
-            foreach (var page in pages)
+            if (pages != null && pages.Length > 0)
             {
-                if (page != null)
-                    page.LangaugeIndex = languageIndex;
+                foreach (var page in pages)
+                {
+                    if (page != null)
+                        page.LangaugeIndex = languageIndex;
+                }
             }
             if (localizationClients != null && localizationClients.Length > 0)
             {
@@ -92,13 +95,13 @@ public class InfoPanel : UdonSharpBehaviour
                     if (pages[value] != null)
                     {
                         title = pages[value].PageTitle;
-                        contentText.text = string.Format("<align=center><b>{0}</b></align>\n<margin=2%>{1}</margin>", title, pages[value].PageBody);
+                        contentText.text = string.Format("<align=center><b>{0}</b></align>\n{1}", title, pages[value].PageBody);
                     }
                 }
                 else
                     contentText.text = defaultText;
             }
-            if (showHideContentPanel)
+            if (showHideContentPanel && contentPanelRect != null)
             {
                 if (hasClose)
                     closeButton.gameObject.SetActive(activeInfoPage >= 0);
@@ -153,20 +156,21 @@ public class InfoPanel : UdonSharpBehaviour
     public void lang_0()
     {
         LanguageIndex = 0;
-        //Debug.Log("Lang 0");
+       // Debug.Log("Lang 0");
     }
     public void lang_1()
     {
         LanguageIndex = 1;
-        //Debug.Log("Lang 1");
+      //  Debug.Log("Lang 1");
     }
     public void lang_2()
     {
+      //  Debug.Log("Lang 2");
         LanguageIndex = 2;
     }
     public void lang_3()
     {
-        //Debug.Log("Lang 3");
+       // Debug.Log("Lang 3");
         LanguageIndex = 3;
     }
     public void lang_4()

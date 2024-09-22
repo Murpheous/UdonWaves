@@ -5,19 +5,21 @@ using UnityEngine.UI;
 using VRC.SDKBase;
 using VRC.Udon;
 
+[RequireComponent(typeof(Toggle))]
+[UdonBehaviourSyncMode(BehaviourSyncMode.None)]
 public class SyncedToggle : UdonSharpBehaviour
 {
     [SerializeField]
     private Toggle toggle;
     [SerializeField]
     private UdonBehaviour toggleClient;
+    private string clientVariable;
+
     public int toggleIndex = -1;
     [SerializeField]
     private bool currentState = false;
     [SerializeField]
     private bool reportedState = false;
-    [SerializeField]
-    private bool hasClient = false;
 
     public bool CurrentState
     {
@@ -28,12 +30,11 @@ public class SyncedToggle : UdonSharpBehaviour
         set 
         {
             currentState = value;
-            if (reportedState != currentState) 
+            if (currentState && reportedState != currentState) 
             {
-                if (hasClient && currentState)
+                if (toggleClient != null)
                 {
-                    if (toggleIndex >= 0)
-                        toggleClient.SendCustomEvent("toggleIndex");
+                    toggleClient.SetProgramVariable<int>("toggleIndex",toggleIndex);
                 }
             }
             reportedState = value;
@@ -57,7 +58,7 @@ public class SyncedToggle : UdonSharpBehaviour
     {
         if (toggle == null)
             toggle = GetComponent<Toggle>();
-        hasClient = toggleClient != null;
-        setState();
+        reportedState = !toggle.isOn;
+        CurrentState = !reportedState;
     }
 }
