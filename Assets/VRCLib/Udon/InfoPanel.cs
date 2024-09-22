@@ -23,7 +23,6 @@ public class InfoPanel : UdonSharpBehaviour
     [SerializeField] TextMeshProUGUI contentText;
     [SerializeField] Toggle[] toggles = null;
     [SerializeField] InfoPage[] pages = null;
-    [SerializeField] UdonBehaviour[] localizationClients;
 
     int toggleCount = 0;
 
@@ -52,14 +51,6 @@ public class InfoPanel : UdonSharpBehaviour
                 {
                     if (page != null)
                         page.LangaugeIndex = languageIndex;
-                }
-            }
-            if (localizationClients != null && localizationClients.Length > 0)
-            {
-                foreach (UdonBehaviour item in localizationClients)
-                {
-                    if (item != null)
-                        item.SetProgramVariable<int>("languageIndex", languageIndex);
                 }
             }
             ActiveInfoPage = activeInfoPage;
@@ -128,7 +119,6 @@ public class InfoPanel : UdonSharpBehaviour
             }
         }
     }
-
     public void onBtnClose()
     {
         if (selectedToggle >= 0)
@@ -153,35 +143,6 @@ public class InfoPanel : UdonSharpBehaviour
     }
 
     
-    public void lang_0()
-    {
-        LanguageIndex = 0;
-       // Debug.Log("Lang 0");
-    }
-    public void lang_1()
-    {
-        LanguageIndex = 1;
-      //  Debug.Log("Lang 1");
-    }
-    public void lang_2()
-    {
-      //  Debug.Log("Lang 2");
-        LanguageIndex = 2;
-    }
-    public void lang_3()
-    {
-       // Debug.Log("Lang 3");
-        LanguageIndex = 3;
-    }
-    public void lang_4()
-    {
-        LanguageIndex = 4;
-    }
-    public void lang_5()
-    {
-        LanguageIndex = 5;
-    }
-
     [SerializeField,UdonSynced,FieldChangeCallback(nameof(SelectedToggle))]
     private int selectedToggle = -1;
     private bool togglePending = false;
