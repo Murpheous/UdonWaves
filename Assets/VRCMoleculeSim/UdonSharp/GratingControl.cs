@@ -243,7 +243,7 @@ public class GratingControl : UdonSharpBehaviour
 
     private void UpdateLabels()
     {
-        setText(labelGratingScale,"Grating\nScale\n1:" +scaleDownFactor.ToString());
+        setText(labelGratingScale,string.Format ("1:{0}",scaleDownFactor));
         if (gratingDescription == null)
             return;
         string gratingdesc = 
@@ -285,7 +285,7 @@ public class GratingControl : UdonSharpBehaviour
             UpdateRowPitch();
         }
     }
-
+    
     private float SlitWidthFrac
     {
         get => slitWidthFrac;
@@ -323,7 +323,7 @@ public class GratingControl : UdonSharpBehaviour
                 RequestSerialization();
             }
             UpdateSlitPitch();
-            setText(labelSlits, "Slits\n" + columnCount.ToString());
+            setText(labelSlits, columnCount.ToString());
         }
     }
 
@@ -344,7 +344,7 @@ public class GratingControl : UdonSharpBehaviour
                 RequestSerialization();
             }
             UpdateRowPitch();
-            setText(labelRows, "Rows\n" + rowCount.ToString());
+            setText(labelRows, RowCount.ToString());
         }
     }
     public void scaleDown()
