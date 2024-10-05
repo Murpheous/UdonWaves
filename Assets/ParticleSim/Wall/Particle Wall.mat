@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: RightWallCRT_MAT
-  m_Shader: {fileID: 4800000, guid: fd5c36de8bef24e43866c5effe93d6d1, type: 3}
+  m_Name: Particle Wall
+  m_Shader: {fileID: 4800000, guid: 4aec18f853675754fa5035835ed3723d, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -43,15 +43,15 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _IdleTex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 8600000, guid: 63963bc9bcd30994f8212de8a884bb04, type: 2}
+        m_Texture: {fileID: 2800000, guid: 2e0df7ca3c27f324a8c322971699bf3e, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MomentumMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -63,43 +63,54 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _PulseLookup:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _BaseTime: 0
+    - _BeamWidth: 1
     - _BumpScale: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
-    - _DisplayMode: 0
     - _DstBlend: 0
-    - _Frequency: 1
+    - _EnableEmission: 0
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _Lambda: 29.186708
-    - _LambdaPx: 30
+    - _GratingOffset: 0
+    - _MapMaxP: 1
+    - _MarkerScale: 4.5
+    - _MarkerSize: 2
+    - _MaxScale: 5
+    - _MaxVelocity: 1
     - _Metallic: 0
     - _Mode: 0
-    - _NumSources: 17
     - _OcclusionStrength: 1
-    - _OutputRaw: 1
     - _Parallax: 0.02
-    - _Phase: 0
-    - _Scale: 2.5308328
-    - _SlitCount: 10
-    - _SlitPitch: 298.75723
-    - _SlitPitchPx: 364.22433
-    - _SlitWidePx: 5
-    - _SlitWidth: 12
+    - _ParticleP: 1
+    - _PauseTime: 0
+    - _Play: 1
+    - _PulseWidth: 0
+    - _PulseWidthMax: 1.5
+    - _Scale: 1
+    - _SlitCount: 2
+    - _SlitPitch: 0.3
+    - _SlitWidth: 0.05
     - _SmoothnessTextureChannel: 0
-    - _SourceResolution: 0.5
     - _SpecularHighlights: 1
+    - _SpeedRange: 0
     - _SrcBlend: 1
     - _UVSec: 0
+    - _Visibility: 1
     - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 1, g: 0.84293705, b: 0.2, a: 1}
-    - _ColorFlow: {r: 0.38431373, g: 1, b: 0.54509807, a: 1}
-    - _ColorNeg: {r: 0, g: 0.23137255, b: 0.34117648, a: 1}
-    - _ColorVel: {r: 1, g: 0.44313726, b: 0, a: 1}
+    - _ArrayDimension: {r: 128, g: 80, b: 1, a: 10240}
+    - _ArraySpacing: {r: 0.1, g: 0.1, b: 0.1, a: 0}
+    - _Color: {r: 0.6659298, g: 0, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _IdleColour: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+    - _MeshSpacing: {r: 0.1, g: 0.1, b: 0.1, a: 0.1}
+    - _QuadDimension: {r: 128, g: 80, b: 1, a: 10240}
+    - _QuadSpacing: {r: 0.1, g: 0.1, b: 0.1, a: 0}
   m_BuildTextureStacks: []
