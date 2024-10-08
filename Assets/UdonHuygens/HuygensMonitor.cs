@@ -17,6 +17,9 @@ public class HuygensMonitor : UdonSharpBehaviour
     [SerializeField, Range(0.1f, 1f), FieldChangeCallback(nameof(Visibility))]
     private float visibility = 0.2f;
 
+    [SerializeField, FieldChangeCallback(nameof(ContrastVal))]
+    public float contrastVal = 40f;
+
     [SerializeField, FieldChangeCallback(nameof(DisplayMode))]
     public int displayMode = 1;
     [SerializeField] Vector2Int simResolution = new Vector2Int(2048, 1280);
@@ -43,6 +46,8 @@ public class HuygensMonitor : UdonSharpBehaviour
     private Toggle togWaves;
     [SerializeField]
     private Toggle togParticles;
+    [SerializeField]
+    private Toggle togBoth;
 
     [SerializeField] 
     private UdonSlider speedSlider;
@@ -60,6 +65,8 @@ public class HuygensMonitor : UdonSharpBehaviour
     [SerializeField]
     private UdonSlider widthSlider;
     private bool iHaveWidthControl = false;
+
+    [SerializeField] UdonSlider contrastSlider;
 
     [SerializeField]
     private float momentum;
@@ -125,16 +132,35 @@ public class HuygensMonitor : UdonSharpBehaviour
     //[SerializeField]
     private bool iHaveSimControl = false;
 
+    private float prevVisibility = -1;
+    private void reviewContrast()
+    {
+        if (!iHaveSimDisplay)
+            return;
+        float targetViz = (contrastVal / 50) * visibility;
+        if (targetViz == prevVisibility)
+            return;
+        prevVisibility = targetViz;
+        matSimDisplay.SetFloat("_Brightness", targetViz);
+    }
+
+    private float ContrastVal
+    {
+        get => contrastVal;
+        set
+        {
+            contrastVal = value;
+            reviewContrast();
+        }
+    }
+
     private float Visibility
     {
         get => visibility;
         set
         {
             visibility = value;
-            if (iHaveSimDisplay)
-            {
-                matSimDisplay.SetFloat("_Brightness", brightness * visibility);
-            }
+            reviewContrast();
         }
     }
     private float Brightness
@@ -213,6 +239,8 @@ public class HuygensMonitor : UdonSharpBehaviour
                         togParticles.interactable = true;
                     if (togWaves != null)
                         togWaves.interactable = true;
+                    if (togBoth != null)
+                        togBoth.interactable = true;
                     if (iHavePitchControl)
                         pitchSlider.Interactable = true;
                     if (iHaveWidthControl)
@@ -229,6 +257,8 @@ public class HuygensMonitor : UdonSharpBehaviour
             {
                 if (togParticles != null)
                     togParticles.interactable = false;
+                if (togBoth != null)
+                    togBoth.interactable = false;
                 if (togWaves != null)
                 {
                     if (!togWaves.isOn)
@@ -590,6 +620,10 @@ public class HuygensMonitor : UdonSharpBehaviour
             widthSlider.SetLimits(5, 50);
             widthSlider.SetValue(defaultWidth);
         }
+        ContrastVal = contrastVal;
+        if (contrastSlider != null)
+            contrastSlider.SetValue(contrastVal);
+
         SlitWidth = defaultWidth;
         Lambda = lambda;
         SlitPitch = slitPitch;
