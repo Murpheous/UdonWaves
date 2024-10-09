@@ -31,8 +31,6 @@ public class UdonLabel : UdonSharpBehaviour
         get => isVisible;
         set
         {
-            if (isVisible == value) 
-                return;
             isVisible = value;
             if (textPanel != null)
             {
