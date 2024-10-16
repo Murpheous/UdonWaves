@@ -87,7 +87,7 @@ public class HuygensMonitor : UdonSharpBehaviour
     [SerializeField, Range(1, 10), FieldChangeCallback(nameof(SimScale))]
     private float simScale = 1f;
     [SerializeField]
-    private UdonBehaviour vectorDrawing;
+    private VectorDiagram vectorDrawing;
     [SerializeField]
     private UdonBehaviour particleSim;
 
@@ -251,7 +251,7 @@ public class HuygensMonitor : UdonSharpBehaviour
                         scaleSlider.Interactable = true;
                 }
                 if (vectorDrawing != null)
-                    vectorDrawing.SetProgramVariable<Vector2>("displayRect", displayRect);
+                    vectorDrawing.DisplayRect =  displayRect;
             }
             else
             {
@@ -293,7 +293,7 @@ public class HuygensMonitor : UdonSharpBehaviour
                     simCRT.Initialize();
                 SlitCount = 2;
                 if (vectorDrawing != null)
-                    vectorDrawing.SetProgramVariable<Vector2>("displayRect", defaultDisplayRect);
+                    vectorDrawing.DisplayRect = defaultDisplayRect;
             }
             displayMode = value;
             updateNeeded = true;
@@ -331,7 +331,7 @@ public class HuygensMonitor : UdonSharpBehaviour
         {
             slitWidth = value;
             if (vectorDrawing != null)
-                vectorDrawing.SetProgramVariable<float>("slitWidth", slitWidth);
+                vectorDrawing.SlitWidth = slitWidth;
             if (particleSim != null)
                 particleSim.SetProgramVariable<float>("slitWidth", slitWidth*mmToMetres);
             updateGrating();
@@ -344,7 +344,7 @@ public class HuygensMonitor : UdonSharpBehaviour
         {
             slitPitch = value;
             if (vectorDrawing != null)
-                vectorDrawing.SetProgramVariable<float>("slitPitch", slitPitch);
+                vectorDrawing.SlitPitch = slitPitch;
             if (particleSim != null)
                 particleSim.SetProgramVariable<float>("slitPitch", slitPitch * mmToMetres);
             updateGrating();
@@ -365,7 +365,7 @@ public class HuygensMonitor : UdonSharpBehaviour
             if (lblSourceCount != null)
                 lblSourceCount.text = slitCount.ToString();
             if (vectorDrawing != null)
-                vectorDrawing.SetProgramVariable<int>("slitCount", slitCount);
+                vectorDrawing.SlitCount = slitCount;
             if (particleSim != null)
                 particleSim.SetProgramVariable<int>("slitCount",slitCount);
             RequestSerialization();
@@ -395,6 +395,8 @@ public class HuygensMonitor : UdonSharpBehaviour
                 matSimControl.SetFloat("_Scale", simScale);
             if (iHaveScaleControl)
                 scaleSlider.SetValue(simScale);
+            if (vectorDrawing != null)
+                vectorDrawing.SimScale = simScale;
             if (particleSim != null)
                 particleSim.SetProgramVariable<float>("simScale",simScale);
             updateNeeded = true;
@@ -512,7 +514,7 @@ public class HuygensMonitor : UdonSharpBehaviour
             lambda = value;
             //phaseRate = 35f/value;
             if (vectorDrawing != null)
-                vectorDrawing.SetProgramVariable<float>("lambda", lambda);
+                vectorDrawing.Lambda = lambda;
             if (iHaveWaveCRT)
                 matSimControl.SetFloat("_Lambda", lambda * mmToPixels);
             if (lambdaSlider != null) 

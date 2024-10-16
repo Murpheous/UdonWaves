@@ -23,17 +23,13 @@ public class InfoPanel : UdonSharpBehaviour
     [SerializeField] RectTransform contentPanelRect;
     [SerializeField] TextMeshProUGUI contentText;
     [SerializeField] Toggle[] toggles = null;
+    [SerializeField] Toggle[] modeToggles = null;
     [SerializeField] InfoPage[] pages = null;
-
     int toggleCount = 0;
 
-    bool hasTextField = false;
     bool hasClose = false;
     private bool iamOwner;
     private VRCPlayerApi player;
-//    private RectTransform textRect;
-//    private VRC.Udon.Common.Interfaces.NetworkEventTarget toTheOwner = VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner;
-//    private VRC.Udon.Common.Interfaces.NetworkEventTarget toAll = VRC.Udon.Common.Interfaces.NetworkEventTarget.All;
 
     [SerializeField,UdonSynced,FieldChangeCallback(nameof(ActiveInfoPage))] 
     private int activeInfoPage = -1;
@@ -78,17 +74,18 @@ public class InfoPanel : UdonSharpBehaviour
         {
             activeInfoPage = value;
             //Debug.Log("ActiveInfoPage=" + value);
-            if (hasTextField)
+            if (contentText != null)
             {
                 if (value >= 0)
                 {
-                    contentText.text = "";
                     string title = "";
                     if (pages[value] != null)
                     {
                         title = pages[value].PageTitle;
                         contentText.text = string.Format("<align=center><b>{0}</b></align>\n{1}", title, pages[value].PageBody);
                     }
+                    else
+                        contentText.text = "";
                 }
                 else
                     contentText.text = defaultText;
@@ -127,6 +124,7 @@ public class InfoPanel : UdonSharpBehaviour
             SelectedToggle = -1;
         }
     }
+
     public void onToggle()
     {
         int toggleIdx = -1;
@@ -143,6 +141,10 @@ public class InfoPanel : UdonSharpBehaviour
         SelectedToggle = toggleIdx;
     }
 
+    public void subToggle()
+    {
+
+    }
     
     [SerializeField,UdonSynced,FieldChangeCallback(nameof(SelectedToggle))]
     private int selectedToggle = -1;
@@ -211,7 +213,6 @@ public class InfoPanel : UdonSharpBehaviour
             toggleGroup = gameObject.GetComponent<ToggleGroup>();
         toggleGroup.allowSwitchOff = true;
         toggleGroup.SetAllTogglesOff(false);
-        hasTextField = contentText != null;
         hasClose = closeButton != null && closeButton.gameObject.activeSelf;
         if (contentPanelRect != null)
             panelSize = contentPanelRect.sizeDelta;
