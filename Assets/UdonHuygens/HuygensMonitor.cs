@@ -390,13 +390,13 @@ public class HuygensMonitor : UdonSharpBehaviour
         get => simScale;
         set
         {
-            simScale = value;
+            simScale = Mathf.Max(1.0f,value);
             if (iHaveWaveCRT)
                 matSimControl.SetFloat("_Scale", simScale);
             if (iHaveScaleControl)
                 scaleSlider.SetValue(simScale);
             if (vectorDrawing != null)
-                vectorDrawing.SimScale = simScale;
+                vectorDrawing.VecScale = mmToMetres/simScale;
             if (particleSim != null)
                 particleSim.SetProgramVariable<float>("simScale",simScale);
             updateNeeded = true;

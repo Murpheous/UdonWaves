@@ -1365,7 +1365,7 @@ GameObject:
   - component: {fileID: 179547866}
   - component: {fileID: 179547865}
   m_Layer: 17
-  m_Name: DisplayPanel
+  m_Name: WavePanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1455,7 +1455,7 @@ MonoBehaviour:
   SynchronizePosition: 0
   AllowCollisionOwnershipTransfer: 0
   Reliable: 0
-  _syncMethod: 2
+  _syncMethod: 3
   serializedProgramAsset: {fileID: 11400000, guid: e377fa85da9266240aa19e7daeea9435,
     type: 2}
   programSource: {fileID: 11400000, guid: b65bf675646c2914fb845ef664477f94, type: 2}
@@ -1485,8 +1485,8 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 179547865}
   dimensions: {x: 2.56, y: 1.6}
-  highRes: {x: 16, y: 10}
-  lowRes: {x: 16, y: 10}
+  highRes: {x: 160, y: 100}
+  lowRes: {x: 1, y: 1}
   useHighRes: 0
   material: {fileID: 2100000, guid: f6e58d038ebe41d42b59ca4bbb3f5fe5, type: 2}
 --- !u!114 &188407786 stripped
@@ -25109,9 +25109,8 @@ MonoBehaviour:
   slitWidth: 40
   slitPitch: 436.5234
   lambda: 48.37839
-  simScale: 1
+  vecScale: 0.001
   arrowLambda: 55
-  layerGap: -0.001
   demoMode: 0
   kVectors:
   - {fileID: 1778824468}
@@ -25146,6 +25145,7 @@ MonoBehaviour:
   - {fileID: 1933939381}
   - {fileID: 2114809696}
   kStartPoints: []
+  kEndPoints: []
 --- !u!1001 &1933939380
 PrefabInstance:
   m_ObjectHideFlags: 0
