@@ -1,152 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &3644530369096899813
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 428426096457068431}
-  - component: {fileID: 7395592815375304638}
-  - component: {fileID: 8222772520694794513}
-  m_Layer: 17
-  m_Name: Content
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &428426096457068431
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3644530369096899813}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 4885456637723263855}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -30, y: -30}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!222 &7395592815375304638
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3644530369096899813}
-  m_CullTransparentMesh: 0
---- !u!114 &8222772520694794513
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3644530369096899813}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_text: '<align=center>Preview World</align>
-
-    A portal to current work under
-    development.
-
-
-    <b>Ballistic Quantum:</b>Explore how the probability distributions
-    obtained from quantum theory evolve in a manner equivalent to that of classical
-    particle ensembles undergoing ballistic diffusion.
-
-
-    Please be patient if
-    features are incomplete or not fully working.'
-  m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: ddbcc27b0346e4644a45316aaf00c441, type: 2}
-  m_sharedMaterial: {fileID: 4410821715232426517, guid: ddbcc27b0346e4644a45316aaf00c441,
-    type: 2}
-  m_fontSharedMaterials: []
-  m_fontMaterial: {fileID: 0}
-  m_fontMaterials: []
-  m_fontColor32:
-    serializedVersion: 2
-    rgba: 4294948502
-  m_fontColor: {r: 0.5896226, g: 0.71212596, b: 1, a: 1}
-  m_enableVertexGradient: 0
-  m_colorMode: 3
-  m_fontColorGradient:
-    topLeft: {r: 1, g: 1, b: 1, a: 1}
-    topRight: {r: 1, g: 1, b: 1, a: 1}
-    bottomLeft: {r: 1, g: 1, b: 1, a: 1}
-    bottomRight: {r: 1, g: 1, b: 1, a: 1}
-  m_fontColorGradientPreset: {fileID: 0}
-  m_spriteAsset: {fileID: 0}
-  m_tintAllSprites: 0
-  m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: -1183493901
-  m_overrideHtmlColors: 0
-  m_faceColor:
-    serializedVersion: 2
-    rgba: 4294967295
-  m_fontSize: 24
-  m_fontSizeBase: 24
-  m_fontWeight: 400
-  m_enableAutoSizing: 0
-  m_fontSizeMin: 18
-  m_fontSizeMax: 72
-  m_fontStyle: 0
-  m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
-  m_textAlignment: 65535
-  m_characterSpacing: 0
-  m_wordSpacing: 0
-  m_lineSpacing: 0
-  m_lineSpacingMax: 0
-  m_paragraphSpacing: 0
-  m_charWidthMaxAdj: 0
-  m_enableWordWrapping: 1
-  m_wordWrappingRatios: 0.4
-  m_overflowMode: 0
-  m_linkedTextComponent: {fileID: 0}
-  parentLinkedComponent: {fileID: 0}
-  m_enableKerning: 1
-  m_enableExtraPadding: 0
-  checkPaddingRequired: 0
-  m_isRichText: 1
-  m_parseCtrlCharacters: 1
-  m_isOrthographic: 1
-  m_isCullingEnabled: 0
-  m_horizontalMapping: 0
-  m_verticalMapping: 0
-  m_uvLineOffset: 0
-  m_geometrySortingOrder: 0
-  m_IsTextObjectScaleStatic: 0
-  m_VertexBufferAutoSizeReduction: 0
-  m_useMaxVisibleDescender: 1
-  m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
-  m_isUsingLegacyAnimationComponent: 0
-  m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
-  m_baseMaterial: {fileID: 0}
-  m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1 &3793891503499815303
 GameObject:
   m_ObjectHideFlags: 0
@@ -503,3 +356,186 @@ MonoBehaviour:
   effectPrefabName: 
   roomName: 
   updateFlag: 0
+--- !u!1001 &5671592406410795253
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 4885456637723263855}
+    m_Modifications:
+    - target: {fileID: 4370922882536067556, guid: c328e3cd83fb5284a92c73432116a752,
+        type: 3}
+      propertyPath: m_text
+      value: "<align=center><b>Preview World</b><br>\r</align>A portal to current
+        work under development.<br><b><br>Ballistic Quantum:</b>Explore how the probability
+        distributions obtained from quantum theory evolve in a manner equivalent
+        to that of classical particle ensembles undergoing ballistic diffusion.\r<br><br>\rPlease
+        be patient if features are incomplete or not fully working."
+      objectReference: {fileID: 0}
+    - target: {fileID: 4370922882536067556, guid: c328e3cd83fb5284a92c73432116a752,
+        type: 3}
+      propertyPath: m_fontSize
+      value: 22
+      objectReference: {fileID: 0}
+    - target: {fileID: 4370922882536067556, guid: c328e3cd83fb5284a92c73432116a752,
+        type: 3}
+      propertyPath: m_fontSizeBase
+      value: 22
+      objectReference: {fileID: 0}
+    - target: {fileID: 4617930561656656242, guid: c328e3cd83fb5284a92c73432116a752,
+        type: 3}
+      propertyPath: _syncMethod
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5424471940125407098, guid: c328e3cd83fb5284a92c73432116a752,
+        type: 3}
+      propertyPath: m_Pivot.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5424471940125407098, guid: c328e3cd83fb5284a92c73432116a752,
+        type: 3}
+      propertyPath: m_Pivot.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5424471940125407098, guid: c328e3cd83fb5284a92c73432116a752,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5424471940125407098, guid: c328e3cd83fb5284a92c73432116a752,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5424471940125407098, guid: c328e3cd83fb5284a92c73432116a752,
+        type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5424471940125407098, guid: c328e3cd83fb5284a92c73432116a752,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5424471940125407098, guid: c328e3cd83fb5284a92c73432116a752,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: -30
+      objectReference: {fileID: 0}
+    - target: {fileID: 5424471940125407098, guid: c328e3cd83fb5284a92c73432116a752,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: -30
+      objectReference: {fileID: 0}
+    - target: {fileID: 5424471940125407098, guid: c328e3cd83fb5284a92c73432116a752,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5424471940125407098, guid: c328e3cd83fb5284a92c73432116a752,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5424471940125407098, guid: c328e3cd83fb5284a92c73432116a752,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5424471940125407098, guid: c328e3cd83fb5284a92c73432116a752,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5424471940125407098, guid: c328e3cd83fb5284a92c73432116a752,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5424471940125407098, guid: c328e3cd83fb5284a92c73432116a752,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5424471940125407098, guid: c328e3cd83fb5284a92c73432116a752,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5424471940125407098, guid: c328e3cd83fb5284a92c73432116a752,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5424471940125407098, guid: c328e3cd83fb5284a92c73432116a752,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5424471940125407098, guid: c328e3cd83fb5284a92c73432116a752,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5424471940125407098, guid: c328e3cd83fb5284a92c73432116a752,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5424471940125407098, guid: c328e3cd83fb5284a92c73432116a752,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6313274347133426041, guid: c328e3cd83fb5284a92c73432116a752,
+        type: 3}
+      propertyPath: texts.Array.data[0]
+      value: <align=center><b>Preview World</b> <br><br></align> A portal to current
+        work under development.<br><br> <b>Ballistic Quantum:</b>Explore how the
+        probability distributions obtained from quantum theory evolve in a manner
+        equivalent to that of classical particle ensembles undergoing ballistic diffusion.
+        <br><br> Please be patient if features are incomplete or not fully working.
+      objectReference: {fileID: 0}
+    - target: {fileID: 6313274347133426041, guid: c328e3cd83fb5284a92c73432116a752,
+        type: 3}
+      propertyPath: texts.Array.data[1]
+      value: "<align=center><b>\u30D7\u30EC\u30D3\u30E5\u30FC \u30EF\u30FC\u30EB\u30C9</b><br>
+        </align>\u73FE\u5728\u958B\u767A\u4E2D\u306E\u4F5C\u696D\u3078\u306E\u30DD\u30FC\u30BF\u30EB\u3002<br><b><br>\u5F3E\u9053\u91CF\u5B50:</b>\u91CF\u5B50\u7406\u8AD6\u304B\u3089\u5F97\u3089\u308C\u308B\u78BA\u7387\u5206\u5E03\u304C\u3001\u5F3E\u9053\u62E1\u6563\u3092\u53D7\u3051\u308B\u53E4\u5178\u7684\u306A\u7C92\u5B50\u96C6\u56E3\u3068\u540C\u7B49\u306E\u65B9\u6CD5\u3067\u3069\u306E\u3088\u3046\u306B\u9032\u5316\u3059\u308B\u304B\u3092\u8ABF\u3079\u307E\u3059\u3002
+        <br><br>\u6A5F\u80FD\u304C\u4E0D\u5B8C\u5168\u307E\u305F\u306F\u5B8C\u5168\u306B\u52D5\u4F5C\u3057\u3066\u3044\u306A\u3044\u5834\u5408\u306F\u3001\u3057\u3070\u3089\u304F\u304A\u5F85\u3061\u304F\u3060\u3055\u3044\u3002"
+      objectReference: {fileID: 0}
+    - target: {fileID: 6313274347133426041, guid: c328e3cd83fb5284a92c73432116a752,
+        type: 3}
+      propertyPath: texts.Array.data[2]
+      value: "<align=center><b>\u9810\u89BD\u4E16\u754C</b><br> </align>\u76EE\u524D\u6B63\u5728\u958B\u767C\u7684\u5DE5\u4F5C\u5165\u53E3\u7DB2\u7AD9\u3002
+        <br><b><br>\u5F48\u9053\u91CF\u5B50\uFF1A</b>\u63A2\u7D22\u5F9E\u91CF\u5B50\u7406\u8AD6\u7372\u5F97\u7684\u6A5F\u7387\u5206\u4F48\u5982\u4F55\u4EE5\u8207\u7D93\u6B77\u5F48\u9053\u64F4\u6563\u7684\u7D93\u5178\u7C92\u5B50\u96C6\u5408\u76F8\u540C\u7684\u65B9\u5F0F\u6F14\u8B8A\u3002
+        <br><br>\u5982\u679C\u529F\u80FD\u4E0D\u5B8C\u6574\u6216\u7121\u6CD5\u5B8C\u5168\u6B63\u5E38\u5DE5\u4F5C\uFF0C\u8ACB\u8010\u5FC3\u7B49\u5F85\u3002"
+      objectReference: {fileID: 0}
+    - target: {fileID: 6313274347133426041, guid: c328e3cd83fb5284a92c73432116a752,
+        type: 3}
+      propertyPath: texts.Array.data[3]
+      value: "<align=center><b>\u9884\u89C8\u4E16\u754C</b><br> </align>\u5F53\u524D\u6B63\u5728\u5F00\u53D1\u7684\u5DE5\u4F5C\u95E8\u6237\u3002<br><b><br>\u5F39\u9053\u91CF\u5B50\uFF1A</b>\u63A2\u7D22\u4ECE\u91CF\u5B50\u7406\u8BBA\u83B7\u5F97\u7684\u6982\u7387\u5206\u5E03\u5982\u4F55\u4EE5\u4E0E\u7ECF\u5386\u5F39\u9053\u6269\u6563\u7684\u7ECF\u5178\u7C92\u5B50\u96C6\u5408\u76F8\u540C\u7684\u65B9\u5F0F\u6F14\u53D8\u3002
+        <br><br>\u5982\u679C\u529F\u80FD\u4E0D\u5B8C\u6574\u6216\u65E0\u6CD5\u5B8C\u5168\u6B63\u5E38\u5DE5\u4F5C\uFF0C\u8BF7\u8010\u5FC3\u7B49\u5F85\u3002"
+      objectReference: {fileID: 0}
+    - target: {fileID: 6313274347133426041, guid: c328e3cd83fb5284a92c73432116a752,
+        type: 3}
+      propertyPath: serializationData.Prefab
+      value: 
+      objectReference: {fileID: 6313274347133426041, guid: c328e3cd83fb5284a92c73432116a752,
+        type: 3}
+    - target: {fileID: 8945963265164297232, guid: c328e3cd83fb5284a92c73432116a752,
+        type: 3}
+      propertyPath: m_Name
+      value: localizedBallistic
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: c328e3cd83fb5284a92c73432116a752, type: 3}
+--- !u!224 &428426096457068431 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 5424471940125407098, guid: c328e3cd83fb5284a92c73432116a752,
+    type: 3}
+  m_PrefabInstance: {fileID: 5671592406410795253}
+  m_PrefabAsset: {fileID: 0}
