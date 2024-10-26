@@ -158,10 +158,8 @@ public class WavePanelControl : UdonSharpBehaviour
         {
             if (!iHavePanelMaterial)
                 return true;
-            if (matPanel.HasProperty("_ShowCRT"))
+            if (matPanel.HasProperty("_ShowReal"))
                 return false; 
-            if (matPanel.HasProperty("_DisplayMode"))
-                return false;
             return true;
         }
     }
@@ -253,12 +251,6 @@ public class WavePanelControl : UdonSharpBehaviour
         if (!iHaveSimDisplay)
         {
             Debug.Log(gameObject.name + " Warning- no Display material");
-            return;
-        }
-        if (matSimDisplay.HasProperty("_DisplayMode"))
-        {
-            //Debug.Log(gameObject.name + "updateDisplayTxture(Mode 1#" + displayMode.ToString() +")");
-            matSimDisplay.SetFloat("_DisplayMode", displayMode);
             return;
         }
         //Debug.Log(gameObject.name + "updateDisplayTxture(Mode 2#" + displayMode.ToString() + ")");
@@ -496,29 +488,24 @@ public class WavePanelControl : UdonSharpBehaviour
         iHavePitchControl = pitchSlider != null;
         if (iHaveSimDisplay && displayMode < 0)
         {
-            if (matSimDisplay.HasProperty("_DisplayMode"))
-                displayMode = Mathf.RoundToInt(matSimDisplay.GetFloat("_DisplayMode"));
-            else
-            {
-                int dMode = Mathf.RoundToInt(matSimDisplay.GetFloat("_ShowReal")) > 0 ? 1 : 0;
-                dMode += Mathf.RoundToInt(matSimDisplay.GetFloat("_ShowImaginary")) > 0 ? 2 : 0;
+            int dMode = Mathf.RoundToInt(matSimDisplay.GetFloat("_ShowReal")) > 0 ? 1 : 0;
+            dMode += Mathf.RoundToInt(matSimDisplay.GetFloat("_ShowImaginary")) > 0 ? 2 : 0;
 
-                int nSq = Mathf.RoundToInt(matSimDisplay.GetFloat("_ShowSquare")) > 0 ? 1 : 0;
-                switch (dMode)
-                {
-                    case 1:
-                        displayMode = nSq;
-                        break;
-                    case 2: 
-                        displayMode = 2 + nSq;
-                        break;
-                    case 3:
-                        displayMode = 4 + nSq;
-                        break;
-                    default:
-                        displayMode = 0;
-                        break;
-                }
+            int nSq = Mathf.RoundToInt(matSimDisplay.GetFloat("_ShowSquare")) > 0 ? 1 : 0;
+            switch (dMode)
+            {
+                case 1:
+                    displayMode = nSq;
+                    break;
+                case 2: 
+                    displayMode = 2 + nSq;
+                    break;
+                case 3:
+                    displayMode = 4 + nSq;
+                    break;
+                default:
+                    displayMode = 0;
+                    break;
             }
         }
         Lambda = defaultLambda;
